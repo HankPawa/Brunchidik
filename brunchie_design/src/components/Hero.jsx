@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import heroImg from "../assets/hero.jpg";
 import "./Hero.css";
 
 const Hero = () => {
   const heroRef = useRef(null);
 
   useEffect(() => {
+    if (globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const ctx = gsap.context(() => {
       gsap.from(".hero-title", {
         y: 50,
@@ -27,11 +28,17 @@ const Hero = () => {
   }, []);
 
   return (
-    <section
-      ref={heroRef}
-      className="hero is-medium hero-bg"
-      style={{ backgroundImage: `url(${heroImg})` }}
-    >
+    <section ref={heroRef} className="hero is-large hero-bg">
+      <video
+        className="hero-video"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      >
+        <source src="/homebrunchie.mp4" type="video/mp4" />
+      </video>
       <div className="overlay">
         <div className="hero-body has-text-centered">
           <h1 className="title has-text-white hero-title">Brunch & Co.</h1>

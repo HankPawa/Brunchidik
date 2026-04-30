@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import "./Navbar.css";
 
@@ -7,11 +8,11 @@ const Navbar = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".navbar-item, .custom-btn", {
-        y: -30,
+      gsap.from(".nav-animate", {
+        y: -20,
         opacity: 0,
         duration: 0.5,
-        stagger: 0.1,
+        stagger: 0.08,
         ease: "power2.out",
       });
     }, navRef);
@@ -20,21 +21,23 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav ref={navRef} className="navbar is-light px-5">
+    <nav ref={navRef} className="navbar navbar-custom" role="navigation">
       <div className="navbar-brand">
-        <a className="navbar-item">
-          <strong>Brunch & Co.</strong>
-        </a>
+        <Link to="/" className="navbar-item nav-animate brand-name">
+          Brunch & Co.
+        </Link>
       </div>
 
-      <div className="navbar-end">
-        <a className="navbar-item">Inicio</a>
-        <a className="navbar-item">Menú</a>
-        <a className="navbar-item">Nosotros</a>
-        <a className="navbar-item">Contacto</a>
-        <button className="button is-black is-small custom-btn">
-            Reservar
-        </button>
+      <div className="navbar-menu">
+        <div className="navbar-end">
+          <Link to="/" className="navbar-item nav-link nav-animate">Inicio</Link>
+          <Link to="/menu" className="navbar-item nav-link nav-animate">Menú</Link>
+          <a href="#nosotros" className="navbar-item nav-link nav-animate">Nosotros</a>
+          <a href="#contacto" className="navbar-item nav-link nav-animate">Contacto</a>
+          <div className="navbar-item nav-animate">
+            <button className="button reservar-btn">Reservar</button>
+          </div>
+        </div>
       </div>
     </nav>
   );
