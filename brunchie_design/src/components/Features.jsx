@@ -1,7 +1,7 @@
 const features = [
   {
     icon: "🐾",
-    title: "Disfruta con tu mejor amigo",
+    title: "Pet friendly",
     desc: "Tu mascota es bienvenida",
     bg: "#FFF3E0",
   },
