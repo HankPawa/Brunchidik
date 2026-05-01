@@ -1,0 +1,64 @@
+.custom-footer {
+  background-color: #0a0a0a;
+  color: #ccc;
+  padding: 2rem 1.5rem; /* más pequeño */
+}
+
+.footer-title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 0.8rem;
+  margin: 2px 0;
+  text-align: center;
+}
+
+.footer-bottom {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: #888;
+  text-align: center;
+}
+
+.footer-slogan{
+    color: #fff;
+    font-weight: 600;
+    font-size: 2rem;
+    margin-bottom:0%;
+    text-align: center;
+}
+
+.footer-subtitle{
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.98rem;
+    margin-bottom: 1rem;
+    margin-top: 0%;
+    text-align: center;
+}
+
+
+.social-top {
+  display: flex;
+  margin-left: 760px;
+  gap: 14px;
+  margin-bottom: 0; 
+}
+
+
+.social-top img {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.social-top img:hover {
+  transform: scale(1.15);
+  opacity: 0.8;
+}
