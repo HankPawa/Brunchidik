@@ -111,7 +111,7 @@ const Menu = () => {
 
       <section className="menu-hero">
         <video className="menu-hero-video" autoPlay muted loop playsInline preload="metadata">
-          <source src="/menubrunch.mp4" type="video/mp4" />
+          <source src="https://res.cloudinary.com/dwhezsxkg/video/upload/v1778112262/menubrunch_xe5q9r.mp4" type="video/mp4" />
         </video>
         <div className="menu-hero-overlay">
           <h1 className="menu-hero-title">Nuestro Menú</h1>

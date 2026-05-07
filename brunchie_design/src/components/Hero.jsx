@@ -37,7 +37,7 @@ const Hero = () => {
         playsInline
         preload="metadata"
       >
-        <source src="/homebrunchie.mp4" type="video/mp4" />
+        <source src="https://res.cloudinary.com/dwhezsxkg/video/upload/v1778019228/homebrunchie_gd2laf.mp4" type="video/mp4" />
       </video>
       <div className="overlay">
         <div className="hero-body has-text-centered">
