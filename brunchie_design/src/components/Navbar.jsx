@@ -35,7 +35,9 @@ const Navbar = () => {
           <Link to="/about" className="navbar-item nav-link nav-animate">Nosotros</Link>
           <Link to="/contact" className="navbar-item nav-link nav-animate">Contacto</Link>
           <div className="navbar-item nav-animate">
-            <button className="button reservar-btn">Reservar</button>
+            <Link to="/login">
+              <button className="button reservar-btn">Reservar</button>
+            </Link>
           </div>
         </div>
       </div>
