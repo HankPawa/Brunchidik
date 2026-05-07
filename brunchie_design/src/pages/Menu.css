@@ -47,7 +47,7 @@
 }
 
 .menu-category {
-  margin-bottom: 4rem;
+  margin-bottom: 5rem;
 }
 
 .menu-category-title {
@@ -62,20 +62,22 @@
   height: 2px;
   background-color: #1a1a1a;
   width: 60px;
-  margin-bottom: 2rem;
+  margin: 0.7rem 0 2rem;
+  border-radius: 999px;
 }
 
 .menu-card {
-  border-radius: 16px;
+  background: #fff;
+  border-radius: 18px;
   overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+  height: 100%;
 }
 
 .menu-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 .menu-img-placeholder {
@@ -86,8 +88,9 @@
 
 .menu-img {
   width: 100%;
-  height: 200px;
+  height: 220px;
   object-fit: cover;
+  transition: 0.4s ease;
 }
 
 .menu-card-body {
@@ -110,14 +113,28 @@
 
 .menu-item-price {
   font-family: 'Nunito', sans-serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #b08968;
 }
 
 .menu-item-desc {
-  font-family: 'Nunito', sans-serif;
+   font-family: 'Nunito', sans-serif;
   font-size: 0.88rem;
   color: #777;
-  line-height: 1.55;
+  line-height: 1.5;
+  margin-top: 0.8rem;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
+
+.menu-card:hover .menu-img {
+  transform: scale(1.04);
+}
+

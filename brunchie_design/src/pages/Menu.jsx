@@ -125,7 +125,7 @@ const Menu = () => {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section has-background-white">
         <div className="container">
           {categories.map((cat) => (
             <div key={cat.name} className="menu-category">
@@ -145,7 +145,9 @@ const Menu = () => {
                           <span className="menu-item-name">{item.name}</span>
                           <span className="menu-item-price">{item.price}</span>
                         </div>
-                        <p className="menu-item-desc">{item.desc ?? lorem}</p>
+                        <p className="menu-item-desc">
+                          {(item.desc ?? lorem).slice(0, 110)}
+                        </p>
                       </div>
                     </div>
                   </div>
