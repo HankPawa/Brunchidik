@@ -30,6 +30,8 @@ const Hero = () => {
   return (
     <section ref={heroRef} className="hero is-large hero-bg">
       <video
+        loading="lazy"
+        preload="none"
         className="hero-video"
         autoPlay
         muted

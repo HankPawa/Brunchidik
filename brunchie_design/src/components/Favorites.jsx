@@ -87,14 +87,14 @@ const Favorites = () => {
         
         <h2 className="title is-4 fav-title">Nuestros Favoritos</h2>
 
-        {/* 🔥 CARRUSEL 3D */}
+
         <div className="carousel-container mt-5">
           <div className="carousel">
             {items.map((item, index) => (
               <div className="fav-card card custom-card" key={index}>
                 <div className="card-image">
                   <figure className="image is-4by3">
-                    <img src={item.img} alt={item.name} />
+                    <img src={item.img} alt={item.name} loading="lazy"/>
                   </figure>
                 </div>
                 <div className="card-content">

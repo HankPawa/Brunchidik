@@ -7,7 +7,7 @@ import pancakes from "../assets/pancakes.jpg";
 import avocado from "../assets/avocado.jpg";
 import englisheggs from "../assets/englisheggs.jpg";
 import torrejon from "../assets/torrejon.jpg";
-import baconeggs from "../assets/baconeggs.jpg";
+import baconeggs from "../assets/baconeggs.webp";
 import eggs from "../assets/eggs.jpg";
 import "./Menu.css";
 
@@ -110,7 +110,13 @@ const Menu = () => {
       <Navbar />
 
       <section className="menu-hero">
-        <video className="menu-hero-video" autoPlay muted loop playsInline preload="metadata">
+        <video
+            className="menu-hero-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata">
           <source src="https://res.cloudinary.com/dwhezsxkg/video/upload/v1778112262/menubrunch_xe5q9r.mp4" type="video/mp4" />
         </video>
         <div className="menu-hero-overlay">
