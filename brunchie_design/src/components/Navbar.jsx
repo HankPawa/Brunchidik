@@ -32,6 +32,7 @@ const Navbar = () => {
         <div className="navbar-end">
           <Link to="/" className="navbar-item nav-link nav-animate">Inicio</Link>
           <Link to="/menu" className="navbar-item nav-link nav-animate">Menú</Link>
+          <Link to="/about" className="navbar-item nav-link nav-animate">Nosotros</Link>
           <Link to="/contact" className="navbar-item nav-link nav-animate">Contacto</Link>
           <div className="navbar-item nav-animate">
             <button className="button reservar-btn">Reservar</button>

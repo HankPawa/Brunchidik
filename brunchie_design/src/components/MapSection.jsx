@@ -1,0 +1,51 @@
+import { MapPin, Clock, Phone } from "lucide-react";
+import "./MapSection.css";
+
+const MapSection = () => (
+  <section className="map-section">
+    <div className="map-inner">
+
+      <div className="map-info">
+        <span className="map-eyebrow">Encuéntranos</span>
+        <h2 className="map-title">¿Cómo llegar?</h2>
+        <div className="map-divider">
+          <span className="map-divider-line" />
+          <span className="map-divider-gem">✦</span>
+          <span className="map-divider-line map-divider-line--right" />
+        </div>
+
+        <ul className="map-details">
+          <li>
+            <span className="map-detail-icon"><MapPin size={16} strokeWidth={1.8} /></span>
+            <span>Calle del Sabor 123, Ciudad del Brunch</span>
+          </li>
+          <li>
+            <span className="map-detail-icon"><Clock size={16} strokeWidth={1.8} /></span>
+            <span>
+              Lun – Vie: 8:00 – 18:00<br />
+              Sáb – Dom: 9:00 – 17:00
+            </span>
+          </li>
+          <li>
+            <span className="map-detail-icon"><Phone size={16} strokeWidth={1.8} /></span>
+            <span>+57 000 000 0000</span>
+          </li>
+        </ul>
+      </div>
+
+      <div className="map-frame-wrap">
+        {/* Reemplaza el src con tu enlace de Google Maps → Compartir › Insertar mapa › copia la URL del iframe */}
+        <iframe
+          title="Ubicación Brunch & Co."
+          src="https://maps.google.com/maps?q=Bogota,Colombia&output=embed&z=15"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
+
+    </div>
+  </section>
+);
+
+export default MapSection;
