@@ -53,6 +53,10 @@ const categories = [
 const Menu = () => {
   const pageRef = useRef(null);
 
+    useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     if (globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
