@@ -1,3 +1,7 @@
+.fav-title {
+  font-family: 'Fraunces', serif !important;
+}
+
 .custom-card {
   border-radius: 20px;
   overflow: hidden;

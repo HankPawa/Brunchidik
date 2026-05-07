@@ -9,6 +9,9 @@ import englisheggs from "../assets/englisheggs.jpg";
 import torrejon from "../assets/torrejon.jpg";
 import baconeggs from "../assets/baconeggs.webp";
 import eggs from "../assets/eggs.jpg";
+import matcha_latte from "../assets/matcha_latte.jpg";
+import mimosa_coctel from "../assets/mimosa_coctel.jpg";
+import kombucha from "../assets/kombucha.jpg";
 import "./Menu.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -63,9 +66,9 @@ const categories = [
   {
     name: "Bebidas",
     items: [
-      { name: "Bebida 1", price: "$0.00", img: null, desc: "Descripción próximamente." },
-      { name: "Bebida 2", price: "$0.00", img: null, desc: "Descripción próximamente." },
-      { name: "Bebida 3", price: "$0.00", img: null, desc: "Descripción próximamente." },
+      { name: "Mimosa", price: "$16.000", img: mimosa_coctel, desc: "Burbujas de champaña encontrándose con el sol de un jugo de naranja recién exprimido. Fresca, festiva y elegante, la Mimosa es el brindis perfecto para empezar la mañana con estilo. Un clásico que nunca pasa de moda." },
+      { name: "Kombucha", price: "$10.000", img: kombucha, desc: "Una bebida fermentada de té con siglos de historia y personalidad propia. Ligeramente efervescente, con notas frutales y un toque ácido que despierta los sentidos. Cuida tu bienestar sin sacrificar el sabor — porque sentirse bien también puede ser delicioso." },
+      { name: "Matcha Latte", price: "$12.000", img: matcha_latte, desc: "Polvo de té verde japonés de primera calidad, suavemente disuelto en leche vaporizada hasta crear una bebida aterciopelada, cremosa y de un verde que enamora. Energía limpia y sostenida, sin los altibajos del café. La elección de quienes saben disfrutar despacio." },
     ],
   },
   {

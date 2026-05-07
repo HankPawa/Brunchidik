@@ -26,7 +26,6 @@ const Favorites = () => {
 
     const ctx = gsap.context(() => {
 
-      // ✨ Animaciones de entrada
       gsap.from(".fav-title", {
         scrollTrigger: { trigger: ".fav-title", start: "top 85%", once: true },
         y: 25,
@@ -43,7 +42,6 @@ const Favorites = () => {
         ease: "power2.out",
       });
 
-      // 🔥 CARRUSEL 3D (tipo cilindro)
       const cards = gsap.utils.toArray(".fav-card");
       const total = cards.length;
       const angle = 360 / total;
@@ -57,7 +55,6 @@ const Favorites = () => {
         });
       });
 
-      // 🔄 ROTACIÓN CONTINUA
       const tween = gsap.to(".carousel", {
         rotationY: "+=360",
         duration: 20,
