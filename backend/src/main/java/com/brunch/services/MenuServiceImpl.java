@@ -21,7 +21,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuItem> listarPorCategoria(Long categoriaId) {
-        return menuItemRepository.findByCategoriaId(categoriaId);
+        return menuItemRepository.findByCategoria_Id(categoriaId);
     }
 
     @Override

@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
     List<MenuItem> findByDisponibleTrue();
-    List<MenuItem> findByCategoriaId(Long categoriaId);
+    List<MenuItem> findByCategoria_Id(Long categoriaId);
 }
