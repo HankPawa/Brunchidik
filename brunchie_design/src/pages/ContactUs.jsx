@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SocialLinks from "../components/SocialLinks";
-import Form from "../components/Form";
+import ChatBox from "../components/ChatBox";
 import "./ContactUs.css";
 
 const ContactUs = () => {
@@ -65,9 +65,9 @@ const ContactUs = () => {
           </section>
 
           <section className="contact-card contact-form">
-            <span className="contact-eyebrow">Escríbenos</span>
-            <h2 className="contact-heading">Tu opinión es importante</h2>
-            <Form />
+            <span className="contact-eyebrow">Asistente virtual</span>
+            <h2 className="contact-heading">¿En qué podemos ayudarte?</h2>
+            <ChatBox />
           </section>
 
         </div>

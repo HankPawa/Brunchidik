@@ -13,6 +13,9 @@ import eggs from "../assets/eggs.jpg";
 import matcha_latte from "../assets/matcha_latte.jpg";
 import mimosa_coctel from "../assets/mimosa_coctel.jpg";
 import kombucha from "../assets/kombucha.jpg";
+import french_toast from "../assets/french_toast.jpg";
+import parfait from "../assets/parfait.jpg";
+import acai_bowl from "../assets/acai_bowl.jpg";
 import "./Menu.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -75,9 +78,9 @@ const categories = [
   {
     name: "Postres",
     items: [
-      { name: "French Toast", price: "$0.00", img: null, desc: "Descripción próximamente." },
-      { name: "Parfait de granola y frutos rojos", price: "$0.00", img: null, desc: "Descripción próximamente." },
-      { name: "Açaí bowl", price: "$0.00", img: null, desc: "Descripción próximamente." },
+      { name: "French Toast", price: "$0.00", img: french_toast, desc: "Descripción próximamente." },
+      { name: "Parfait de granola y frutos rojos", price: "$0.00", img: parfait, desc: "Descripción próximamente." },
+      { name: "Açaí bowl", price: "$0.00", img: acai_bowl, desc: "Descripción próximamente." },
     ],
   },
 ];
