@@ -1,11 +1,18 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const FAKE_2FA_CODE = "123456";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("brunch_user")); } catch { return null; }
+  });
   const [pendingUser, setPendingUser] = useState(null);
+
+  useEffect(() => {
+    if (user) localStorage.setItem("brunch_user", JSON.stringify(user));
+    else localStorage.removeItem("brunch_user");
+  }, [user]);
 
   const login = async (email, password) => {
     try {
