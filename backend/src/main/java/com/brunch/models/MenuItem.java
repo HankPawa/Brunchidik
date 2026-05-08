@@ -1,8 +1,9 @@
 package com.brunch.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 @Entity
@@ -19,13 +20,14 @@ public class MenuItem {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @Positive
+    @PositiveOrZero
     private BigDecimal precio;
 
     private String imagenUrl;
 
     private boolean disponible = true;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
@@ -49,6 +51,8 @@ public class MenuItem {
 
     public boolean isDisponible() { return disponible; }
     public void setDisponible(boolean disponible) { this.disponible = disponible; }
+
+    public Long getCategoriaId() { return categoria != null ? categoria.getId() : null; }
 
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }

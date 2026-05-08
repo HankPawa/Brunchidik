@@ -9,13 +9,13 @@ import "./Checkout.css";
 const fmt = (n) => `$${n.toLocaleString("es-CO")}`;
 
 const PAYMENT_METHODS = [
-  { id: "efectivo",     label: "Efectivo contra entrega" },
-  { id: "debito",       label: "Tarjeta débito" },
-  { id: "credito",      label: "Tarjeta crédito" },
-  { id: "pse",          label: "PSE" },
+  { id: "efectivo", label: "Efectivo contra entrega" },
+  { id: "debito",   label: "Tarjeta débito" },
+  { id: "credito",  label: "Tarjeta crédito" },
+  { id: "pse",      label: "PSE" },
 ];
 
-const PaymentModal = ({ method, onClose, onConfirm }) => {
+const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
   const isCard = method === "debito" || method === "credito";
   return (
     <div className="pay-overlay" onClick={onClose}>
@@ -72,11 +72,7 @@ const PaymentModal = ({ method, onClose, onConfirm }) => {
             <div className="pay-row">
               <div className="pay-field">
                 <label>Tipo de documento</label>
-                <select>
-                  <option>CC</option>
-                  <option>NIT</option>
-                  <option>CE</option>
-                </select>
+                <select><option>CC</option><option>NIT</option><option>CE</option></select>
               </div>
               <div className="pay-field">
                 <label>Número de documento</label>
@@ -87,8 +83,10 @@ const PaymentModal = ({ method, onClose, onConfirm }) => {
         )}
 
         <div className="pay-modal-actions">
-          <button className="pay-btn-cancel" onClick={onClose}>Cancelar</button>
-          <button className="pay-btn-confirm" onClick={onConfirm}>Confirmar pago</button>
+          <button className="pay-btn-cancel" onClick={onClose} disabled={loading}>Cancelar</button>
+          <button className="pay-btn-confirm" onClick={onConfirm} disabled={loading}>
+            {loading ? "Procesando..." : "Confirmar pago"}
+          </button>
         </div>
       </div>
     </div>
@@ -99,24 +97,57 @@ const Checkout = () => {
   const { items, subtotal, shipping, total, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const [direccion, setDireccion] = useState("");
+  const [telefono, setTelefono]   = useState("");
+  const [notas, setNotas]         = useState("");
   const [payMethod, setPayMethod] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState("");
 
   if (items.length === 0) {
     navigate("/menu");
     return null;
   }
 
-  const handleConfirm = () => {
-    clearCart();
-    setShowModal(false);
-    navigate("/pedido-exitoso");
+  const handleConfirm = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/pedidos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          direccion,
+          telefono,
+          metodoPago: payMethod,
+          notas,
+          total,
+          usuario: { id: user?.id },
+          detalles: items.map((item) => ({
+            cantidad:       item.qty,
+            precioUnitario: item.priceNum,
+            menuItem:       { id: item.id },
+          })),
+        }),
+      });
+
+      if (!res.ok) throw new Error();
+      clearCart();
+      setShowModal(false);
+      navigate("/pedido-exitoso");
+    } catch {
+      setError("No se pudo procesar el pedido. Inténtalo de nuevo.");
+      setShowModal(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
       <Navbar />
-
       <main className="checkout-main">
         <div className="checkout-grid">
 
@@ -128,7 +159,6 @@ const Checkout = () => {
               <span className="checkout-divider-gem">✦</span>
               <span className="checkout-divider-line" />
             </div>
-
             <ul className="checkout-items">
               {items.map((item) => (
                 <li key={item.name} className="checkout-item">
@@ -138,19 +168,15 @@ const Checkout = () => {
                 </li>
               ))}
             </ul>
-
             <div className="checkout-breakdown">
               <div className="checkout-breakdown-row">
-                <span>Subtotal</span>
-                <span>{fmt(subtotal)}</span>
+                <span>Subtotal</span><span>{fmt(subtotal)}</span>
               </div>
               <div className="checkout-breakdown-row">
-                <span>Costo de envío</span>
-                <span>{fmt(shipping)}</span>
+                <span>Costo de envío</span><span>{fmt(shipping)}</span>
               </div>
               <div className="checkout-breakdown-row checkout-breakdown-total">
-                <span>Total</span>
-                <span>{fmt(total)}</span>
+                <span>Total</span><span>{fmt(total)}</span>
               </div>
             </div>
           </section>
@@ -171,11 +197,23 @@ const Checkout = () => {
               </div>
               <div className="checkout-field">
                 <label>Dirección de entrega</label>
-                <input type="text" placeholder="Calle 10 # 5-23, Apto 301" required />
+                <input
+                  type="text"
+                  placeholder="Calle 10 # 5-23, Apto 301"
+                  value={direccion}
+                  onChange={(e) => setDireccion(e.target.value)}
+                  required
+                />
               </div>
               <div className="checkout-field">
                 <label>Teléfono</label>
-                <input type="tel" placeholder="+57 300 000 0000" required />
+                <input
+                  type="tel"
+                  placeholder="+57 300 000 0000"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value)}
+                  required
+                />
               </div>
 
               <div className="checkout-field">
@@ -183,12 +221,7 @@ const Checkout = () => {
                 <div className="pay-methods">
                   {PAYMENT_METHODS.map((m) => (
                     <label key={m.id} className={`pay-method-option ${payMethod === m.id ? "selected" : ""}`}>
-                      <input
-                        type="radio"
-                        name="payment"
-                        value={m.id}
-                        onChange={() => setPayMethod(m.id)}
-                      />
+                      <input type="radio" name="payment" value={m.id} onChange={() => setPayMethod(m.id)} />
                       {m.label}
                     </label>
                   ))}
@@ -197,21 +230,24 @@ const Checkout = () => {
 
               <div className="checkout-field">
                 <label>Notas adicionales</label>
-                <textarea placeholder="Instrucciones para el domiciliario..." rows={2} />
+                <textarea
+                  placeholder="Instrucciones para el domiciliario..."
+                  rows={2}
+                  value={notas}
+                  onChange={(e) => setNotas(e.target.value)}
+                />
               </div>
 
+              {error && <p className="checkout-error">{error}</p>}
+
               <div className="checkout-actions">
-                <button
-                  type="button"
-                  className="checkout-cancel-btn"
-                  onClick={() => navigate("/menu")}
-                >
+                <button type="button" className="checkout-cancel-btn" onClick={() => navigate("/menu")}>
                   Cancelar
                 </button>
                 <button
                   type="button"
                   className="checkout-submit-btn"
-                  disabled={!payMethod}
+                  disabled={!payMethod || !direccion || !telefono}
                   onClick={() => setShowModal(true)}
                 >
                   Continuar
@@ -230,6 +266,7 @@ const Checkout = () => {
           method={payMethod}
           onClose={() => setShowModal(false)}
           onConfirm={handleConfirm}
+          loading={loading}
         />
       )}
     </>

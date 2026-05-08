@@ -1,3 +1,6 @@
+.contact-form-ok  { font-family: 'Nunito', sans-serif; font-size: .85rem; color: #27ae60; margin: .25rem 0; }
+.contact-form-err { font-family: 'Nunito', sans-serif; font-size: .85rem; color: #c0392b; margin: .25rem 0; }
+
 .contact-main {
   background: #faf5ef;
   padding: 4rem 2rem;

@@ -13,5 +13,7 @@
 .reservas-field input, .reservas-field select, .reservas-field textarea { width: 100%; padding: .7rem 1rem; border: 1.5px solid #ddd; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: .9rem; color: #1a1a1a; background-color: #faf8f5; outline: none; transition: border-color .2s ease; resize: none; }
 .reservas-field input:focus, .reservas-field select:focus, .reservas-field textarea:focus { border-color: #1a1a1a; }
 .reservas-submit-btn { width: 100%; padding: .9rem; background-color: #1a1a1a; color: #fff; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: .95rem; font-weight: 700; cursor: pointer; letter-spacing: .5px; margin-top: .5rem; transition: background-color .2s ease, transform .15s ease; }
-.reservas-submit-btn:hover { background-color: #333; transform: translateY(-1px); }
+.reservas-submit-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
+.reservas-submit-btn:not(:disabled):hover { background-color: #333; transform: translateY(-1px); }
+.reservas-error { font-family: 'Nunito', sans-serif; font-size: .85rem; color: #c0392b; text-align: center; margin: 0; }
 @media (max-width: 600px) { .reservas-row { grid-template-columns: 1fr; } .reservas-card { padding: 2rem 1.5rem; } }

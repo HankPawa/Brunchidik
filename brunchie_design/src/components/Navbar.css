@@ -77,6 +77,18 @@
 }
 .cart-icon-btn:hover { color: #1a1a1a; }
 
+.admin-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: #444;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.admin-nav-btn:hover { background: #f0ede8; color: #1a1a1a; }
+
 .nav-user-wrap { padding: 0 0.5rem; }
 
 .nav-user-btn {

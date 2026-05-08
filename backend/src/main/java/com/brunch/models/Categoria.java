@@ -16,7 +16,7 @@ public class Categoria {
     @Column(unique = true)
     private String nombre;
 
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MenuItem> items;
 
     public Categoria() {}

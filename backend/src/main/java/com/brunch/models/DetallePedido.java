@@ -1,5 +1,6 @@
 package com.brunch.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ public class DetallePedido {
 
     private BigDecimal precioUnitario;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;

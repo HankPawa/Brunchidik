@@ -16,6 +16,9 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public Pedido crear(Pedido pedido) {
+        if (pedido.getDetalles() != null) {
+            pedido.getDetalles().forEach(d -> d.setPedido(pedido));
+        }
         return pedidoRepository.save(pedido);
     }
 

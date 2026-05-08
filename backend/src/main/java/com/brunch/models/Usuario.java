@@ -30,6 +30,9 @@ public class Usuario {
 
     private boolean cuentaGoogle = false;
 
+    @Enumerated(EnumType.STRING)
+    private Rol rol = Rol.USUARIO;
+
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Reserva> reservas;
@@ -57,6 +60,9 @@ public class Usuario {
 
     public boolean isCuentaGoogle() { return cuentaGoogle; }
     public void setCuentaGoogle(boolean cuentaGoogle) { this.cuentaGoogle = cuentaGoogle; }
+
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
 
     public List<Reserva> getReservas() { return reservas; }
     public void setReservas(List<Reserva> reservas) { this.reservas = reservas; }

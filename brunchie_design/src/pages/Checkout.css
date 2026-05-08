@@ -215,6 +215,7 @@
   letter-spacing: 0.5px;
   transition: background-color 0.2s ease, transform 0.15s ease;
 }
+.checkout-error { font-family: 'Nunito', sans-serif; font-size: .85rem; color: #c0392b; text-align: center; margin: 0; }
 .checkout-submit-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
 .checkout-submit-btn:not(:disabled):hover { background-color: #333; transform: translateY(-1px); }
 

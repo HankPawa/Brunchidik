@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, LayoutDashboard } from "lucide-react";
 import gsap from "gsap";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -52,6 +52,14 @@ const Navbar = () => {
               <button className="button reservar-btn">Reservar</button>
             </Link>
           </div>
+
+          {user?.rol === "ADMIN" && (
+            <div className="navbar-item nav-animate">
+              <Link to="/admin" className="admin-nav-btn" title="Panel admin">
+                <LayoutDashboard size={18} strokeWidth={1.8} />
+              </Link>
+            </div>
+          )}
 
           {user && (
             <div className="navbar-item nav-animate nav-user-wrap">

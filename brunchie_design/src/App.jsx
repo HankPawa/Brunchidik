@@ -18,6 +18,8 @@ import ReservaExitosa from './pages/ReservaExitosa';
 import Checkout from './pages/Checkout';
 import PedidoExitoso from './pages/PedidoExitoso';
 import Perfil from './pages/Perfil';
+import AdminPanel from './pages/AdminPanel';
+import AdminRoute from './components/AdminRoute';
 
 function App() {
   return (
@@ -39,6 +41,7 @@ function App() {
               <Route path="/pedido-exitoso" element={<PedidoExitoso />} />
               <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
               <Route path="/reservas" element={<ProtectedRoute><Reservas /></ProtectedRoute>} />
+              <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
               <Route path="/reserva-exitosa" element={<ProtectedRoute><ReservaExitosa /></ProtectedRoute>} />
             </Routes>
           </BrowserRouter>
