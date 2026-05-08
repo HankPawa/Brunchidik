@@ -216,3 +216,17 @@
   text-align: center;
   margin: 0;
 }
+
+.login-success {
+  color: #27ae60;
+}
+
+.login-forgot {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.83rem;
+  color: #999;
+  text-align: center;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.login-forgot:hover { color: #1a1a1a; }

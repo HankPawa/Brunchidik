@@ -16,7 +16,6 @@ const Reservas = () => {
   return (
     <>
       <Navbar />
-
       <main className="reservas-main">
         <div className="reservas-card">
           <span className="reservas-eyebrow">Bienvenido, {user?.nombre}</span>
@@ -26,33 +25,29 @@ const Reservas = () => {
             <span className="reservas-divider-gem">✦</span>
             <span className="reservas-divider-line" />
           </div>
-          <p className="reservas-sub">
-            Reserva tu mesa y disfruta de la mejor experiencia brunch
-          </p>
+          <p className="reservas-sub">Reserva tu mesa y disfruta la mejor experiencia brunch</p>
 
           <form className="reservas-form" onSubmit={handleSubmit}>
             <div className="reservas-row">
               <div className="reservas-field">
                 <label>Nombre completo</label>
-                <input type="text" placeholder="Tu nombre" defaultValue={user?.nombre} />
+                <input type="text" defaultValue={user?.nombre} required />
               </div>
               <div className="reservas-field">
                 <label>Correo electrónico</label>
-                <input type="email" placeholder="tucorreo@ejemplo.com" defaultValue={user?.email} />
+                <input type="email" defaultValue={user?.email} required />
               </div>
             </div>
-
             <div className="reservas-row">
               <div className="reservas-field">
                 <label>Fecha</label>
-                <input type="date" />
+                <input type="date" required />
               </div>
               <div className="reservas-field">
                 <label>Hora</label>
-                <input type="time" min="08:00" max="17:00" />
+                <input type="time" min="08:00" max="17:00" required />
               </div>
             </div>
-
             <div className="reservas-row">
               <div className="reservas-field">
                 <label>Número de personas</label>
@@ -73,19 +68,14 @@ const Reservas = () => {
                 </select>
               </div>
             </div>
-
             <div className="reservas-field">
               <label>Notas adicionales</label>
               <textarea placeholder="Alergias, preferencias, solicitudes especiales..." rows={3} />
             </div>
-
-            <button type="submit" className="reservas-submit-btn">
-              Confirmar reserva
-            </button>
+            <button type="submit" className="reservas-submit-btn">Confirmar reserva</button>
           </form>
         </div>
       </main>
-
       <Footer />
     </>
   );

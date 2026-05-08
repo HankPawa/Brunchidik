@@ -1,0 +1,20 @@
+
+# Java / Maven
+backend/target/
+*.class
+*.jar
+*.war
+
+# Node
+brunchie_design/node_modules/
+brunchie_design/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.sw?

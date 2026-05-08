@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import ProductModal from "../components/ProductModal";
 import pancakes from "../assets/pancakes.jpg";
 import avocado from "../assets/avocado.jpg";
 import englisheggs from "../assets/englisheggs.jpg";
@@ -20,55 +21,25 @@ const categories = [
   {
     name: "Desayunos Clásicos",
     items: [
-      {
-        name: "Pancakes",
-        price: "$12.900",
-        img: pancakes,
-        desc: "Una torre de cuatro pancakes dorados y extra esponjosos, bañados con miel de abejas pura y azúcar glass. Coronados con frambuesas frescas, arándanos azules y láminas de almendra tostada.",
-      },
-      {
-        name: "Bacon Eggs",
-        price: "$18.900",
-        img: baconeggs,
-        desc: "Tiras de tocineta premium ahumada en madera de nogal, cocinadas hasta el punto exacto de crocancia, acompañadas de un huevo frito con yema sedosa que resalta los sabores salados del conjunto.",
-      },
-      {
-        name: "Muffin Inglés con Huevos",
-        price: "$21.000",
-        img: englisheggs,
-        desc: "Muffin inglés artesanal tostado con huevos revueltos cremosos sazonados con pimienta negra molida. Acompañado de tomates cherry en rama asados para resaltar su dulzor natural.",
-      },
+      { name: "Pancakes", price: "$12.900", img: pancakes, desc: "Una torre de cuatro pancakes dorados y extra esponjosos, bañados con miel de abejas pura y azúcar glass. Coronados con frambuesas frescas, arándanos azules y láminas de almendra tostada." },
+      { name: "Bacon Eggs", price: "$18.900", img: baconeggs, desc: "Tiras de tocineta premium ahumada en madera de nogal, cocinadas hasta el punto exacto de crocancia, acompañadas de un huevo frito con yema sedosa que resalta los sabores salados del conjunto." },
+      { name: "Muffin Inglés con Huevos", price: "$21.000", img: englisheggs, desc: "Muffin inglés artesanal tostado con huevos revueltos cremosos sazonados con pimienta negra molida. Acompañado de tomates cherry en rama asados para resaltar su dulzor natural." },
     ],
   },
   {
     name: "Brunch",
     items: [
-      {
-        name: "Avocado Toast Campestre",
-        price: "$30.000",
-        img: avocado,
-        desc: "Pan de masa madre tostado con crema de aguacate y salteado de vegetales frescos: maíz tierno, pimentón y cebollas caramelizadas. Terminado con romero fresco y pimienta negra recién molida.",
-      },
-      {
-        name: "Eggs Benedict",
-        price: "$29.900",
-        img: eggs,
-        desc: "Dos huevos pochados sobre muffins ingleses tostados y jamón de espalda premium. Bañados en salsa holandesa de la casa con páprika, acompañados de rúcula, tomates cherry y cebolla morada.",
-      },
-      {
-        name: "Torrijas de Ricotta",
-        price: "$26.000",
-        img: torrejon,
-        desc: "Rebanadas de brioche artesanal doradas en mantequilla, rellenas de crema de ricotta al limón y acompañadas de compota casera de arándanos frescos. Dulce, ácido y perfectamente equilibrado.",
-      },
+      { name: "Avocado Toast Campestre", price: "$30.000", img: avocado, desc: "Pan de masa madre tostado con crema de aguacate y salteado de vegetales frescos: maíz tierno, pimentón y cebollas caramelizadas. Terminado con romero fresco y pimienta negra recién molida." },
+      { name: "Eggs Benedict", price: "$29.900", img: eggs, desc: "Dos huevos pochados sobre muffins ingleses tostados y jamón de espalda premium. Bañados en salsa holandesa de la casa con páprika, acompañados de rúcula, tomates cherry y cebolla morada." },
+      { name: "Torrijas de Ricotta", price: "$26.000", img: torrejon, desc: "Rebanadas de brioche artesanal doradas en mantequilla, rellenas de crema de ricotta al limón y acompañadas de compota casera de arándanos frescos. Dulce, ácido y perfectamente equilibrado." },
     ],
   },
   {
     name: "Bebidas",
     items: [
-      { name: "Mimosa", price: "$16.000", img: mimosa_coctel, desc: "Burbujas de champaña encontrándose con el sol de un jugo de naranja recién exprimido. Fresca, festiva y elegante, la Mimosa es el brindis perfecto para empezar la mañana con estilo. Un clásico que nunca pasa de moda." },
-      { name: "Kombucha", price: "$10.000", img: kombucha, desc: "Una bebida fermentada de té con siglos de historia y personalidad propia. Ligeramente efervescente, con notas frutales y un toque ácido que despierta los sentidos. Cuida tu bienestar sin sacrificar el sabor — porque sentirse bien también puede ser delicioso." },
-      { name: "Matcha Latte", price: "$12.000", img: matcha_latte, desc: "Polvo de té verde japonés de primera calidad, suavemente disuelto en leche vaporizada hasta crear una bebida aterciopelada, cremosa y de un verde que enamora. Energía limpia y sostenida, sin los altibajos del café. La elección de quienes saben disfrutar despacio." },
+      { name: "Mimosa", price: "$16.000", img: mimosa_coctel, desc: "Burbujas de champaña encontrándose con el sol de un jugo de naranja recién exprimido. Fresca, festiva y elegante." },
+      { name: "Kombucha", price: "$10.000", img: kombucha, desc: "Una bebida fermentada de té con siglos de historia. Ligeramente efervescente, con notas frutales y un toque ácido que despierta los sentidos." },
+      { name: "Matcha Latte", price: "$12.000", img: matcha_latte, desc: "Polvo de té verde japonés de primera calidad, suavemente disuelto en leche vaporizada. Energía limpia y sostenida, sin los altibajos del café." },
     ],
   },
   {
@@ -81,7 +52,7 @@ const categories = [
   },
 ];
 
-const FlipCard = ({ item }) => {
+const FlipCard = ({ item, onOpenModal }) => {
   const [flipped, setFlipped] = useState(false);
 
   return (
@@ -92,7 +63,6 @@ const FlipCard = ({ item }) => {
       aria-pressed={flipped}
     >
       <div className="flip-inner">
-        {/* ── Front ── */}
         <div className="flip-front">
           {item.img
             ? <img src={item.img} alt={item.name} className="flip-img" loading="lazy" />
@@ -105,13 +75,17 @@ const FlipCard = ({ item }) => {
           <span className="flip-hint">Toca para ver más</span>
         </div>
 
-        {/* ── Back ── */}
         <div className="flip-back">
           <p className="flip-back-label">✦</p>
           <h3 className="flip-back-name">{item.name}</h3>
           <p className="flip-back-price">{item.price}</p>
           <p className="flip-back-desc">{item.desc}</p>
-          <span className="flip-back-close">Toca para cerrar</span>
+          <button
+            className="flip-add-btn"
+            onClick={(e) => { e.stopPropagation(); onOpenModal(item); }}
+          >
+            + Agregar
+          </button>
         </div>
       </div>
     </div>
@@ -120,21 +94,16 @@ const FlipCard = ({ item }) => {
 
 const Menu = () => {
   const pageRef = useRef(null);
+  const [modalItem, setModalItem] = useState(null);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   useEffect(() => {
     if (globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = gsap.context(() => {
-      gsap.from(".menu-hero-title", {
-        y: 30, opacity: 0, duration: 0.55, ease: "power3.out",
-      });
-      gsap.from(".menu-hero-sub", {
-        y: 18, opacity: 0, duration: 0.55, delay: 0.15, ease: "power3.out",
-      });
+      gsap.from(".menu-hero-title", { y: 30, opacity: 0, duration: 0.55, ease: "power3.out" });
+      gsap.from(".menu-hero-sub", { y: 18, opacity: 0, duration: 0.55, delay: 0.15, ease: "power3.out" });
 
       gsap.utils.toArray(".menu-category-title").forEach((title) => {
         gsap.from(title, {
@@ -145,10 +114,7 @@ const Menu = () => {
 
       ScrollTrigger.batch(".flip-card", {
         onEnter: (batch) =>
-          gsap.fromTo(batch,
-            { opacity: 0, y: 35 },
-            { opacity: 1, y: 0, duration: 0.4, stagger: 0.07, ease: "power2.out" }
-          ),
+          gsap.fromTo(batch, { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.07, ease: "power2.out" }),
         start: "top 92%",
         once: true,
       });
@@ -188,7 +154,7 @@ const Menu = () => {
               <div className="columns is-multiline">
                 {cat.items.map((item) => (
                   <div key={item.name} className="column is-4">
-                    <FlipCard item={item} />
+                    <FlipCard item={item} onOpenModal={setModalItem} />
                   </div>
                 ))}
               </div>
@@ -198,6 +164,8 @@ const Menu = () => {
       </section>
 
       <Footer />
+
+      <ProductModal item={modalItem} onClose={() => setModalItem(null)} />
     </div>
   );
 };

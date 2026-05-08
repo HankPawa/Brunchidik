@@ -1,0 +1,338 @@
+.perfil-main {
+  min-height: calc(100vh - 130px);
+  background-color: #faf8f5;
+  padding: 3rem 1.5rem;
+}
+
+.perfil-wrapper {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header */
+.perfil-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2rem;
+  background: #1a1a1a;
+  border-radius: 16px;
+  color: #fff;
+}
+
+.perfil-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fff;
+  color: #1a1a1a;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.perfil-nombre {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.2rem;
+}
+
+.perfil-email {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+}
+
+/* Cards */
+.perfil-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  padding: 2rem;
+}
+
+.perfil-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.75rem;
+}
+
+.perfil-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.perfil-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #e8e2da;
+}
+
+.perfil-divider-gem {
+  font-size: 0.65rem;
+  color: #bbb;
+}
+
+/* Info grid */
+.perfil-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.perfil-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #faf8f5;
+  border-radius: 10px;
+}
+
+.perfil-info-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.perfil-info-value {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.perfil-info-muted { color: #aaa; }
+
+/* 2FA toggle */
+.perfil-2fa-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.perfil-2fa-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.perfil-2fa-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.perfil-2fa-desc {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.83rem;
+  color: #888;
+}
+
+.perfil-toggle {
+  width: 48px;
+  height: 26px;
+  border-radius: 50px;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.25s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.perfil-toggle--on { background: #1a1a1a; }
+
+.perfil-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.25s ease;
+  display: block;
+}
+
+.perfil-toggle--on .perfil-toggle-thumb {
+  transform: translateX(22px);
+}
+
+.perfil-2fa-badge {
+  display: flex;
+}
+
+.badge {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  border-radius: 50px;
+}
+
+.badge--green { background: #eafaf1; color: #27ae60; }
+.badge--gray  { background: #f0ede8; color: #999; }
+
+/* Google account card */
+.perfil-card--google {
+  border: 1.5px solid #e8e2da;
+}
+
+.perfil-google-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.perfil-google-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.perfil-google-title {
+  display: block;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.2rem;
+}
+
+.perfil-google-desc {
+  display: block;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.83rem;
+  color: #888;
+  line-height: 1.5;
+}
+
+.perfil-google-desc a {
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+/* Cambiar contraseña */
+.perfil-pw-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.perfil-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.perfil-field label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #444;
+}
+
+.perfil-field input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  background: #faf8f5;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.perfil-field input:focus { border-color: #1a1a1a; }
+
+.perfil-msg {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0;
+}
+.perfil-msg--ok  { color: #27ae60; }
+.perfil-msg--err { color: #c0392b; }
+
+.perfil-btn-pw {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.perfil-btn-pw:disabled { background: #ccc; cursor: not-allowed; }
+.perfil-btn-pw:not(:disabled):hover { background: #333; transform: translateY(-1px); }
+
+/* Action buttons */
+.perfil-card--actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.perfil-btn-reservas {
+  flex: 1;
+  padding: 0.85rem;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.perfil-btn-reservas:hover { background: #333; transform: translateY(-1px); }
+
+.perfil-btn-logout {
+  flex: 1;
+  padding: 0.85rem;
+  background-color: transparent;
+  color: #c0392b;
+  border: 1.5px solid #f5c6c0;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.perfil-btn-logout:hover { background: #fdf0ee; border-color: #c0392b; }
+
+@media (max-width: 500px) {
+  .perfil-card--actions { flex-direction: column; }
+  .perfil-header { flex-direction: column; text-align: center; }
+}
