@@ -1,10 +1,13 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { ShoppingBag } from "lucide-react";
 import gsap from "gsap";
+import { useCart } from "../context/CartContext";
 import "./Navbar.css";
 
 const Navbar = () => {
   const navRef = useRef(null);
+  const { count, setIsOpen } = useCart();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -34,6 +37,12 @@ const Navbar = () => {
           <Link to="/menu" className="navbar-item nav-link nav-animate">Menú</Link>
           <Link to="/about" className="navbar-item nav-link nav-animate">Nosotros</Link>
           <Link to="/contact" className="navbar-item nav-link nav-animate">Contacto</Link>
+          <div className="navbar-item nav-animate">
+            <button className="cart-icon-btn" onClick={() => setIsOpen(true)}>
+              <ShoppingBag size={20} strokeWidth={1.8} />
+              {count > 0 && <span className="cart-badge">{count}</span>}
+            </button>
+          </div>
           <div className="navbar-item nav-animate">
             <Link to="/login">
               <button className="button reservar-btn">Reservar</button>

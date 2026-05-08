@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useCart } from "../context/CartContext";
 import pancakes from "../assets/pancakes.jpg";
 import avocado from "../assets/avocado.jpg";
 import englisheggs from "../assets/englisheggs.jpg";
@@ -74,15 +75,16 @@ const categories = [
   {
     name: "Postres",
     items: [
-      { name: "Postre 1", price: "$0.00", img: null, desc: "Descripción próximamente." },
-      { name: "Postre 2", price: "$0.00", img: null, desc: "Descripción próximamente." },
-      { name: "Postre 3", price: "$0.00", img: null, desc: "Descripción próximamente." },
+      { name: "French Toast", price: "$0.00", img: null, desc: "Descripción próximamente." },
+      { name: "Parfait de granola y frutos rojos", price: "$0.00", img: null, desc: "Descripción próximamente." },
+      { name: "Açaí bowl", price: "$0.00", img: null, desc: "Descripción próximamente." },
     ],
   },
 ];
 
 const FlipCard = ({ item }) => {
   const [flipped, setFlipped] = useState(false);
+  const { addToCart } = useCart();
 
   return (
     <div
@@ -111,7 +113,12 @@ const FlipCard = ({ item }) => {
           <h3 className="flip-back-name">{item.name}</h3>
           <p className="flip-back-price">{item.price}</p>
           <p className="flip-back-desc">{item.desc}</p>
-          <span className="flip-back-close">Toca para cerrar</span>
+          <button
+            className="flip-add-btn"
+            onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+          >
+            + Agregar al carrito
+          </button>
         </div>
       </div>
     </div>

@@ -213,3 +213,24 @@
   letter-spacing: 0.04em;
 }
 
+.flip-add-btn {
+  margin-top: 1rem;
+  padding: 0.55rem 1.2rem;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  border: 1.5px solid #ffffff;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.flip-add-btn:hover {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
