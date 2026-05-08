@@ -1,4 +1,7 @@
 
+# Variables de entorno (contienen secretos)
+.env
+
 # Java / Maven
 backend/target/
 *.class
