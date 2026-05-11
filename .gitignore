@@ -2,6 +2,9 @@
 # Variables de entorno (contienen secretos)
 .env
 
+# Credenciales de base de datos (no subir a git)
+backend/src/main/resources/application-neon.properties
+
 # Java / Maven
 backend/target/
 *.class
