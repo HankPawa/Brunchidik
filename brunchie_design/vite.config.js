@@ -5,8 +5,32 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
+      '/api/usuarios': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+      },
+      '/api/admin/menu': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+      },
+      '/api/categorias': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+      },
+      '/api/menu': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+      },
+      '/api/pedidos': {
+        target: 'http://localhost:8083',
+        changeOrigin: true,
+      },
+      '/api/reservas': {
+        target: 'http://localhost:8084',
+        changeOrigin: true,
+      },
+      '/api/contacto': {
+        target: 'http://localhost:8085',
         changeOrigin: true,
       },
     },
