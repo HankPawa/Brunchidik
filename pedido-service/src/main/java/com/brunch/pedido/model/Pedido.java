@@ -1,6 +1,7 @@
 package com.brunch.pedido.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,6 +34,9 @@ public class Pedido {
 
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
+    @FutureOrPresent(message = "La fecha programada no puede ser en el pasado")
+    private LocalDateTime fechaProgramada;
+
     // Referencia por ID al usuario-service, sin JPA cross-service
     private Long usuarioId;
 
@@ -64,6 +68,9 @@ public class Pedido {
 
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+
+    public LocalDateTime getFechaProgramada() { return fechaProgramada; }
+    public void setFechaProgramada(LocalDateTime fechaProgramada) { this.fechaProgramada = fechaProgramada; }
 
     public Long getUsuarioId() { return usuarioId; }
     public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }

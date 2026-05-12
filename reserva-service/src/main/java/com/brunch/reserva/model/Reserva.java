@@ -1,6 +1,7 @@
 package com.brunch.reserva.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class Reserva {
     private String email;
 
     @NotNull
+    @FutureOrPresent(message = "La fecha de reserva no puede ser en el pasado")
     private LocalDate fecha;
 
     @NotNull

@@ -337,6 +337,25 @@
 }
 .pay-btn-confirm:hover { background: #333; transform: translateY(-1px); }
 
+.checkout-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: .9rem;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+}
+.checkout-toggle-label input { width: 16px; height: 16px; accent-color: #1a1a1a; }
+
+.checkout-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 @media (max-width: 700px) {
   .checkout-grid { grid-template-columns: 1fr; }
+  .checkout-row  { grid-template-columns: 1fr; }
 }

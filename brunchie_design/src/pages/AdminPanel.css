@@ -82,3 +82,15 @@
 .admin-btn-save { flex: 2; padding: .8rem; background: #1a1a1a; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: .9rem; font-weight: 700; color: #fff; cursor: pointer; transition: background .2s ease, transform .15s ease; }
 .admin-btn-save:disabled { background: #ccc; cursor: not-allowed; }
 .admin-btn-save:not(:disabled):hover { background: #333; transform: translateY(-1px); }
+
+/* Tabs */
+.admin-tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #f0ede8; padding-bottom: .5rem; }
+
+.admin-tab { background: transparent; border: none; font-family: 'Nunito', sans-serif; font-size: .9rem; font-weight: 700; color: #999; padding: .5rem 1rem; border-radius: 50px; cursor: pointer; transition: all .2s ease; display: flex; align-items: center; gap: .4rem; }
+.admin-tab:hover { color: #1a1a1a; background: #f0ede8; }
+.admin-tab--active { color: #1a1a1a; background: #f0ede8; }
+
+.admin-tab-count { background: #1a1a1a; color: #fff; font-size: .7rem; font-weight: 700; padding: .15rem .5rem; border-radius: 50px; }
+
+/* Empty state */
+.admin-empty { font-family: 'Nunito', sans-serif; font-size: .95rem; color: #999; text-align: center; padding: 3rem; margin: 0; }

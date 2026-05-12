@@ -6,21 +6,35 @@ import "./AdminPanel.css";
 const EMPTY_FORM = { nombre: "", descripcion: "", precio: "", categoriaId: "", disponible: true, imagenUrl: "" };
 
 const AdminPanel = () => {
-  const [items, setItems]         = useState([]);
-  const [categorias, setCategorias] = useState([]);
-  const [form, setForm]           = useState(EMPTY_FORM);
-  const [editId, setEditId]       = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading]     = useState(false);
-  const [msg, setMsg]             = useState({ text: "", ok: false });
+  const [tab, setTab]              = useState("productos");
 
-  const fetchData = () => {
+  // Productos
+  const [items, setItems]          = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [form, setForm]            = useState(EMPTY_FORM);
+  const [editId, setEditId]        = useState(null);
+  const [showModal, setShowModal]  = useState(false);
+  const [loading, setLoading]      = useState(false);
+  const [msg, setMsg]              = useState({ text: "", ok: false });
+
+  // Reservas
+  const [reservas, setReservas]    = useState([]);
+
+  const fetchProductos = () => {
     fetch("/api/admin/menu").then(r => r.json()).then(setItems);
     fetch("/api/categorias").then(r => r.json()).then(setCategorias);
   };
 
-  useEffect(() => { fetchData(); }, []);
+  const fetchReservas = () => {
+    fetch("/api/admin/reservas").then(r => r.json()).then(setReservas);
+  };
 
+  useEffect(() => {
+    fetchProductos();
+    fetchReservas();
+  }, []);
+
+  // ── Productos ──
   const openAdd = () => {
     setForm(EMPTY_FORM);
     setEditId(null);
@@ -45,7 +59,7 @@ const AdminPanel = () => {
   const handleDelete = async (id) => {
     if (!confirm("¿Eliminar este producto?")) return;
     await fetch(`/api/admin/menu/${id}`, { method: "DELETE" });
-    fetchData();
+    fetchProductos();
   };
 
   const handleSubmit = async (e) => {
@@ -53,7 +67,6 @@ const AdminPanel = () => {
     setLoading(true);
     const url    = editId ? `/api/admin/menu/${editId}` : "/api/admin/menu";
     const method = editId ? "PUT" : "POST";
-
     try {
       const res = await fetch(url, {
         method,
@@ -62,7 +75,7 @@ const AdminPanel = () => {
       });
       if (!res.ok) throw new Error();
       setMsg({ text: editId ? "Producto actualizado." : "Producto agregado.", ok: true });
-      fetchData();
+      fetchProductos();
       setTimeout(() => setShowModal(false), 800);
     } catch {
       setMsg({ text: "Error al guardar el producto.", ok: false });
@@ -73,6 +86,18 @@ const AdminPanel = () => {
 
   const catNombre = (id) => categorias.find(c => c.id === id)?.nombre || "—";
 
+  // ── Reservas ──
+  const handleDeleteReserva = async (id) => {
+    if (!confirm("¿Cancelar esta reserva?")) return;
+    await fetch(`/api/admin/reservas/${id}`, { method: "DELETE" });
+    fetchReservas();
+  };
+
+  const formatFecha = (fecha) =>
+    new Date(fecha + "T00:00:00").toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" });
+
+  const formatHora = (hora) => hora?.slice(0, 5);
+
   return (
     <>
       <Navbar />
@@ -82,45 +107,113 @@ const AdminPanel = () => {
           <div className="admin-header">
             <div>
               <span className="admin-eyebrow">Panel de administración</span>
-              <h1 className="admin-title">Gestión de productos</h1>
+              <h1 className="admin-title">
+                {tab === "productos" ? "Gestión de productos" : "Gestión de reservas"}
+              </h1>
             </div>
-            <button className="admin-add-btn" onClick={openAdd}>+ Agregar producto</button>
+            {tab === "productos" && (
+              <button className="admin-add-btn" onClick={openAdd}>+ Agregar producto</button>
+            )}
           </div>
 
-          <div className="admin-table-wrap">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Categoría</th>
-                  <th>Precio</th>
-                  <th>Disponible</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => (
-                  <tr key={item.id}>
-                    <td className="admin-td-name">{item.nombre}</td>
-                    <td>{catNombre(item.categoriaId)}</td>
-                    <td>${Number(item.precio).toLocaleString("es-CO")}</td>
-                    <td>
-                      <span className={`admin-badge ${item.disponible ? "badge--green" : "badge--gray"}`}>
-                        {item.disponible ? "Sí" : "No"}
-                      </span>
-                    </td>
-                    <td className="admin-td-actions">
-                      <button className="admin-btn-edit" onClick={() => openEdit(item)}>Editar</button>
-                      <button className="admin-btn-delete" onClick={() => handleDelete(item.id)}>Eliminar</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Tabs */}
+          <div className="admin-tabs">
+            <button
+              className={`admin-tab ${tab === "productos" ? "admin-tab--active" : ""}`}
+              onClick={() => setTab("productos")}
+            >
+              Productos
+            </button>
+            <button
+              className={`admin-tab ${tab === "reservas" ? "admin-tab--active" : ""}`}
+              onClick={() => setTab("reservas")}
+            >
+              Reservas
+              {reservas.length > 0 && (
+                <span className="admin-tab-count">{reservas.length}</span>
+              )}
+            </button>
           </div>
+
+          {/* Tabla productos */}
+          {tab === "productos" && (
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Disponible</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item) => (
+                    <tr key={item.id}>
+                      <td className="admin-td-name">{item.nombre}</td>
+                      <td>{catNombre(item.categoriaId)}</td>
+                      <td>${Number(item.precio).toLocaleString("es-CO")}</td>
+                      <td>
+                        <span className={`admin-badge ${item.disponible ? "badge--green" : "badge--gray"}`}>
+                          {item.disponible ? "Sí" : "No"}
+                        </span>
+                      </td>
+                      <td className="admin-td-actions">
+                        <button className="admin-btn-edit" onClick={() => openEdit(item)}>Editar</button>
+                        <button className="admin-btn-delete" onClick={() => handleDelete(item.id)}>Eliminar</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Tabla reservas */}
+          {tab === "reservas" && (
+            <div className="admin-table-wrap">
+              {reservas.length === 0 ? (
+                <p className="admin-empty">No hay reservas registradas.</p>
+              ) : (
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th>Email</th>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>Personas</th>
+                      <th>Ocasión</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reservas.map((r) => (
+                      <tr key={r.id}>
+                        <td className="admin-td-name">{r.nombre}</td>
+                        <td>{r.email}</td>
+                        <td>{formatFecha(r.fecha)}</td>
+                        <td>{formatHora(r.hora)}</td>
+                        <td>{r.personas}</td>
+                        <td>{r.ocasion || "—"}</td>
+                        <td className="admin-td-actions">
+                          <button className="admin-btn-delete" onClick={() => handleDeleteReserva(r.id)}>
+                            Cancelar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+
         </div>
       </main>
 
+      {/* Modal productos */}
       {showModal && (
         <div className="admin-modal-overlay" onClick={() => setShowModal(false)}>
           <div className="admin-modal" onClick={e => e.stopPropagation()}>

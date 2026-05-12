@@ -98,13 +98,16 @@ const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [direccion, setDireccion] = useState("");
-  const [telefono, setTelefono]   = useState("");
-  const [notas, setNotas]         = useState("");
-  const [payMethod, setPayMethod] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState("");
+  const [direccion, setDireccion]         = useState("");
+  const [telefono, setTelefono]           = useState("");
+  const [notas, setNotas]                 = useState("");
+  const [payMethod, setPayMethod]         = useState("");
+  const [showModal, setShowModal]         = useState(false);
+  const [loading, setLoading]             = useState(false);
+  const [error, setError]                 = useState("");
+  const [programar, setProgramar]         = useState(false);
+  const [fechaProg, setFechaProg]         = useState("");
+  const [horaProg, setHoraProg]           = useState("");
 
   if (items.length === 0) {
     navigate("/menu");
@@ -115,22 +118,28 @@ const Checkout = () => {
     setLoading(true);
     setError("");
     try {
+      const body = {
+        direccion,
+        telefono,
+        metodoPago: payMethod,
+        notas,
+        total,
+        usuarioId: user?.id,
+        detalles: items.map((item) => ({
+          cantidad:       item.qty,
+          precioUnitario: item.priceNum,
+          menuItemId:     item.id,
+        })),
+      };
+
+      if (programar && fechaProg && horaProg) {
+        body.fechaProgramada = `${fechaProg}T${horaProg}:00`;
+      }
+
       const res = await fetch("/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          direccion,
-          telefono,
-          metodoPago: payMethod,
-          notas,
-          total,
-          usuario: { id: user?.id },
-          detalles: items.map((item) => ({
-            cantidad:       item.qty,
-            precioUnitario: item.priceNum,
-            menuItem:       { id: item.id },
-          })),
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) throw new Error();
@@ -229,6 +238,41 @@ const Checkout = () => {
               </div>
 
               <div className="checkout-field">
+                <label className="checkout-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={programar}
+                    onChange={(e) => setProgramar(e.target.checked)}
+                  />
+                  Programar pedido para una fecha y hora específica
+                </label>
+              </div>
+
+              {programar && (
+                <div className="checkout-row">
+                  <div className="checkout-field">
+                    <label>Fecha de entrega</label>
+                    <input
+                      type="date"
+                      min={new Date().toISOString().split("T")[0]}
+                      value={fechaProg}
+                      onChange={(e) => setFechaProg(e.target.value)}
+                      required={programar}
+                    />
+                  </div>
+                  <div className="checkout-field">
+                    <label>Hora de entrega</label>
+                    <input
+                      type="time"
+                      value={horaProg}
+                      onChange={(e) => setHoraProg(e.target.value)}
+                      required={programar}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="checkout-field">
                 <label>Notas adicionales</label>
                 <textarea
                   placeholder="Instrucciones para el domiciliario..."
@@ -247,7 +291,7 @@ const Checkout = () => {
                 <button
                   type="button"
                   className="checkout-submit-btn"
-                  disabled={!payMethod || !direccion || !telefono}
+                  disabled={!payMethod || !direccion || !telefono || (programar && (!fechaProg || !horaProg))}
                   onClick={() => setShowModal(true)}
                 >
                   Continuar

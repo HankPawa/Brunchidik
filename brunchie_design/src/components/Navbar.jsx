@@ -47,11 +47,19 @@ const Navbar = () => {
             </button>
           </div>
 
-          <div className="navbar-item nav-animate">
-            <Link to={user ? "/reservas" : "/login"}>
-              <button className="button reservar-btn">Reservar</button>
-            </Link>
-          </div>
+          {user ? (
+            <div className="navbar-item nav-animate">
+              <Link to="/reservas">
+                <button className="button reservar-btn">Reservar</button>
+              </Link>
+            </div>
+          ) : (
+            <div className="navbar-item nav-animate">
+              <Link to="/login">
+                <button className="button reservar-btn">Iniciar sesión</button>
+              </Link>
+            </div>
+          )}
 
           {user?.rol === "ADMIN" && (
             <div className="navbar-item nav-animate">
