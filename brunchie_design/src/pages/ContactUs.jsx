@@ -33,35 +33,21 @@ const ContactUs = () => {
         <div className="contact-wrapper">
 
           <section className="contact-card contact-info">
-            <span className="contact-eyebrow">Encuéntranos</span>
-            <h2 className="contact-heading">Visítanos o escríbenos</h2>
+            <span className="contact-eyebrow">Brunch & Co.</span>
+
+            <h2 className="contact-heading">
+              Hagamos de tu mañana algo especial
+            </h2>
+
             <p className="contact-body">
-              En Brunch & Co. te esperamos con desayunos y almuerzos preparados con
-              ingredientes frescos y sabor casero. Ven a relajarte en un ambiente
-              acogedor y disfruta de nuestras especialidades.
+              Nuestro espacio fue creado para disfrutar sin afán,
+              compartir buena comida y vivir una experiencia cálida
+              en cada visita.
             </p>
 
-            <ul className="contact-list">
-              <li>
-                <strong>Horario:</strong>
-                <span>Lun – Vie: 8:00 – 15:00</span>
-              </li>
-              <li>
-                <strong>Sábado:</strong>
-                <span>9:00 – 16:00</span>
-              </li>
-              <li>
-                <strong>Domingo:</strong>
-                <span>Cerrado</span>
-              </li>
-              <li>
-                <strong>Dirección:</strong>
-                <span>Calle del Sabor 123, Ciudad del Brunch</span>
-              </li>
-            </ul>
-
-            <p className="contact-social-label">Síguenos</p>
-            <SocialLinks color="#2e2622" size={22} className="contact-social" />
+            <button className="button is-black is-rounded mt-4">
+              Reservar mesa
+            </button>
           </section>
 
           <section className="contact-card contact-form">
