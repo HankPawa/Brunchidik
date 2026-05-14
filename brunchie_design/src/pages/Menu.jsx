@@ -129,7 +129,8 @@ const categories = [
 ];
 
 const FlipCard = ({ item }) => {
-  const [flipped, setFlipped] = useState(false);
+  const [flipped, setFlipped]     = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const { addToCart } = useCart();
 
   return (
@@ -142,10 +143,20 @@ const FlipCard = ({ item }) => {
       <div className="flip-inner">
         {/* ── Front ── */}
         <div className="flip-front">
-          {item.img
-            ? <img src={item.img} alt={item.name} className="flip-img" loading="lazy" />
-            : <div className="flip-img-placeholder" />
-          }
+          {item.img ? (
+            <div className="flip-img-wrap">
+              {!imgLoaded && <div className="flip-img-skeleton" />}
+              <img
+                src={item.img}
+                alt={item.name}
+                className={`flip-img${imgLoaded ? " flip-img--loaded" : ""}`}
+                loading="lazy"
+                onLoad={() => setImgLoaded(true)}
+              />
+            </div>
+          ) : (
+            <div className="flip-img-placeholder" />
+          )}
           <div className="flip-front-info">
             <span className="menu-item-name">{item.name}</span>
             <span className="menu-item-price">{item.price}</span>
