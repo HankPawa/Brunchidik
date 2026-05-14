@@ -21,14 +21,15 @@
 
 .instagram-wrapper{
   width: 100%;
-  max-width: 1150px;
+  max-width: 800px;
   margin: 0 auto;
   border-radius: 28px;
   overflow: hidden;
 }
 
-.snapwidget-widget{
+.instagram-widget{
   width: 100%;
-  height: 950px;
-  border: none;
+  height: 800px;
+  border: 25px;
+  overflow: hidden;
 }

@@ -1,6 +1,5 @@
 .weather-section{
   padding: 2rem 1.5rem 1rem;
-  background: #c2d2fa;
 }
 
 .weather-card{
@@ -109,6 +108,30 @@
 .weather-btn:hover{
   background: #463832;
   transform: translateY(-2px);
+}
+
+.weather-hot{
+  background: linear-gradient(
+    135deg,
+    #fff7ed 0%,
+    #ffe8cc 100%
+  );
+}
+
+.weather-rain{
+  background: linear-gradient(
+    135deg,
+    #eef3f8 0%,
+    #dfe8f2 100%
+  );
+}
+
+.weather-cold{
+  background: linear-gradient(
+    135deg,
+    #f6f1eb 0%,
+    #ebe2d8 100%
+  );
 }
 
 @media (max-width: 768px){

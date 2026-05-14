@@ -98,13 +98,13 @@
 
 /* frente */
 .fav-card-front {
-  background: white;
+  background: rgb(249, 230, 213);
 }
 
 /* atrás */
 .fav-card-back {
-  background: #ba9a87;
-  color: rgb(0, 0, 0);
+  background: #391903;
+  color: rgb(255, 255, 255);
 
   transform: rotateY(180deg);
 
@@ -127,4 +127,8 @@
   font-size: 0.82rem;
   line-height: 1.4;
   color: rgba(255,255,255,0.8);
+}
+
+.button{
+  background-color: #391903;
 }

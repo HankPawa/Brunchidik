@@ -6,18 +6,21 @@ const API_KEY = "ad91376c322b5e62d181a5ecdf79b8ee";
 const recommendations = {
   hot: {
     emoji: "☀️",
+    theme: "weather-hot",
     title: "Perfecto para algo refrescante",
     text: "Hoy recomendamos smoothies, soda de café y bebidas frías.",
   },
 
   rain: {
     emoji: "🌧️",
+    theme: "weather-rain",
     title: "Clima ideal para algo cálido",
     text: "Un latte caliente y nuestros pancakes son la combinación perfecta.",
   },
 
   cold: {
     emoji: "☁️",
+    theme: "weather-cold",
     title: "Un brunch acogedor siempre ayuda",
     text: "Prueba nuestros Eggs Benedict y café artesanal.",
   },
@@ -49,7 +52,7 @@ const WeatherRecommendation = () => {
   return (
   <section className="weather-section">
 
-    <div className="weather-card">
+    <div className={`weather-card ${weather.theme}`}> 
 
       <div className="weather-left">
 

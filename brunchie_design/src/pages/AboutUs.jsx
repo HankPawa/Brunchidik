@@ -2,6 +2,8 @@ import { Heart, Leaf, Users } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./AboutUs.css";
+import InstagramFeed from "../components/InstagramFeed";
+
 
 const values = [
   {
@@ -41,6 +43,8 @@ const AboutUs = () => {
           </p>
         </div>
       </section>
+
+      <InstagramFeed />
 
       {/* ── Historia ── */}
       <section className="about-story">

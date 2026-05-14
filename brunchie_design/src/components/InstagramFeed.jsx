@@ -14,14 +14,8 @@ const InstagramFeed = () => {
 
       <div className="instagram-wrapper">
 
-        <iframe
-          src="https://snapwidget.com/embed/1123655"
-          className="snapwidget-widget"
-          allowTransparency="true"
-          frameBorder="0"
-          scrolling="no"
-          title="Instagram Feed"
-        />
+<script src="https://snapwidget.com/js/snapwidget.js"></script>
+<iframe src="https://snapwidget.com/embed/1123655" className="snapwidget-widget instagram-widget" allowTransparency="true" frameBorder="0" scrolling="no"  title="Brunch artesanal • Café • Momentos especiales"></iframe>
 
       </div>
 
