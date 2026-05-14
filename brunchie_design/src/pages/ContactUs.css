@@ -182,6 +182,7 @@
 .button {
   width: fit-content;
   padding: 0.9rem 2rem;
+  background-color: #391903;
 }
 
 @media (max-width: 960px) {

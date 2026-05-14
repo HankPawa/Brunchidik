@@ -89,7 +89,7 @@
 }
 
 .login-tab.active {
-  background-color: #1a1a1a;
+  background-color: #391903;
   color: #ffffff;
 }
 
@@ -140,7 +140,7 @@
 .login-submit-btn {
   width: 100%;
   padding: 0.85rem;
-  background-color: #1a1a1a;
+  background-color: #391903;
   color: #ffffff;
   border: none;
   border-radius: 50px;
@@ -154,7 +154,7 @@
 }
 
 .login-submit-btn:hover {
-  background-color: #333;
+  background-color: #694733;
   transform: translateY(-1px);
 }
 
