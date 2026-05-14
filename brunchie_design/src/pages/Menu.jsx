@@ -43,6 +43,24 @@ const categories = [
         img: englisheggs,
         desc: "Muffin inglés artesanal tostado con huevos revueltos cremosos sazonados con pimienta negra molida. Acompañado de tomates cherry en rama asados para resaltar su dulzor natural.",
       },
+      {
+        name: "Huevos Revueltos Cremosos",
+        price: "$15.900",
+        img: eggs,
+        desc: "Huevos revueltos de corral sazonados con pimienta negra molida y hierbas frescas. Acompañados de tostadas integrales caseras, aguacate fresco y tomates cherry cherry maduros.",
+      },
+      {
+        name: "Pancakes con Frutos Rojos",
+        price: "$14.500",
+        img: pancakes,
+        desc: "Torre de tres pancakes esponjosos coronados con una generosa porción de frutos rojos frescos, crema batida y un toque de miel de flores silvestres.",
+      },
+      {
+        name: "Huevos al Nido",
+        price: "$19.000",
+        img: baconeggs,
+        desc: "Base de papas caseras crujientes con un nido de cebolla caramelizada, coronado con dos huevos, tocineta ahumada y champiñones salteados.",
+      },
     ],
   },
   {
@@ -66,6 +84,24 @@ const categories = [
         img: torrejon,
         desc: "Rebanadas de brioche artesanal doradas en mantequilla, rellenas de crema de ricotta al limón y acompañadas de compota casera de arándanos frescos. Dulce, ácido y perfectamente equilibrado.",
       },
+      {
+        name: "Avocado Toast con Salmón",
+        price: "$34.900",
+        img: avocado,
+        desc: "Pan de masa madre tostado con crema de aguacate, salmón ahumado premium, cebolla morada encurtida y un huevo pochado. Acompañado con microgreens y semillas de sésamo.",
+      },
+      {
+        name: "French Toast Gourmet",
+        price: "$27.500",
+        img: french_toast,
+        desc: "Rebanadas de pan brioche cubiertas con una mezcla de huevo y especias, cocinadas hasta dorar. Servidas con jarabe de arce puro, frutos rojos frescos y crema batida artesanal.",
+      },
+      {
+        name: "Huevos Benedictus Premium",
+        price: "$32.000",
+        img: eggs,
+        desc: "Versión premium de nuestro Eggs Benedict: dos huevos pochados, jamón ibérico, salsa holandesa casera con toque de trufa y espárragos frescos al vapor.",
+      },
     ],
   },
   {
@@ -74,14 +110,20 @@ const categories = [
       { name: "Mimosa", price: "$16.000", img: mimosa_coctel, desc: "Burbujas de champaña encontrándose con el sol de un jugo de naranja recién exprimido. Fresca, festiva y elegante, la Mimosa es el brindis perfecto para empezar la mañana con estilo. Un clásico que nunca pasa de moda." },
       { name: "Kombucha", price: "$10.000", img: kombucha, desc: "Una bebida fermentada de té con siglos de historia y personalidad propia. Ligeramente efervescente, con notas frutales y un toque ácido que despierta los sentidos. Cuida tu bienestar sin sacrificar el sabor — porque sentirse bien también puede ser delicioso." },
       { name: "Matcha Latte", price: "$12.000", img: matcha_latte, desc: "Polvo de té verde japonés de primera calidad, suavemente disuelto en leche vaporizada hasta crear una bebida aterciopelada, cremosa y de un verde que enamora. Energía limpia y sostenida, sin los altibajos del café. La elección de quienes saben disfrutar despacio." },
+      { name: "Mimosa Clásica", price: "$16.000", img: mimosa_coctel, desc: "Bebida refrescante hecha con champagne premium y jugo de naranja recién exprimido. Perfecta para celebrar y disfrutar en cualquier momento del brunch." },
+      { name: "Té Verde Matcha Frio", price: "$11.000", img: matcha_latte, desc: "Té matcha preparado en frío, suave y cremoso con un toque de hielo. Bebida refrescante que mantiene todos los beneficios del matcha con un sabor perfecto para días cálidos." },
+      { name: "Kombucha Tropical", price: "$11.500", img: kombucha, desc: "Kombucha artesanal con sabores tropicales de mango y coco. Efervescente, refrescante y llena de probióticos naturales para tu bienestar." },
     ],
   },
   {
     name: "Postres",
     items: [
-      { name: "French Toast", price: "$0.00", img: french_toast, desc: "Descripción próximamente." },
-      { name: "Parfait de granola y frutos rojos", price: "$0.00", img: parfait, desc: "Descripción próximamente." },
-      { name: "Açaí bowl", price: "$0.00", img: acai_bowl, desc: "Descripción próximamente." },
+      { name: "French Toast", price: "$18.900", img: french_toast, desc: "Brioche tostado bañado en mezcla de huevo y especias, cocinado hasta dorar. Acompañado de sirope de arce, frutos silvestres frescos y crema batida casera." },
+      { name: "Parfait de granola y frutos rojos", price: "$14.500", img: parfait, desc: "Capas de yogur griego cremoso, granola casera crujiente, miel pura y frutos rojos frescos. Una combinación perfecta de texturas y sabores en cada cucharada." },
+      { name: "Açaí bowl", price: "$15.000", img: acai_bowl, desc: "Base de açaí puro congelado batido hasta crear una textura cremosa, coronada con granola artesanal, coco rallado, frutos frescos y miel de abejas." },
+      { name: "Waffle Belga", price: "$17.500", img: french_toast, desc: "Waffle crujiente por fuera y suave por dentro, cubierto con chocolate derretido, frutos rojos frescos, crema batida y nueces caramelizadas." },
+      { name: "Tiramisú Clásico", price: "$12.900", img: parfait, desc: "Postre italiano tradicional con capas de bizcocho humedecido en café espresso, mascarpone cremoso y un toque de cacao en polvo. Elegancia en cada bocado." },
+      { name: "Cheesecake de Frutos Rojos", price: "$13.500", img: acai_bowl, desc: "Base de galleta casera crujiente, relleno de queso crema suave y ligero, coronado con compota casera de frutos rojos frescos. Perfecto final para tu brunch." },
     ],
   },
 ];

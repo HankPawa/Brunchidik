@@ -66,7 +66,6 @@
   border-radius: 999px;
 }
 
-/* ── Flip card container ── */
 .flip-card {
   perspective: 1000px;
   cursor: pointer;
