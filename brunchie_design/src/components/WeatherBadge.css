@@ -1,6 +1,6 @@
 .weather-badge {
   position: absolute;
-  top: 120px;
+  top: 50px;
   right: 40px;
 
   backdrop-filter: blur(14px);
