@@ -144,7 +144,7 @@ const Favorites = () => {
           </div>
         </div>
 
-        <Link to="/menu" className="button is-black is-small mt-5 fav-btn">
+        <Link to="/menu" className="button is-black is-rounded mt-5 fav-btn">
           Ver menú completo
         </Link>
 
