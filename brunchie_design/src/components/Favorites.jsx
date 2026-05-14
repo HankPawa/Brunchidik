@@ -5,6 +5,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import pancakes from "../assets/pancakes.jpg";
 import avocado from "../assets/avocado.jpg";
 import eggs from "../assets/eggs.jpg";
+import brunch from "../assets/brunch.jpg";
+import icecream from "../assets/helado.jpg";
+import latte from "../assets/latte.jpg";
+import macaroni from "../assets/macaroni.jpg";
+import redvelvet from "../assets/redvelvet.jpg";
+import smoothie from "../assets/smoothie.jpg";
+import soda from "../assets/soda.jpg";
+import tostada from "../assets/tostada.jpg";
 import "./Favorites.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -14,11 +22,21 @@ const Favorites = () => {
 
   const items = [
     { name: "Pancakes", img: pancakes },
+    { name: "Soda de Café", img: soda },
     { name: "Avocado Toast", img: avocado },
+    { name: "Coffe Latte", img: latte },
+    { name: "Macaroni", img: macaroni },
     { name: "Eggs Benedict", img: eggs },
+    { name: "Smoothie", img: smoothie },
     { name: "Pancakes", img: pancakes },
+    { name: "Ice cream", img: icecream },
     { name: "Avocado Toast", img: avocado },
+    { name: "Cupcake", img: redvelvet },
     { name: "Eggs Benedict", img: eggs },
+    { name: "brunch", img: brunch },  
+   
+    
+    { name: "Tostada de la casa", img: tostada },
   ];
 
   useEffect(() => {
@@ -45,7 +63,7 @@ const Favorites = () => {
       const cards = gsap.utils.toArray(".fav-card");
       const total = cards.length;
       const angle = 360 / total;
-      const radius = 250;
+      const radius = 420;
 
       cards.forEach((card, i) => {
         gsap.set(card, {
@@ -57,7 +75,7 @@ const Favorites = () => {
 
       const tween = gsap.to(".carousel", {
         rotationY: "+=360",
-        duration: 20,
+        duration: 35,
         repeat: -1,
         ease: "none",
       });
@@ -79,7 +97,7 @@ const Favorites = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="section has-background-light">
+    <section ref={sectionRef} className="section favorites-section">
       <div className="container has-text-centered">
         
         <h2 className="title is-4 fav-title">Nuestros Favoritos</h2>
@@ -88,14 +106,38 @@ const Favorites = () => {
         <div className="carousel-container mt-5">
           <div className="carousel">
             {items.map((item, index) => (
-              <div className="fav-card card custom-card" key={index}>
-                <div className="card-image">
-                  <figure className="image is-4by3">
-                    <img src={item.img} alt={item.name} loading="lazy"/>
-                  </figure>
-                </div>
-                <div className="card-content">
-                  <p>{item.name}</p>
+              <div
+                className="fav-card"
+                key={index}
+                onClick={(e) => {
+                  e.currentTarget.classList.toggle("flipped");
+                }}
+              >
+                <div className="fav-card-inner">
+
+                  {/* FRONT */}
+                  <div className="fav-card-front card custom-card">
+                    <div className="card-image">
+                      <figure className="image is-4by3">
+                        <img src={item.img} alt={item.name} loading="lazy" />
+                      </figure>
+                    </div>
+
+                    <div className="card-content">
+                      <p>{item.name}</p>
+                    </div>
+                  </div>
+
+                  {/* BACK */}
+                  <div className="fav-card-back">
+                    <h3>{item.name}</h3>
+
+                    <p>
+                      Delicioso brunch preparado con ingredientes frescos y
+                      sabores artesanales.
+                    </p>
+                  </div>
+
                 </div>
               </div>
             ))}
@@ -108,6 +150,7 @@ const Favorites = () => {
 
       </div>
     </section>
+    
   );
 };
 

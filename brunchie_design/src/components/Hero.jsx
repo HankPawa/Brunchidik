@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import "./Hero.css";
+import WeatherBadge from "../components/WeatherBadge";
 
 const Hero = () => {
   const heroRef = useRef(null);
@@ -40,6 +41,7 @@ const Hero = () => {
       >
         <source src="https://res.cloudinary.com/dwhezsxkg/video/upload/v1778019228/homebrunchie_gd2laf.mp4" type="video/mp4" />
       </video>
+      <WeatherBadge />
       <div className="overlay">
         <div className="hero-body has-text-centered">
           <h1 className="title has-text-white hero-title">Brunch & Co.</h1>

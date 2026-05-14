@@ -17,6 +17,7 @@ import french_toast from "../assets/french_toast.jpg";
 import parfait from "../assets/parfait.jpg";
 import acai_bowl from "../assets/acai_bowl.jpg";
 import "./Menu.css";
+import WeatherRecommendation from "../components/WeatherRecommendation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -188,6 +189,8 @@ const Menu = () => {
           <p className="menu-hero-sub">Ingredientes frescos, sabores que enamoran</p>
         </div>
       </section>
+
+      <WeatherRecommendation />
 
       <section className="section has-background-white">
         <div className="container">

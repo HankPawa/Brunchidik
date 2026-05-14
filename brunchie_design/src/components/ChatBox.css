@@ -1,11 +1,13 @@
 .chatbox {
   display: flex;
   flex-direction: column;
-  height: 380px;
+  height: 420px;
+
   border: 1px solid #e0d8d0;
   border-radius: 18px;
   overflow: hidden;
   background: #faf7f4;
+
 }
 
 /* ── Messages area ── */

@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import SocialLinks from "../components/SocialLinks";
 import ChatBox from "../components/ChatBox";
 import "./ContactUs.css";
+import brunchShop from "../assets/brunchshop.jpg"
 
 const ContactUs = () => {
   return (
@@ -48,6 +49,7 @@ const ContactUs = () => {
             <button className="button is-black is-rounded mt-4">
               Reservar mesa
             </button>
+            <img src={brunchShop} className="contact-image" />
           </section>
 
           <section className="contact-card contact-form">

@@ -1,8 +1,12 @@
 import { MapPin, Clock, Phone } from "lucide-react";
 import "./MapSection.css";
+import InstagramFeed from "../components/InstagramFeed";
+
 
 const MapSection = () => (
   <section className="map-section">
+          <InstagramFeed />
+          <br />
     <div className="map-inner">
 
       <div className="map-info">
