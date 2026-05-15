@@ -34,7 +34,7 @@
 }
 
 .checkout-section-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -104,7 +104,7 @@
   font-weight: 700;
   color: #1a1a1a;
   font-size: 1rem;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
 }
 
 /* Form */
@@ -247,7 +247,7 @@
 }
 
 .pay-modal-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 1.3rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -355,7 +355,24 @@
   gap: 1rem;
 }
 
+.checkout-premium-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, #faf5ef, #f2e9df);
+  border: 1.5px solid #e8ddd0;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+.checkout-premium-icon { font-size: 1.2rem; color: #b08968; flex-shrink: 0; }
+.checkout-premium-texto { font-family: 'Nunito', sans-serif; font-size: .9rem; font-weight: 700; color: #1a1a1a; margin: 0; }
+.checkout-premium-sub { font-family: 'Nunito', sans-serif; font-size: .8rem; color: #888; margin: .15rem 0 0; }
+.checkout-premium-btn { margin-left: auto; white-space: nowrap; padding: .45rem 1rem; background: #1a1a1a; color: #fff; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: .82rem; font-weight: 700; text-decoration: none; transition: background .2s ease; }
+.checkout-premium-btn:hover { background: #333; }
+
 @media (max-width: 700px) {
   .checkout-grid { grid-template-columns: 1fr; }
   .checkout-row  { grid-template-columns: 1fr; }
+  .checkout-premium-banner { flex-wrap: wrap; }
 }
+

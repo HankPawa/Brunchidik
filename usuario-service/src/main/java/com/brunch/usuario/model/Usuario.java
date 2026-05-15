@@ -29,6 +29,9 @@ public class Usuario {
 
     private boolean cuentaGoogle = false;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean suscrito = false;
+
     @Enumerated(EnumType.STRING)
     private Rol rol = Rol.USUARIO;
 
@@ -54,4 +57,7 @@ public class Usuario {
 
     public Rol getRol() { return rol; }
     public void setRol(Rol rol) { this.rol = rol; }
+
+    public boolean isSuscrito() { return suscrito; }
+    public void setSuscrito(boolean suscrito) { this.suscrito = suscrito; }
 }

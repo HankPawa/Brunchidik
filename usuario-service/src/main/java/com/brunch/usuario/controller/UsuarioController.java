@@ -2,6 +2,8 @@ package com.brunch.usuario.controller;
 
 import com.brunch.usuario.model.Usuario;
 import com.brunch.usuario.repository.UsuarioRepository;
+import com.brunch.usuario.service.CodigoService;
+import com.brunch.usuario.service.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,10 +15,16 @@ import java.util.Map;
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
+    private final CodigoService     codigoService;
+    private final EmailService      emailService;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
+    public UsuarioController(UsuarioRepository usuarioRepository,
+                             CodigoService codigoService,
+                             EmailService emailService) {
         this.usuarioRepository = usuarioRepository;
+        this.codigoService     = codigoService;
+        this.emailService      = emailService;
     }
 
     @PostMapping("/registro")
@@ -32,7 +40,18 @@ public class UsuarioController {
     public ResponseEntity<?> login(@RequestBody Usuario credenciales) {
         return usuarioRepository.findByEmail(credenciales.getEmail())
                 .filter(u -> encoder.matches(credenciales.getPassword(), u.getPassword()))
-                .map(u -> ResponseEntity.ok((Object) u))
+                .map(u -> {
+                    if (u.isDosFaActivo()) {
+                        String codigo = codigoService.generarYGuardar(u.getId());
+                        try { emailService.enviarCodigo2FA(u.getEmail(), codigo); } catch (Exception ignored) {}
+                        return ResponseEntity.ok((Object) Map.of(
+                            "requiere2fa", true,
+                            "usuarioId",   u.getId(),
+                            "email",       u.getEmail()
+                        ));
+                    }
+                    return ResponseEntity.ok((Object) u);
+                })
                 .orElse(ResponseEntity.status(401).body("Credenciales incorrectas"));
     }
 
@@ -41,16 +60,52 @@ public class UsuarioController {
         String email  = body.get("email");
         String nombre = body.get("nombre");
 
-        return ResponseEntity.ok(
-            usuarioRepository.findByEmail(email).orElseGet(() -> {
-                Usuario nuevo = new Usuario();
-                nuevo.setNombre(nombre);
-                nuevo.setEmail(email);
-                nuevo.setPassword(encoder.encode(java.util.UUID.randomUUID().toString()));
-                nuevo.setCuentaGoogle(true);
-                return usuarioRepository.save(nuevo);
-            })
-        );
+        Usuario u = usuarioRepository.findByEmail(email).orElseGet(() -> {
+            Usuario nuevo = new Usuario();
+            nuevo.setNombre(nombre);
+            nuevo.setEmail(email);
+            nuevo.setPassword(encoder.encode(java.util.UUID.randomUUID().toString()));
+            nuevo.setCuentaGoogle(true);
+            return usuarioRepository.save(nuevo);
+        });
+
+        if (u.isDosFaActivo()) {
+            String codigo = codigoService.generarYGuardar(u.getId());
+            try { emailService.enviarCodigo2FA(u.getEmail(), codigo); } catch (Exception ignored) {}
+            return ResponseEntity.ok(Map.of(
+                "requiere2fa", true,
+                "usuarioId",   u.getId(),
+                "email",       u.getEmail()
+            ));
+        }
+
+        return ResponseEntity.ok(u);
+    }
+
+    @PostMapping("/2fa/enviar")
+    public ResponseEntity<?> enviarCodigo(@RequestBody Map<String, Object> body) {
+        Long usuarioId = Long.valueOf(body.get("usuarioId").toString());
+        return usuarioRepository.findById(usuarioId).map(u -> {
+            String codigo = codigoService.generarYGuardar(u.getId());
+            try { emailService.enviarCodigo2FA(u.getEmail(), codigo); } catch (Exception e) {
+                return ResponseEntity.status(500).body((Object) "Error al enviar el correo");
+            }
+            return ResponseEntity.ok((Object) "Código enviado");
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/2fa/verificar")
+    public ResponseEntity<?> verificarCodigo(@RequestBody Map<String, Object> body) {
+        Long   usuarioId = Long.valueOf(body.get("usuarioId").toString());
+        String codigo    = body.get("codigo").toString();
+
+        if (!codigoService.verificar(usuarioId, codigo)) {
+            return ResponseEntity.status(401).body("Código incorrecto o expirado");
+        }
+
+        return usuarioRepository.findById(usuarioId)
+                .map(u -> ResponseEntity.ok((Object) u))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{id}/password")
@@ -64,6 +119,16 @@ public class UsuarioController {
                         return ResponseEntity.status(401).body((Object) "Contraseña actual incorrecta");
                     }
                     u.setPassword(encoder.encode(nueva));
+                    return ResponseEntity.ok((Object) usuarioRepository.save(u));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/suscripcion")
+    public ResponseEntity<?> suscribir(@PathVariable Long id, @RequestParam boolean activo) {
+        return usuarioRepository.findById(id)
+                .map(u -> {
+                    u.setSuscrito(activo);
                     return ResponseEntity.ok((Object) usuarioRepository.save(u));
                 })
                 .orElse(ResponseEntity.notFound().build());

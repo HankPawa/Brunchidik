@@ -21,6 +21,13 @@ public class AdminReservaController {
         return reservaRepository.findAll();
     }
 
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<Reserva> actualizarEstado(@PathVariable Long id, @RequestParam Reserva.Estado estado) {
+        return reservaRepository.findById(id)
+                .map(r -> { r.setEstado(estado); return ResponseEntity.ok(reservaRepository.save(r)); })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         reservaRepository.deleteById(id);

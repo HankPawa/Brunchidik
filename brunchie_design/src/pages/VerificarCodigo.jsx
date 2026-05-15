@@ -6,9 +6,11 @@ import { useAuth } from "../context/AuthContext";
 import "./VerificarCodigo.css";
 
 const VerificarCodigo = () => {
-  const [code, setCode] = useState("");
-  const [error, setError] = useState("");
-  const { verifyCode, pendingUser } = useAuth();
+  const [code, setCode]       = useState("");
+  const [error, setError]     = useState("");
+  const [loading, setLoading] = useState(false);
+  const [reenvio, setReenvio] = useState("");
+  const { verifyCode, reenviarCodigo, pendingUser } = useAuth();
   const navigate = useNavigate();
 
   if (!pendingUser) {
@@ -16,14 +18,24 @@ const VerificarCodigo = () => {
     return null;
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const ok = verifyCode(code);
+    setLoading(true);
+    setError("");
+    const ok = await verifyCode(code);
+    setLoading(false);
     if (ok) {
       navigate("/");
     } else {
-      setError("Código incorrecto. Inténtalo de nuevo.");
+      setError("Código incorrecto o expirado. Inténtalo de nuevo.");
     }
+  };
+
+  const handleReenviar = async () => {
+    setReenvio("Enviando...");
+    await reenviarCodigo();
+    setReenvio("¡Código reenviado!");
+    setTimeout(() => setReenvio(""), 3000);
   };
 
   return (
@@ -44,10 +56,6 @@ const VerificarCodigo = () => {
             Ingrésalo a continuación para continuar.
           </p>
 
-          <div className="verify-demo-note">
-            Demo: usa el código <strong>123456</strong>
-          </div>
-
           <form className="verify-form" onSubmit={handleSubmit}>
             <input
               className="verify-input"
@@ -59,11 +67,13 @@ const VerificarCodigo = () => {
               required
             />
             {error && <p className="verify-error">{error}</p>}
-            <button type="submit" className="verify-btn">Verificar</button>
+            <button type="submit" className="verify-btn" disabled={loading}>
+              {loading ? "Verificando..." : "Verificar"}
+            </button>
           </form>
 
-          <button className="verify-resend" onClick={() => {}}>
-            ¿No recibiste el código? Reenviar
+          <button className="verify-resend" onClick={handleReenviar}>
+            {reenvio || "¿No recibiste el código? Reenviar"}
           </button>
         </div>
       </main>

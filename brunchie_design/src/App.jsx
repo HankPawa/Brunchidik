@@ -20,6 +20,7 @@ import PedidoExitoso from './pages/PedidoExitoso';
 import Perfil from './pages/Perfil';
 import AdminPanel from './pages/AdminPanel';
 import AdminRoute from './components/AdminRoute';
+import Suscripcion from './pages/Suscripcion';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
               <Route path="/reservas" element={<ProtectedRoute><Reservas /></ProtectedRoute>} />
               <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
               <Route path="/reserva-exitosa" element={<ProtectedRoute><ReservaExitosa /></ProtectedRoute>} />
+              <Route path="/suscripcion" element={<Suscripcion />} />
             </Routes>
           </BrowserRouter>
         </CartProvider>

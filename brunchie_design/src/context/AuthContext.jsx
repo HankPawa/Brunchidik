@@ -1,6 +1,5 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 
-const FAKE_2FA_CODE = "123456";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -23,7 +22,10 @@ export const AuthProvider = ({ children }) => {
       });
       if (!res.ok) return "invalid";
       const data = await res.json();
-      if (data.dosFaActivo) { setPendingUser(data); return "2fa"; }
+      if (data.requiere2fa) {
+        setPendingUser({ id: data.usuarioId, email: data.email });
+        return "2fa";
+      }
       setUser(data);
       return "success";
     } catch { return "error"; }
@@ -34,14 +36,14 @@ export const AuthProvider = ({ children }) => {
       const res = await fetch("/api/usuarios/google-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: googleUser.email,
-          nombre: googleUser.name,
-        }),
+        body: JSON.stringify({ email: googleUser.email, nombre: googleUser.name }),
       });
       if (!res.ok) return "error";
       const data = await res.json();
-      if (data.dosFaActivo) { setPendingUser(data); return "2fa"; }
+      if (data.requiere2fa) {
+        setPendingUser({ id: data.usuarioId, email: data.email });
+        return "2fa";
+      }
       setUser(data);
       return "success";
     } catch { return "error"; }
@@ -73,13 +75,29 @@ export const AuthProvider = ({ children }) => {
     } catch { return { ok: false, text: "No se pudo conectar al servidor." }; }
   };
 
-  const verifyCode = (code) => {
-    if (code === FAKE_2FA_CODE && pendingUser) {
-      setUser(pendingUser);
+  const verifyCode = async (codigo) => {
+    try {
+      const res = await fetch("/api/usuarios/2fa/verificar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuarioId: pendingUser.id, codigo }),
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      setUser(data);
       setPendingUser(null);
       return true;
-    }
-    return false;
+    } catch { return false; }
+  };
+
+  const reenviarCodigo = async () => {
+    try {
+      await fetch("/api/usuarios/2fa/enviar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuarioId: pendingUser.id }),
+      });
+    } catch {}
   };
 
   const toggle2fa = async (activo) => {
@@ -90,10 +108,20 @@ export const AuthProvider = ({ children }) => {
     } catch {}
   };
 
+  const actualizarUsuario = (datos) => {
+    setUser((prev) => ({ ...prev, ...datos }));
+  };
+
   const logout = () => { setUser(null); setPendingUser(null); };
 
+  const value = useMemo(() => ({
+    user, pendingUser, login, loginWithGoogle, register,
+    changePassword, verifyCode, reenviarCodigo, toggle2fa, actualizarUsuario, logout,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [user, pendingUser]);
+
   return (
-    <AuthContext.Provider value={{ user, pendingUser, login, loginWithGoogle, register, changePassword, verifyCode, toggle2fa, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

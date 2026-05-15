@@ -32,7 +32,7 @@
 }
 
 .cart-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -184,7 +184,7 @@
 }
 
 .cart-total-price {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 1.15rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -220,3 +220,4 @@
   transition: border-color 0.2s ease, color 0.2s ease;
 }
 .cart-clear-btn:hover { border-color: #c0392b; color: #c0392b; }
+

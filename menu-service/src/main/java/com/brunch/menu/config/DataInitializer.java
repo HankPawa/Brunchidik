@@ -43,9 +43,9 @@ public class DataInitializer implements ApplicationRunner {
             item("Mimosa",                   "Burbujas de champaña encontrándose con el sol de un jugo de naranja recién exprimido. Fresca, festiva y elegante.",                                                                                                                                                                        16000, bebidas),
             item("Kombucha",                 "Una bebida fermentada de té con siglos de historia. Ligeramente efervescente, con notas frutales y un toque ácido que despierta los sentidos.",                                                                                                                                            10000, bebidas),
             item("Matcha Latte",             "Polvo de té verde japonés de primera calidad, suavemente disuelto en leche vaporizada. Energía limpia y sostenida, sin los altibajos del café.",                                                                                                                                           12000, bebidas),
-            item("Postre 1",                 "Descripción próximamente.", 0, postres),
-            item("Postre 2",                 "Descripción próximamente.", 0, postres),
-            item("Postre 3",                 "Descripción próximamente.", 0, postres)
+            item("French Toast",                      "Brioche tostado bañado en mezcla de huevo y especias, cocinado hasta dorar. Acompañado de sirope de arce puro, frutos silvestres frescos y crema batida casera.",                                                     18900, postres),
+            item("Parfait de granola y frutos rojos", "Capas de yogur griego cremoso, granola casera crujiente, miel pura y frutos rojos frescos. Una combinación perfecta de texturas y sabores en cada cucharada.",                                    14500, postres),
+            item("Açaí Bowl",                         "Base de açaí puro congelado batido hasta crear una textura cremosa, coronada con granola artesanal, coco rallado, frutos frescos y miel de abejas.",                                              15000, postres)
         );
 
         menuItemRepository.saveAll(items);

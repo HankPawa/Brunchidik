@@ -1,7 +1,8 @@
-.reservas-main { min-height: calc(100vh - 130px); display: flex; align-items: center; justify-content: center; background-color: #faf8f5; padding: 3rem 1rem; }
-.reservas-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 30px rgba(0,0,0,.08); padding: 3rem 2.5rem; width: 100%; max-width: 700px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.reservas-main { min-height: calc(100vh - 130px); background-color: #faf8f5; padding: 3rem 1rem; }
+.reservas-wrapper { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; }
+.reservas-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 30px rgba(0,0,0,.08); padding: 3rem 2.5rem; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .reservas-eyebrow { font-family: 'Nunito', sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #999; margin-bottom: .5rem; }
-.reservas-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1rem; }
+.reservas-title { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1rem; }
 .reservas-divider { display: flex; align-items: center; gap: .6rem; width: 60%; margin-bottom: 1rem; }
 .reservas-divider-line { flex: 1; height: 1px; background-color: #e8e2da; }
 .reservas-divider-gem { font-size: .7rem; color: #bbb; }
@@ -16,4 +17,24 @@
 .reservas-submit-btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
 .reservas-submit-btn:not(:disabled):hover { background-color: #333; transform: translateY(-1px); }
 .reservas-error { font-family: 'Nunito', sans-serif; font-size: .85rem; color: #c0392b; text-align: center; margin: 0; }
+
+/* Mis reservas */
+.mis-reservas { background: #fff; border-radius: 16px; box-shadow: 0 4px 30px rgba(0,0,0,.08); padding: 2rem 2.5rem; }
+.mis-reservas-title { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1.25rem; }
+.mis-reservas-list { display: flex; flex-direction: column; gap: .75rem; }
+.mis-reservas-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border: 1.5px solid #f0ede8; border-radius: 12px; gap: 1rem; flex-wrap: wrap; }
+.mis-reservas-info { display: flex; flex-direction: column; gap: .2rem; }
+.mis-reservas-fecha { font-family: 'Nunito', sans-serif; font-size: .95rem; font-weight: 700; color: #1a1a1a; }
+.mis-reservas-personas { font-family: 'Nunito', sans-serif; font-size: .83rem; color: #888; }
+.mis-reservas-actions { display: flex; align-items: center; gap: .6rem; }
+.mis-reservas-cancelar { padding: .4rem .9rem; background: #fdf0ee; color: #c0392b; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .2s ease; }
+.mis-reservas-cancelar:hover { background: #f5c6c0; }
+
+/* Badges */
+.reserva-badge { font-family: 'Nunito', sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .5px; padding: .25rem .65rem; border-radius: 50px; }
+.badge--yellow { background: #fef9e7; color: #d4ac0d; }
+.badge--green  { background: #eafaf1; color: #27ae60; }
+.badge--gray   { background: #f0ede8; color: #999; }
+
 @media (max-width: 600px) { .reservas-row { grid-template-columns: 1fr; } .reservas-card { padding: 2rem 1.5rem; } }
+

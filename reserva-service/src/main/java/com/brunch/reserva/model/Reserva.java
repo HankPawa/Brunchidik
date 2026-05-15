@@ -12,6 +12,8 @@ import java.time.LocalTime;
 @Table(name = "reservas")
 public class Reserva {
 
+    public enum Estado { PENDIENTE, CONFIRMADA, CANCELADA }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,6 +37,10 @@ public class Reserva {
     private String ocasion;
 
     private String notas;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(20) default 'PENDIENTE'")
+    private Estado estado = Estado.PENDIENTE;
 
     // Referencia por ID al usuario-service, sin JPA cross-service
     private Long usuarioId;
@@ -64,6 +70,9 @@ public class Reserva {
 
     public String getNotas() { return notas; }
     public void setNotas(String notas) { this.notas = notas; }
+
+    public Estado getEstado() { return estado; }
+    public void setEstado(Estado estado) { this.estado = estado; }
 
     public Long getUsuarioId() { return usuarioId; }
     public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }

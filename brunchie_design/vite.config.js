@@ -21,6 +21,10 @@ export default defineConfig({
         target: 'http://localhost:8082',
         changeOrigin: true,
       },
+      '/api/admin/pedidos': {
+        target: 'http://localhost:8083',
+        changeOrigin: true,
+      },
       '/api/pedidos': {
         target: 'http://localhost:8083',
         changeOrigin: true,

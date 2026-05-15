@@ -39,6 +39,7 @@ const Navbar = () => {
           <Link to="/menu" className="navbar-item nav-link nav-animate">Menú</Link>
           <Link to="/about" className="navbar-item nav-link nav-animate">Nosotros</Link>
           <Link to="/contact" className="navbar-item nav-link nav-animate">Contacto</Link>
+          <Link to="/suscripcion" className="navbar-item nav-link nav-animate">Premium</Link>
 
           <div className="navbar-item nav-animate">
             <button className="cart-icon-btn" onClick={() => setIsOpen(true)}>

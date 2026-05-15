@@ -237,16 +237,29 @@ const Checkout = () => {
                 </div>
               </div>
 
-              <div className="checkout-field">
-                <label className="checkout-toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={programar}
-                    onChange={(e) => setProgramar(e.target.checked)}
-                  />
-                  Programar pedido para una fecha y hora específica
-                </label>
-              </div>
+              {user?.suscrito ? (
+                <div className="checkout-field">
+                  <label className="checkout-toggle-label">
+                    <input
+                      type="checkbox"
+                      checked={programar}
+                      onChange={(e) => setProgramar(e.target.checked)}
+                    />
+                    Programar pedido para una fecha y hora específica
+                  </label>
+                </div>
+              ) : (
+                <div className="checkout-field">
+                  <div className="checkout-premium-banner">
+                    <span className="checkout-premium-icon">✦</span>
+                    <div>
+                      <p className="checkout-premium-texto">¿Quieres programar tu pedido?</p>
+                      <p className="checkout-premium-sub">Esta función es exclusiva para miembros Premium.</p>
+                    </div>
+                    <a href="/suscripcion" className="checkout-premium-btn">Ver planes</a>
+                  </div>
+                </div>
+              )}
 
               {programar && (
                 <div className="checkout-row">

@@ -29,7 +29,7 @@
   border-radius: 50%;
   background: #fff;
   color: #1a1a1a;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 1.4rem;
   font-weight: 700;
   display: flex;
@@ -39,7 +39,7 @@
 }
 
 .perfil-nombre {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: #fff;
@@ -62,7 +62,7 @@
 }
 
 .perfil-section-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Fraunces', serif;
   font-size: 1.2rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -336,3 +336,4 @@
   .perfil-card--actions { flex-direction: column; }
   .perfil-header { flex-direction: column; text-align: center; }
 }
+
