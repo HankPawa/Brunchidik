@@ -38,21 +38,47 @@ const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
           <div className="pay-form">
             <div className="pay-field">
               <label>Número de tarjeta</label>
-              <input type="text" placeholder="0000 0000 0000 0000" maxLength={19} />
+              <input
+                type="text"
+                placeholder="0000 0000 0000 0000"
+                maxLength={19}
+                inputMode="numeric"
+                onInput={e => e.target.value = e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim()}
+              />
             </div>
             <div className="pay-row">
               <div className="pay-field">
                 <label>Vencimiento</label>
-                <input type="text" placeholder="MM/AA" maxLength={5} />
+                <input
+                  type="text"
+                  placeholder="MM/AA"
+                  maxLength={5}
+                  inputMode="numeric"
+                  onInput={e => {
+                    let v = e.target.value.replace(/\D/g, "");
+                    if (v.length >= 2) v = v.slice(0,2) + "/" + v.slice(2);
+                    e.target.value = v;
+                  }}
+                />
               </div>
               <div className="pay-field">
                 <label>CVV</label>
-                <input type="text" placeholder="•••" maxLength={4} />
+                <input
+                  type="password"
+                  placeholder="•••"
+                  maxLength={4}
+                  inputMode="numeric"
+                  onInput={e => e.target.value = e.target.value.replace(/\D/g, "")}
+                />
               </div>
             </div>
             <div className="pay-field">
               <label>Nombre en la tarjeta</label>
-              <input type="text" placeholder="Como aparece en la tarjeta" />
+              <input
+                type="text"
+                placeholder="Como aparece en la tarjeta"
+                onInput={e => e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, "")}
+              />
             </div>
           </div>
         )}
@@ -76,7 +102,12 @@ const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
               </div>
               <div className="pay-field">
                 <label>Número de documento</label>
-                <input type="text" placeholder="1234567890" />
+                <input
+                  type="text"
+                  placeholder="1234567890"
+                  inputMode="numeric"
+                  onInput={e => e.target.value = e.target.value.replace(/\D/g, "")}
+                />
               </div>
             </div>
           </div>
@@ -219,8 +250,9 @@ const Checkout = () => {
                 <input
                   type="tel"
                   placeholder="+57 300 000 0000"
+                  inputMode="numeric"
                   value={telefono}
-                  onChange={(e) => setTelefono(e.target.value)}
+                  onChange={(e) => setTelefono(e.target.value.replace(/[^\d+\s]/g, ""))}
                   required
                 />
               </div>
