@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import SandwichFalling from "../components/SandwichFalling";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "../components/Navbar";
@@ -231,6 +232,7 @@ const Menu = () => {
 
   return (
     <div ref={pageRef}>
+      <SandwichFalling />
       <Navbar />
 
       <section className="menu-hero">

@@ -4,10 +4,12 @@ import Features from "../components/Features";
 import Favorites from "../components/Favorites";
 import MapSection from "../components/MapSection";
 import Footer from "../components/Footer";
+import SandwichFalling from "../components/SandwichFalling";
 
 const Home = () => {
   return (
     <>
+      <SandwichFalling />
       <Navbar />
       <Hero />
       <Features />
