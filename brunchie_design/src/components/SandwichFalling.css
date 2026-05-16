@@ -1,0 +1,27 @@
+.sw-wrapper {
+  position: fixed;
+  top: 60px;
+  right: 24px;
+  width: 90px;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.18));
+}
+
+.sw-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.sw-arm-left,
+.sw-arm-right,
+.sw-leg-left,
+.sw-leg-right {
+  transform-box: fill-box;
+}
+
+@media (max-width: 600px) {
+  .sw-wrapper { width: 65px; right: 12px; }
+}
