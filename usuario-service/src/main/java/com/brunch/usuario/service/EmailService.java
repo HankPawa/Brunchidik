@@ -15,6 +15,7 @@ public class EmailService {
 
     public void enviarCodigo2FA(String destinatario, String codigo) {
         SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setFrom("onboarding@resend.dev");
         mensaje.setTo(destinatario);
         mensaje.setSubject("Tu código de verificación — Brunch & Co.");
         mensaje.setText(

@@ -5,6 +5,8 @@ import com.brunch.usuario.repository.UsuarioRepository;
 import com.brunch.usuario.service.CodigoService;
 import com.brunch.usuario.service.EmailService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ public class UsuarioController {
     private final UsuarioRepository usuarioRepository;
     private final CodigoService     codigoService;
     private final EmailService      emailService;
+    private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public UsuarioController(UsuarioRepository usuarioRepository,
@@ -43,7 +46,7 @@ public class UsuarioController {
                 .map(u -> {
                     if (u.isDosFaActivo()) {
                         String codigo = codigoService.generarYGuardar(u.getId());
-                        try { emailService.enviarCodigo2FA(u.getEmail(), codigo); } catch (Exception ignored) {}
+                        try { emailService.enviarCodigo2FA(u.getEmail(), codigo); } catch (Exception ex) { log.error("Error enviando 2FA a {}: {}", u.getEmail(), ex.getMessage()); }
                         return ResponseEntity.ok((Object) Map.of(
                             "requiere2fa", true,
                             "usuarioId",   u.getId(),
@@ -71,7 +74,7 @@ public class UsuarioController {
 
         if (u.isDosFaActivo()) {
             String codigo = codigoService.generarYGuardar(u.getId());
-            try { emailService.enviarCodigo2FA(u.getEmail(), codigo); } catch (Exception ignored) {}
+            try { emailService.enviarCodigo2FA(u.getEmail(), codigo); } catch (Exception ex) { log.error("Error enviando 2FA a {}: {}", u.getEmail(), ex.getMessage()); }
             return ResponseEntity.ok(Map.of(
                 "requiere2fa", true,
                 "usuarioId",   u.getId(),
