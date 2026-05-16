@@ -9,7 +9,7 @@ import SandwichFalling from "../components/SandwichFalling";
 const Home = () => {
   return (
     <>
-      <SandwichFalling />
+      <SandwichFalling heroSelector=".hero-bg" />
       <Navbar />
       <Hero />
       <Features />

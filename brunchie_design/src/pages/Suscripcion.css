@@ -46,7 +46,7 @@
 
 /* Modal pago */
 .sus-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-.sus-modal { background: #fff; border-radius: 16px; padding: 2rem; width: 100%; max-width: 420px; box-shadow: 0 8px 40px rgba(0,0,0,.18); animation: modalIn .25s cubic-bezier(.175,.885,.32,1.275); }
+.sus-modal { background: #fff; border-radius: 16px; padding: 2rem; width: 100%; max-width: 420px; box-shadow: 0 8px 40px rgba(0,0,0,.18); animation: modalIn .25s cubic-bezier(.175,.885,.32,1.275); overflow: hidden; box-sizing: border-box; }
 @keyframes modalIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .sus-modal-title { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; color: #1a1a1a; margin-bottom: .25rem; }
 .sus-modal-precio { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 700; color: #b08968; margin-bottom: 1.25rem; }
@@ -56,7 +56,7 @@
 .sus-pay-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 .sus-pay-field { display: flex; flex-direction: column; gap: .3rem; }
 .sus-pay-field label { font-family: 'Nunito', sans-serif; font-size: .82rem; font-weight: 700; color: #444; }
-.sus-pay-field input { padding: .65rem .9rem; border: 1.5px solid #ddd; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: .88rem; background: #faf8f5; outline: none; transition: border-color .2s ease; }
+.sus-pay-field input { padding: .65rem .9rem; border: 1.5px solid #ddd; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: .88rem; background: #faf8f5; outline: none; transition: border-color .2s ease; width: 100%; box-sizing: border-box; }
 .sus-pay-field input:focus { border-color: #1a1a1a; }
 
 .sus-modal-actions { display: flex; gap: .75rem; }
