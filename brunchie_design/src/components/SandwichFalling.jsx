@@ -1,129 +1,111 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import panVolando from "../assets/pan_volando.png";
+import panCaido  from "../assets/pan_caido.png";
 import "./SandwichFalling.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const SandwichFalling = () => {
-  const sandwichRef = useRef(null);
+const SandwichFalling = ({ heroSelector = ".hero-bg" }) => {
+  const wrapperRef = useRef(null);
+  const volandoRef = useRef(null);
+  const caidoRef   = useRef(null);
 
   useEffect(() => {
-    const el = sandwichRef.current;
-    if (!el) return;
+    const wrapper = wrapperRef.current;
+    const volando = volandoRef.current;
+    const caido   = caidoRef.current;
+    if (!wrapper) return;
 
-    // Brazo izquierdo y derecho
-    const armL = el.querySelector(".sw-arm-left");
-    const armR = el.querySelector(".sw-arm-right");
-    const legL = el.querySelector(".sw-leg-left");
-    const legR = el.querySelector(".sw-leg-right");
+    const hero   = document.querySelector(heroSelector);
+    const footer = document.querySelector("footer");
+    if (!hero || !footer) return;
 
-    // Animación de caída al hacer scroll
-    gsap.fromTo(el,
-      { y: -120, rotation: -8, opacity: 0 },
-      {
-        y: () => window.innerHeight * 0.75,
-        rotation: 15,
-        opacity: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: "body",
-          start: "top top",
-          end: "+=800",
-          scrub: 1.2,
+    // Espera a que la página esté completamente renderizada
+    ScrollTrigger.refresh();
+
+    // Estado inicial — oculto arriba
+    gsap.set(wrapper, { position: "fixed", top: 60, right: 24, left: "auto", x: 0, y: -80, rotation: -12, opacity: 0 });
+    gsap.set(caido,   { opacity: 0, scale: 0.8 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: hero,
+        start: "bottom top",
+        endTrigger: footer,
+        end: "top bottom",
+        scrub: 1.5,
+
+        // Al salir por abajo: convierte a absolute justo antes del footer
+        onLeave: () => {
+          const footerTop = footer.getBoundingClientRect().top + window.scrollY;
+          gsap.set(wrapper, {
+            position: "absolute",
+            top: footerTop - wrapper.offsetHeight - 380,
+            right: 24,
+            left: "auto",
+            y: 0, x: 0, rotation: 0, opacity: 1,
+          });
+          gsap.set(volando, { opacity: 0 });
+          gsap.set(caido,   { opacity: 1, scale: 1 });
         },
-      }
-    );
 
-    // Brazos y piernas se agitan mientras cae
-    gsap.to([armL, armR], {
-      rotation: "+=25",
-      transformOrigin: "top center",
-      duration: 0.35,
-      yoyo: true,
-      repeat: -1,
-      ease: "sine.inOut",
-      stagger: 0.18,
+        // Al volver a entrar desde abajo: vuelve a fixed para que el scrub lo mueva
+        onEnterBack: () => {
+          gsap.set(wrapper, {
+            position: "fixed",
+            top: 60, right: 24, left: "auto",
+            y: "57vh", x: 0, rotation: 0, opacity: 1,
+          });
+          gsap.set(volando, { opacity: 0 });
+          gsap.set(caido,   { opacity: 1, scale: 1 });
+        },
+
+        // Al salir por arriba del hero: se oculta
+        onLeaveBack: () => {
+          gsap.set(wrapper, {
+            position: "fixed",
+            top: 60, right: 24, left: "auto",
+            opacity: 0, y: -80, rotation: -12,
+          });
+          gsap.set(caido,   { opacity: 0, scale: 0.8 });
+          gsap.set(volando, { opacity: 1 });
+        },
+      },
     });
 
-    gsap.to([legL, legR], {
-      rotation: "+=20",
-      transformOrigin: "top center",
-      duration: 0.4,
-      yoyo: true,
-      repeat: -1,
-      ease: "sine.inOut",
-      stagger: 0.2,
+    // Fase 1: aparece planeando
+    tl.to(wrapper, {
+      opacity: 1, y: 0, rotation: -5,
+      duration: 0.2, ease: "power1.out",
+    })
+    // Fase 2: se inclina suave
+    .to(wrapper, {
+      y: "20vh", x: 10, rotation: 5,
+      ease: "none", duration: 0.25,
+    })
+    // Fase 3: cae con aceleración controlada
+    .to(wrapper, {
+      y: "55vh", x: 20, rotation: 28,
+      ease: "power1.in", duration: 0.4,
+    })
+    // Fase 4: impacto
+    .to(volando, { opacity: 0, duration: 0.05 }, "-=0.05")
+    .to(caido,   { opacity: 1, scale: 1, duration: 0.08, ease: "back.out(1.5)" }, "<")
+    // Fase 5: queda quieto
+    .to(wrapper, {
+      rotation: 0, x: 0, y: "57vh",
+      duration: 0.1, ease: "power1.out",
     });
 
     return () => ScrollTrigger.getAll().forEach(t => t.kill());
-  }, []);
+  }, [heroSelector]);
 
   return (
-    <div className="sw-wrapper" ref={sandwichRef}>
-      <svg viewBox="0 0 120 130" className="sw-svg" xmlns="http://www.w3.org/2000/svg">
-
-        {/* ── Brazo izquierdo ── */}
-        <g className="sw-arm-left">
-          <line x1="22" y1="62" x2="4" y2="80" stroke="#c8a26a" strokeWidth="5" strokeLinecap="round"/>
-          <circle cx="4" cy="82" r="5" fill="#f4c97a"/>
-        </g>
-
-        {/* ── Brazo derecho ── */}
-        <g className="sw-arm-right">
-          <line x1="98" y1="62" x2="116" y2="80" stroke="#c8a26a" strokeWidth="5" strokeLinecap="round"/>
-          <circle cx="116" cy="82" r="5" fill="#f4c97a"/>
-        </g>
-
-        {/* ── Pan de arriba ── */}
-        <ellipse cx="60" cy="38" rx="42" ry="22" fill="#f4c97a"/>
-        <ellipse cx="60" cy="32" rx="38" ry="18" fill="#f9dfa0"/>
-
-        {/* ── Ojos ── */}
-        <circle cx="46" cy="30" r="7" fill="white"/>
-        <circle cx="74" cy="30" r="7" fill="white"/>
-        <circle cx="48" cy="31" r="3.5" fill="#2d2d2d"/>
-        <circle cx="76" cy="31" r="3.5" fill="#2d2d2d"/>
-        {/* Brillo */}
-        <circle cx="49.5" cy="29.5" r="1.5" fill="white"/>
-        <circle cx="77.5" cy="29.5" r="1.5" fill="white"/>
-
-        {/* Boca */}
-        <path d="M 50 42 Q 60 50 70 42" stroke="#c0392b" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-
-        {/* Mejillas */}
-        <ellipse cx="37" cy="40" rx="6" ry="4" fill="#f4a0a0" opacity="0.6"/>
-        <ellipse cx="83" cy="40" rx="6" ry="4" fill="#f4a0a0" opacity="0.6"/>
-
-        {/* ── Lechuga ── */}
-        <ellipse cx="60" cy="58" rx="44" ry="9" fill="#5cb85c"/>
-        <path d="M18 56 Q30 48 42 56 Q54 48 66 56 Q78 48 90 56 Q102 48 102 58" fill="#4cae4c" stroke="none"/>
-
-        {/* ── Tomate ── */}
-        <ellipse cx="60" cy="66" rx="40" ry="7" fill="#e74c3c"/>
-
-        {/* ── Queso ── */}
-        <ellipse cx="60" cy="72" rx="43" ry="7" fill="#f39c12"/>
-        <polygon points="18,68 28,78 18,78" fill="#e67e22"/>
-        <polygon points="102,68 92,78 102,78" fill="#e67e22"/>
-
-        {/* ── Pan de abajo ── */}
-        <ellipse cx="60" cy="82" rx="44" ry="10" fill="#f4c97a"/>
-        <ellipse cx="60" cy="86" rx="44" ry="8" fill="#e8b84b"/>
-
-        {/* ── Pierna izquierda ── */}
-        <g className="sw-leg-left">
-          <line x1="42" y1="90" x2="32" y2="112" stroke="#c8a26a" strokeWidth="5" strokeLinecap="round"/>
-          <ellipse cx="30" cy="116" rx="8" ry="5" fill="#f4c97a"/>
-        </g>
-
-        {/* ── Pierna derecha ── */}
-        <g className="sw-leg-right">
-          <line x1="78" y1="90" x2="88" y2="112" stroke="#c8a26a" strokeWidth="5" strokeLinecap="round"/>
-          <ellipse cx="90" cy="116" rx="8" ry="5" fill="#f4c97a"/>
-        </g>
-
-      </svg>
+    <div className="sw-wrapper" ref={wrapperRef}>
+      <img ref={volandoRef} src={panVolando} alt="pan volando" className="sw-img" />
+      <img ref={caidoRef}   src={panCaido}   alt="pan caido"   className="sw-img sw-img-caido" />
     </div>
   );
 };

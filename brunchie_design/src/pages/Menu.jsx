@@ -234,12 +234,15 @@ const Menu = () => {
       });
     }, pageRef);
 
+    // Recalcula ScrollTrigger cuando carga el contenido completo
+    setTimeout(() => ScrollTrigger.refresh(), 300);
+
     return () => ctx.revert();
   }, [loading, categorias]);
 
   return (
     <div ref={pageRef}>
-      <SandwichFalling />
+      <SandwichFalling heroSelector=".menu-hero" />
       <Navbar />
 
       <section className="menu-hero">
