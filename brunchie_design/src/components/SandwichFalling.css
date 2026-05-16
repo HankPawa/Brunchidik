@@ -2,26 +2,25 @@
   position: fixed;
   top: 60px;
   right: 24px;
-  width: 90px;
+  width: 110px;
   z-index: 999;
   pointer-events: none;
-  opacity: 0;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.18));
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.15));
 }
 
-.sw-svg {
+.sw-img {
   width: 100%;
   height: auto;
-  overflow: visible;
+  display: block;
 }
 
-.sw-arm-left,
-.sw-arm-right,
-.sw-leg-left,
-.sw-leg-right {
-  transform-box: fill-box;
+.sw-img-caido {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 
 @media (max-width: 600px) {
-  .sw-wrapper { width: 65px; right: 12px; }
+  .sw-wrapper { width: 75px; right: 12px; }
 }
