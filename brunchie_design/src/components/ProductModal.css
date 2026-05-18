@@ -153,3 +153,10 @@
 }
 .pmodal-btn-add:hover { background: #333; transform: translateY(-1px); }
 
+@media (max-width: 520px) {
+  .pmodal-card { max-height: 90vh; overflow-y: auto; }
+  .pmodal-img { height: 160px; }
+  .pmodal-body { padding: 1.25rem; }
+  .pmodal-name { font-size: 1.2rem; }
+}
+

@@ -17,3 +17,9 @@
 .pedido-btn-secondary { width: 100%; padding: .85rem; background-color: transparent; color: #1a1a1a; border: 1.5px solid #ddd; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: .95rem; font-weight: 700; cursor: pointer; transition: border-color .2s ease, transform .15s ease; }
 .pedido-btn-secondary:hover { border-color: #aaa; transform: translateY(-1px); }
 
+@media (max-width: 480px) {
+  .pedido-card { padding: 2.25rem 1.25rem; }
+  .pedido-title { font-size: 1.6rem; }
+  .pedido-eta { padding: .85rem 1.25rem; }
+}
+

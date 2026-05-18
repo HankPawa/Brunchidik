@@ -221,3 +221,9 @@
 }
 .cart-clear-btn:hover { border-color: #c0392b; color: #c0392b; }
 
+@media (max-width: 400px) {
+  .cart-drawer { width: 100%; max-width: 100%; }
+  .cart-header, .cart-items, .cart-footer { padding-left: 1rem; padding-right: 1rem; }
+  .cart-title { font-size: 1.2rem; }
+}
+

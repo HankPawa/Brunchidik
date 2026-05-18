@@ -145,7 +145,14 @@ const Checkout = () => {
     return null;
   }
 
+  const horaValida = !programar || !horaProg || (horaProg >= "08:00" && horaProg <= "15:00");
+
   const handleConfirm = async () => {
+    if (programar && horaProg && !horaValida) {
+      setError("La hora de entrega debe ser entre las 8:00 AM y las 3:00 PM.");
+      setShowModal(false);
+      return;
+    }
     setLoading(true);
     setError("");
     try {
@@ -306,9 +313,11 @@ const Checkout = () => {
                     />
                   </div>
                   <div className="checkout-field">
-                    <label>Hora de entrega</label>
+                    <label>Hora de entrega <span className="checkout-hora-hint">(8:00 AM – 3:00 PM)</span></label>
                     <input
                       type="time"
+                      min="08:00"
+                      max="15:00"
                       value={horaProg}
                       onChange={(e) => setHoraProg(e.target.value)}
                       required={programar}
@@ -336,7 +345,7 @@ const Checkout = () => {
                 <button
                   type="button"
                   className="checkout-submit-btn"
-                  disabled={!payMethod || !direccion || !telefono || (programar && (!fechaProg || !horaProg))}
+                  disabled={!payMethod || !direccion || !telefono || (programar && (!fechaProg || !horaProg || !horaValida))}
                   onClick={() => setShowModal(true)}
                 >
                   Continuar

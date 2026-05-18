@@ -231,3 +231,8 @@
 }
 .login-forgot:hover { color: #1a1a1a; }
 
+@media (max-width: 480px) {
+  .login-card { padding: 2rem 1.25rem; }
+  .login-title { font-size: 1.6rem; }
+}
+

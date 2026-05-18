@@ -35,42 +35,95 @@ const PLANES = [
   },
 ];
 
-const PagoModal = ({ plan, onClose, onConfirm, loading }) => (
-  <div className="sus-overlay" onClick={onClose}>
-    <div className="sus-modal" onClick={(e) => e.stopPropagation()}>
-      <h3 className="sus-modal-title">Plan {plan.nombre}</h3>
-      <p className="sus-modal-precio">{plan.precio}<span>{plan.ciclo}</span></p>
+const PagoModal = ({ plan, onClose, onConfirm, loading }) => {
+  const [card, setCard] = useState({ numero: "", vencimiento: "", cvv: "", nombre: "" });
+  const [error, setError] = useState("");
 
-      <div className="sus-pay-form">
-        <div className="sus-pay-field">
-          <label>Número de tarjeta</label>
-          <input type="text" placeholder="0000 0000 0000 0000" maxLength={19} />
-        </div>
-        <div className="sus-pay-row">
+  const validar = () => {
+    if (card.numero.replace(/\s/g, "").length < 16) return "El número de tarjeta debe tener 16 dígitos.";
+    if (!/^\d{2}\/\d{2}$/.test(card.vencimiento))   return "Fecha de vencimiento inválida (MM/AA).";
+    if (card.cvv.length < 3)                          return "CVV debe tener mínimo 3 dígitos.";
+    if (!card.nombre.trim())                          return "Ingresa el nombre tal como aparece en la tarjeta.";
+    return "";
+  };
+
+  const handleConfirm = () => {
+    const err = validar();
+    if (err) { setError(err); return; }
+    onConfirm();
+  };
+
+  return (
+    <div className="sus-overlay" onClick={onClose}>
+      <div className="sus-modal" onClick={(e) => e.stopPropagation()}>
+        <h3 className="sus-modal-title">Plan {plan.nombre}</h3>
+        <p className="sus-modal-precio">{plan.precio}<span>{plan.ciclo}</span></p>
+
+        <div className="sus-pay-form">
           <div className="sus-pay-field">
-            <label>Vencimiento</label>
-            <input type="text" placeholder="MM/AA" maxLength={5} />
+            <label>Número de tarjeta</label>
+            <input
+              type="text"
+              placeholder="0000 0000 0000 0000"
+              maxLength={19}
+              value={card.numero}
+              onChange={e => {
+                const v = e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim();
+                setCard({ ...card, numero: v });
+                setError("");
+              }}
+            />
+          </div>
+          <div className="sus-pay-row">
+            <div className="sus-pay-field">
+              <label>Vencimiento</label>
+              <input
+                type="text"
+                placeholder="MM/AA"
+                maxLength={5}
+                value={card.vencimiento}
+                onChange={e => {
+                  let v = e.target.value.replace(/\D/g, "");
+                  if (v.length >= 2) v = v.slice(0, 2) + "/" + v.slice(2);
+                  setCard({ ...card, vencimiento: v });
+                  setError("");
+                }}
+              />
+            </div>
+            <div className="sus-pay-field">
+              <label>CVV</label>
+              <input
+                type="password"
+                placeholder="•••"
+                maxLength={4}
+                value={card.cvv}
+                onChange={e => { setCard({ ...card, cvv: e.target.value.replace(/\D/g, "") }); setError(""); }}
+              />
+            </div>
           </div>
           <div className="sus-pay-field">
-            <label>CVV</label>
-            <input type="text" placeholder="•••" maxLength={4} />
+            <label>Nombre en la tarjeta</label>
+            <input
+              type="text"
+              placeholder="Como aparece en la tarjeta"
+              value={card.nombre}
+              onChange={e => { setCard({ ...card, nombre: e.target.value }); setError(""); }}
+            />
           </div>
         </div>
-        <div className="sus-pay-field">
-          <label>Nombre en la tarjeta</label>
-          <input type="text" placeholder="Como aparece en la tarjeta" />
-        </div>
-      </div>
 
-      <div className="sus-modal-actions">
-        <button className="sus-btn-cancel" onClick={onClose} disabled={loading}>Cancelar</button>
-        <button className="sus-btn-confirm" onClick={onConfirm} disabled={loading}>
-          {loading ? "Procesando..." : "Confirmar pago"}
-        </button>
+        {error && <p className="sus-pay-error">{error}</p>}
+
+        <div className="sus-modal-actions">
+          <button className="sus-btn-cancel" onClick={onClose} disabled={loading}>Cancelar</button>
+          <button className="sus-btn-confirm" onClick={handleConfirm} disabled={loading}>
+            {loading ? "Procesando..." : "Confirmar pago"}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const Suscripcion = () => {
   const { user, actualizarUsuario } = useAuth();
