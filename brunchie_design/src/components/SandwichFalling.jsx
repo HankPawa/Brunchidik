@@ -7,7 +7,7 @@ import "./SandwichFalling.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const SandwichFalling = ({ heroSelector = ".hero-bg" }) => {
+const SandwichFalling = ({ heroSelector = ".hero-bg", rightOffset = 24 }) => {
   const wrapperRef = useRef(null);
   const volandoRef = useRef(null);
   const caidoRef   = useRef(null);
@@ -22,11 +22,9 @@ const SandwichFalling = ({ heroSelector = ".hero-bg" }) => {
     const footer = document.querySelector("footer");
     if (!hero || !footer) return;
 
-    // Espera a que la página esté completamente renderizada
     ScrollTrigger.refresh();
 
-    // Estado inicial — oculto arriba
-    gsap.set(wrapper, { position: "fixed", top: 60, right: 24, left: "auto", x: 0, y: -80, rotation: -12, opacity: 0 });
+    gsap.set(wrapper, { position: "fixed", top: 60, right: rightOffset, left: "auto", x: 0, y: -80, rotation: -12, opacity: 0 });
     gsap.set(caido,   { opacity: 0, scale: 0.8 });
 
     const tl = gsap.timeline({
@@ -37,13 +35,12 @@ const SandwichFalling = ({ heroSelector = ".hero-bg" }) => {
         end: "top bottom",
         scrub: 1.5,
 
-        // Al salir por abajo: convierte a absolute justo antes del footer
         onLeave: () => {
           const footerTop = footer.getBoundingClientRect().top + window.scrollY;
           gsap.set(wrapper, {
             position: "absolute",
             top: footerTop - wrapper.offsetHeight - 380,
-            right: 24,
+            right: rightOffset,
             left: "auto",
             y: 0, x: 0, rotation: 0, opacity: 1,
           });
@@ -51,22 +48,20 @@ const SandwichFalling = ({ heroSelector = ".hero-bg" }) => {
           gsap.set(caido,   { opacity: 1, scale: 1 });
         },
 
-        // Al volver a entrar desde abajo: vuelve a fixed para que el scrub lo mueva
         onEnterBack: () => {
           gsap.set(wrapper, {
             position: "fixed",
-            top: 60, right: 24, left: "auto",
+            top: 60, right: rightOffset, left: "auto",
             y: "57vh", x: 0, rotation: 0, opacity: 1,
           });
           gsap.set(volando, { opacity: 0 });
           gsap.set(caido,   { opacity: 1, scale: 1 });
         },
 
-        // Al salir por arriba del hero: se oculta
         onLeaveBack: () => {
           gsap.set(wrapper, {
             position: "fixed",
-            top: 60, right: 24, left: "auto",
+            top: 60, right: rightOffset, left: "auto",
             opacity: 0, y: -80, rotation: -12,
           });
           gsap.set(caido,   { opacity: 0, scale: 0.8 });
@@ -103,7 +98,7 @@ const SandwichFalling = ({ heroSelector = ".hero-bg" }) => {
   }, [heroSelector]);
 
   return (
-    <div className="sw-wrapper" ref={wrapperRef}>
+    <div className="sw-wrapper" ref={wrapperRef} style={{ right: rightOffset }}>
       <img ref={volandoRef} src={panVolando} alt="pan volando" className="sw-img" />
       <img ref={caidoRef}   src={panCaido}   alt="pan caido"   className="sw-img sw-img-caido" />
     </div>

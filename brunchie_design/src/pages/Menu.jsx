@@ -242,7 +242,7 @@ const Menu = () => {
 
   return (
     <div ref={pageRef}>
-      <SandwichFalling heroSelector=".menu-hero" />
+      <SandwichFalling heroSelector=".menu-hero" rightOffset={4} />
       <Navbar />
 
       <section className="menu-hero">
