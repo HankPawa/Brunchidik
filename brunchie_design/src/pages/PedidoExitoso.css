@@ -40,7 +40,7 @@
 }
 
 .pedido-eyebrow {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 2.5px;
@@ -50,7 +50,7 @@
 }
 
 .pedido-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 2rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -77,7 +77,7 @@
 }
 
 .pedido-sub {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   color: #777;
   line-height: 1.6;
@@ -97,7 +97,7 @@
 }
 
 .pedido-eta-label {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -106,7 +106,7 @@
 }
 
 .pedido-eta-time {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -126,7 +126,7 @@
   color: #ffffff;
   border: none;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
@@ -146,7 +146,7 @@
   color: #1a1a1a;
   border: 1.5px solid #ddd;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;

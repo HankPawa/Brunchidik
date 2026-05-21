@@ -34,7 +34,7 @@
 
 .features-eyebrow {
   display: block;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.3em;
@@ -44,7 +44,7 @@
 }
 
 .features-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 2.2rem;
   font-weight: 700;
   color: #3d2b1f;
@@ -144,7 +144,7 @@
 }
 
 .feature-card-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.2rem;
   font-weight: 700;
   color: #3d2b1f;
@@ -168,7 +168,7 @@
 }
 
 .feature-card-desc {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.93rem;
   color: #7a6558;
   line-height: 1.65;

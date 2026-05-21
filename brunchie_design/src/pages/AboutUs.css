@@ -3,7 +3,7 @@
 ───────────────────────────────────── */
 .about-eyebrow {
   display: block;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.3em;
@@ -13,7 +13,7 @@
 }
 
 .about-section-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-weight: 700;
   color: #2e2622;
   margin-bottom: 1.2rem;
@@ -93,7 +93,7 @@
 }
 
 .about-hero-sub {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.05rem;
   color: #7a6558;
   line-height: 1.7;
@@ -126,7 +126,7 @@
 }
 
 .about-story-text p {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.97rem;
   color: #6b5f57;
   line-height: 1.8;
@@ -151,7 +151,7 @@
 
 .about-stat-number {
   display: block;
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 2.4rem;
   font-weight: 700;
   color: #2e2622;
@@ -160,7 +160,7 @@
 
 .about-stat-label {
   display: block;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.8rem;
   color: #9a8880;
   margin-top: 0.3rem;
@@ -255,7 +255,7 @@
 }
 
 .about-value-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.15rem;
   font-weight: 700;
   color: #2e2622;
@@ -263,7 +263,7 @@
 }
 
 .about-value-desc {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.92rem;
   color: #7a6558;
   line-height: 1.65;
@@ -274,7 +274,13 @@
    Promise / Quote
 ───────────────────────────────────── */
 .about-promise {
-  background: #2e2622;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(../assets/foto_nosotros.jpeg);
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center 30%;
   padding: 6rem 2rem;
 }
 
@@ -286,7 +292,7 @@
 
 .about-promise-quote {
   display: block;
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 6rem;
   line-height: 0.5;
   color: rgba(196, 132, 90, 0.4);
@@ -294,7 +300,7 @@
 }
 
 .about-promise-text {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: clamp(1.2rem, 2vw, 1.55rem);
   font-weight: 400;
   font-style: italic;
@@ -304,7 +310,7 @@
 }
 
 .about-promise-attr {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.85rem;
   color: #7a6a60;
   letter-spacing: 0.06em;

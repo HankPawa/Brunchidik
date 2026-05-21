@@ -34,7 +34,7 @@
 }
 
 .cart-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -63,7 +63,7 @@
   justify-content: center;
   gap: 1rem;
   color: #aaa;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
 }
 
@@ -104,14 +104,14 @@
 }
 
 .cart-item-name {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.88rem;
   font-weight: 700;
   color: #1a1a1a;
 }
 
 .cart-item-price {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.85rem;
   color: #666;
 }
@@ -145,7 +145,7 @@
 }
 
 .cart-item-qty span {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.9rem;
   font-weight: 700;
   min-width: 16px;
@@ -178,13 +178,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.9rem;
   color: #666;
 }
 
 .cart-total-price {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.2rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -197,7 +197,7 @@
   color: #ffffff;
   border: none;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;

@@ -24,7 +24,7 @@
 }
 
 .checkout-eyebrow {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 2.5px;
@@ -34,7 +34,7 @@
 }
 
 .checkout-section-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -72,7 +72,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.9rem;
   color: #444;
 }
@@ -99,13 +99,13 @@
   margin-top: 1.25rem;
   padding-top: 1rem;
   border-top: 1px solid #f0ede8;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.9rem;
   color: #666;
 }
 
 .checkout-total-price {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.3rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -125,7 +125,7 @@
 }
 
 .checkout-field label {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.85rem;
   font-weight: 700;
   color: #444;
@@ -138,7 +138,7 @@
   padding: 0.7rem 1rem;
   border: 1.5px solid #ddd;
   border-radius: 10px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.9rem;
   color: #1a1a1a;
   background-color: #faf8f5;
@@ -160,7 +160,7 @@
   color: #ffffff;
   border: none;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
@@ -238,7 +238,7 @@
 }
 
 .checkout-modal-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -246,7 +246,7 @@
 }
 
 .checkout-modal-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1rem;
   color: #666;
   margin: 0;
@@ -259,7 +259,7 @@
   color: #ffffff;
   border: none;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;

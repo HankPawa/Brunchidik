@@ -6,7 +6,7 @@
 }
 
 .brand-name {
-  font-family: 'Playfair Display', serif !important;
+  font-family: 'Fraunces', serif !important;
   font-size: 1.3rem !important;
   font-weight: 700 !important;
   color: #1a1a1a !important;
@@ -14,7 +14,7 @@
 }
 
 .nav-link {
-  font-family: 'Nunito', sans-serif !important;
+  font-family: 'DM Serif Display', serif !important;
   font-size: 0.95rem !important;
   font-weight: 600 !important;
   color: #444 !important;
@@ -45,7 +45,7 @@
 }
 
 .reservar-btn {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-weight: 700;
   font-size: 0.9rem;
   background-color: #391903;
@@ -92,7 +92,7 @@
   right: -6px;
   background-color: #1a1a1a;
   color: #ffffff;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.65rem;
   font-weight: 700;
   width: 17px;

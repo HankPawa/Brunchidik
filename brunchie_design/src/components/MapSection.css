@@ -18,7 +18,7 @@
 
 .map-eyebrow {
   display: block;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.3em;
@@ -28,7 +28,7 @@
 }
 
 .map-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 2rem;
   font-weight: 700;
   color: #2e2622;
@@ -71,7 +71,7 @@
   display: flex;
   gap: 0.9rem;
   align-items: flex-start;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.93rem;
   color: #6b5f57;
   line-height: 1.6;
@@ -125,7 +125,7 @@
   border-radius: 999px;
   background: rgba(255,255,255,0.95);
   color: #2e2622;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-weight: 700;
   font-size: 0.9rem;
   box-shadow: 0 12px 32px rgba(46,38,34,0.12);
