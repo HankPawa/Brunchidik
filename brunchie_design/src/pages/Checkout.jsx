@@ -13,6 +13,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [telefono, setTelefono] = useState("");
 
   if (items.length === 0 && !showModal) {
     navigate("/menu");
@@ -84,7 +85,15 @@ const Checkout = () => {
               </div>
               <div className="checkout-field">
                 <label>Teléfono</label>
-                <input type="tel" placeholder="+57 300 000 0000" required />
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="+57 300 0000 00"
+                  value={telefono}
+                  onChange={(e) => setTelefono(e.target.value.replace(/\D/g, ""))}
+                  required
+                />
               </div>
               <div className="checkout-field">
                 <label>Método de pago</label>
