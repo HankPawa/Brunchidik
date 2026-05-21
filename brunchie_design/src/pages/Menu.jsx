@@ -232,7 +232,7 @@ const Menu = () => {
 
   return (
     <div ref={pageRef}>
-      <SandwichFalling />
+      <SandwichFalling heroSelector=".menu-hero" rightOffset={4} />
       <Navbar />
 
       <section className="menu-hero">
@@ -240,12 +240,13 @@ const Menu = () => {
           <source src="https://res.cloudinary.com/dwhezsxkg/video/upload/v1778112262/menubrunch_xe5q9r.mp4" type="video/mp4" />
         </video>
         <div className="menu-hero-overlay">
-          <h1 className="menu-hero-title">Nuestro Menú</h1>
-          <p className="menu-hero-sub">Ingredientes frescos, sabores que enamoran</p>
+          <div className="menu-hero-texts">
+            <h1 className="menu-hero-title">Nuestro Menú</h1>
+            <p className="menu-hero-sub">Ingredientes frescos, sabores que enamoran</p>
+          </div>
+          <WeatherRecommendation />
         </div>
       </section>
-
-      <WeatherRecommendation />
 
       <section className="section has-background-white">
         <div className="container">

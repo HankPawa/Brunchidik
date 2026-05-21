@@ -62,10 +62,6 @@ const WeatherRecommendation = () => {
 
         <div className="weather-content">
 
-          <span className="weather-badge">
-            Recomendación del día
-          </span>
-
           <h2 className="weather-title">
             {weather.title}
           </h2>
