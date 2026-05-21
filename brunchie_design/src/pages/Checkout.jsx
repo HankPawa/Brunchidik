@@ -129,6 +129,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [nombre, setNombre]               = useState(user?.nombre || "");
   const [direccion, setDireccion]         = useState("");
   const [telefono, setTelefono]           = useState("");
   const [notas, setNotas]                 = useState("");
@@ -240,7 +241,15 @@ const Checkout = () => {
             <form className="checkout-form" onSubmit={(e) => e.preventDefault()}>
               <div className="checkout-field">
                 <label>Nombre completo</label>
-                <input type="text" defaultValue={user?.nombre} required />
+                <input 
+                  type="text" 
+                  value={nombre} 
+                  onChange={(e) => {
+                    // Bloquea números: elimina cualquier dígito del 0 al 9
+                    setNombre(e.target.value.replace(/[0-9]/g, ""));
+                  }} 
+                  required 
+                />
               </div>
               <div className="checkout-field">
                 <label>Dirección de entrega</label>
@@ -259,7 +268,12 @@ const Checkout = () => {
                   placeholder="+57 300 000 0000"
                   inputMode="numeric"
                   value={telefono}
-                  onChange={(e) => setTelefono(e.target.value.replace(/[^\d+\s]/g, ""))}
+                  onChange={(e) => {
+                    // Bloquea letras y limita a los primeros 10 dígitos
+                    const soloNumeros = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    setTelefono(soloNumeros);
+                  }}
+                  maxLength={10}
                   required
                 />
               </div>
