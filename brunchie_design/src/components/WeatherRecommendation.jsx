@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./WeatherRecommendation.css";
 
 const API_KEY = "ad91376c322b5e62d181a5ecdf79b8ee";
@@ -28,6 +29,18 @@ const recommendations = {
 
 const WeatherRecommendation = () => {
   const [weather, setWeather] = useState(null);
+  const navigate = useNavigate();
+
+  const handleViewRecommended = () => {
+    navigate("/menu");
+    // Desplazarse a la sección de Bebidas después de navegar
+    setTimeout(() => {
+      const bebidasSection = document.querySelector(".menu-category:nth-child(3)");
+      if (bebidasSection) {
+        bebidasSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
 
   useEffect(() => {
     fetch(
@@ -74,7 +87,7 @@ const WeatherRecommendation = () => {
 
       </div>
 
-      <button className="weather-btn">
+      <button className="weather-btn" onClick={handleViewRecommended}>
         Ver recomendados
       </button>
 

@@ -36,6 +36,10 @@ const MapSection = () => (
       </div>
 
       <div className="map-frame-wrap">
+        <div className="map-pin-badge">
+          <MapPin size={18} />
+          <span>Brunch & Co.</span>
+        </div>
         {/* Reemplaza el src con tu enlace de Google Maps → Compartir › Insertar mapa › copia la URL del iframe */}
         <iframe
           title="Ubicación Brunch & Co."

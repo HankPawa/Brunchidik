@@ -85,11 +85,24 @@
 
 /* ── Map iframe ── */
 .map-frame-wrap {
+  position: relative;
   flex: 1;
-  border-radius: 20px;
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 8px 40px rgba(46, 38, 34, 0.1);
+  padding: 3px;
+  background: linear-gradient(135deg, rgba(196,132,90,.25), rgba(255,237,219,.14));
+  box-shadow: 0 24px 70px rgba(46,38,34,0.12);
   height: 380px;
+}
+
+.map-frame-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at top left, rgba(255,255,255,.2), transparent 40%);
+  border-radius: 25px;
+  z-index: 1;
 }
 
 .map-frame-wrap iframe {
@@ -97,6 +110,31 @@
   height: 100%;
   border: none;
   display: block;
+  border-radius: 25px;
+}
+
+.map-pin-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.95);
+  color: #2e2622;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 12px 32px rgba(46,38,34,0.12);
+  backdrop-filter: blur(8px);
+}
+
+.map-pin-badge svg {
+  color: #c4845a;
+  flex-shrink: 0;
 }
 
 /* ── Responsive ── */

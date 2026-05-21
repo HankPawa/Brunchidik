@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useCart } from "../context/CartContext";
@@ -11,8 +12,9 @@ const Checkout = () => {
   const { items, total, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
-  if (items.length === 0) {
+  if (items.length === 0 && !showModal) {
     navigate("/menu");
     return null;
   }
@@ -20,7 +22,12 @@ const Checkout = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     clearCart();
-    navigate("/pedido-exitoso");
+    setShowModal(true);
+  };
+
+  const handleModalAccept = () => {
+    setShowModal(false);
+    navigate("/");
   };
 
   return (
@@ -100,6 +107,25 @@ const Checkout = () => {
 
         </div>
       </main>
+
+      {/* Modal de confirmación */}
+      {showModal && (
+        <div className="checkout-modal-overlay" onClick={handleModalAccept}>
+          <div className="checkout-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="checkout-modal-content">
+              <span className="checkout-modal-icon">✓</span>
+              <h2 className="checkout-modal-title">¡Pedido tomado con éxito!</h2>
+              <p className="checkout-modal-text">Pronto estará en tus manos</p>
+              <button 
+                className="checkout-modal-btn" 
+                onClick={handleModalAccept}
+              >
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </>
