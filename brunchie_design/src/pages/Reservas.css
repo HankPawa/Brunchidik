@@ -21,7 +21,7 @@
 }
 
 .reservas-eyebrow {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 2.5px;
@@ -31,7 +31,7 @@
 }
 
 .reservas-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 2rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -58,7 +58,7 @@
 }
 
 .reservas-sub {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   color: #777;
   margin-bottom: 2rem;
@@ -85,7 +85,7 @@
 }
 
 .reservas-field label {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.85rem;
   font-weight: 700;
   color: #444;
@@ -98,7 +98,7 @@
   padding: 0.7rem 1rem;
   border: 1.5px solid #ddd;
   border-radius: 10px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.9rem;
   color: #1a1a1a;
   background-color: #faf8f5;
@@ -125,7 +125,7 @@
   color: #ffffff;
   border: none;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;

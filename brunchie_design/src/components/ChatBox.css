@@ -27,7 +27,7 @@
   max-width: 80%;
   padding: 11px 16px;
   border-radius: 18px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.92rem;
   line-height: 1.55;
   word-break: break-word;
@@ -87,7 +87,7 @@
   border: 1px solid #e0d8d0;
   border-radius: 999px;
   padding: 10px 16px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.9rem;
   color: #34302b;
   background: #faf7f4;
@@ -105,7 +105,7 @@
   background: #2e2622;
   color: #fff;
   padding: 10px 22px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;

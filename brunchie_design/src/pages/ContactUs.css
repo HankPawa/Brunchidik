@@ -27,7 +27,7 @@
 /* ── Typography ── */
 .contact-eyebrow {
   display: inline-block;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.28em;
@@ -37,7 +37,7 @@
 }
 
 .contact-heading {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: clamp(1.6rem, 2.4vw, 2.2rem);
   font-weight: 700;
   color: #2f2b26;
@@ -45,7 +45,7 @@
 }
 
 .contact-body {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   color: #6b5f57;
   line-height: 1.75;
   font-size: 0.95rem;
@@ -63,7 +63,7 @@
 .contact-list li {
   display: flex;
   gap: 14px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.92rem;
   color: #5a504a;
 }
@@ -76,7 +76,7 @@
 
 /* ── Social icons (light background variant) ── */
 .contact-social-label {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.28em;
@@ -104,7 +104,7 @@
 .contact-form label {
   display: grid;
   gap: 8px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-weight: 700;
   color: #2f2b26;
   font-size: 0.9rem;
@@ -116,7 +116,7 @@
   border: 1px solid #e0d8d0;
   border-radius: 14px;
   padding: 14px 16px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   color: #34302b;
   background: #faf7f4;
@@ -141,7 +141,7 @@
   background: #2e2622;
   color: #fff;
   padding: 14px 34px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-weight: 700;
   font-size: 0.92rem;
   letter-spacing: 0.04em;

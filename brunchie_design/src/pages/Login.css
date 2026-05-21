@@ -21,7 +21,7 @@
 }
 
 .login-eyebrow {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 2.5px;
@@ -31,7 +31,7 @@
 }
 
 .login-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 2rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -58,7 +58,7 @@
 }
 
 .login-sub {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   color: #777;
   margin-bottom: 1.5rem;
@@ -79,7 +79,7 @@
   padding: 0.55rem 0;
   border: none;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
@@ -110,7 +110,7 @@
 }
 
 .login-field label {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.85rem;
   font-weight: 700;
   color: #444;
@@ -121,7 +121,7 @@
   padding: 0.7rem 1rem;
   border: 1.5px solid #ddd;
   border-radius: 10px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.9rem;
   color: #1a1a1a;
   outline: none;
@@ -144,7 +144,7 @@
   color: #ffffff;
   border: none;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
@@ -174,7 +174,7 @@
 }
 
 .login-or-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.85rem;
   color: #aaa;
 }
@@ -190,7 +190,7 @@
   background-color: #ffffff;
   border: 1.5px solid #ddd;
   border-radius: 50px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.95rem;
   font-weight: 700;
   color: #1a1a1a;
@@ -210,7 +210,7 @@
 }
 
 .login-error {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.85rem;
   color: #c0392b;
   text-align: center;

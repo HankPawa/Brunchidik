@@ -13,7 +13,7 @@
 
 
 .footer-slogan-mini {
-  font-family: 'Fraunces', serif;
+  font-family: 'DM Serif Display', serif;
   color: #fff;
   font-weight: 700;
   font-size: 1.5rem;
@@ -22,7 +22,7 @@
 
 .footer-subtitle {
   color: #888;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.92rem;
   margin-bottom: 1.4rem;
 }
@@ -74,7 +74,7 @@
 
 .footer-title {
   color: #fff;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
@@ -83,7 +83,7 @@
 }
 
 .footer-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.82rem;
   color: #777;
   margin: 3px 0;
@@ -93,7 +93,7 @@
 /* ── Bottom ── */
 .footer-bottom {
   text-align: center;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 0.75rem;
   color: #444;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
