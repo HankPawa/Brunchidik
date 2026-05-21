@@ -282,11 +282,12 @@ const Menu = () => {
       </section>
 
       <Footer />
-      <ProductModal 
-        key={modalItem?.id || 'empty'} 
-        item={modalItem} 
-        onClose={() => setModalItem(null)} 
-      />
+      {modalItem && (
+        <ProductModal 
+          item={modalItem} 
+          onClose={() => setModalItem(null)} 
+        />
+      )}
     </div>
   );
 };
