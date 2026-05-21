@@ -207,10 +207,20 @@ const Menu = () => {
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   useEffect(() => {
+    setLoading(true);
     fetch("/api/categorias")
-      .then((r) => r.json())
-      .then((data) => setCategorias(data))
-      .catch(() => setCategorias([]))
+      .then((r) => {
+        if (!r.ok) throw new Error(`Error ${r.status}: No se pudo obtener el menú`);
+        return r.json();
+      })
+      .then((data) => {
+        console.log("Datos del menú cargados:", data);
+        setCategorias(data);
+      })
+      .catch((err) => {
+        console.error("Error al cargar el menú:", err);
+        setCategorias([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -272,7 +282,11 @@ const Menu = () => {
       </section>
 
       <Footer />
-      <ProductModal item={modalItem} onClose={() => setModalItem(null)} />
+      <ProductModal 
+        key={modalItem?.id || 'empty'} 
+        item={modalItem} 
+        onClose={() => setModalItem(null)} 
+      />
     </div>
   );
 };
