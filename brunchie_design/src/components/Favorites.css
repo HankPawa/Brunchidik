@@ -1,5 +1,36 @@
+.fav-section {
+  padding: 5rem 1.5rem !important;
+}
+
 .fav-title {
   font-family: 'Fraunces', serif !important;
+  font-size: 2rem !important;
+  margin-bottom: 2.5rem !important;
+}
+
+.fav-carousel-wrap {
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .fav-section { padding: 3.5rem 1rem !important; }
+  .fav-title   { font-size: 1.5rem !important; }
+}
+
+.fav-card-name {
+  font-family: 'Fraunces', serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: .3rem;
+}
+
+.fav-card-desc {
+  font-family: 'Nunito', sans-serif;
+  font-size: .78rem;
+  color: #777;
+  line-height: 1.45;
+  margin: 0;
 }
 
 .custom-card {
@@ -20,7 +51,7 @@
 
 .carousel-container {
   width: min(500px, 100%);
-  height: 300px;
+  height: 240px;
   margin: 0 auto;
   perspective: 1000px;
 }
@@ -38,15 +69,67 @@
 }
 
 .fav-card {
-  width: 160px;
+  width: 120px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform-style: preserve-3d;
   transform: translate(-50%, -50%);
+  cursor: pointer;
 }
 
-/* mejora visual */
 .fav-card img {
   border-radius: 12px;
+}
+
+.fav-card--active {
+  box-shadow: 0 0 0 3px #1a1a1a, 0 10px 30px rgba(0,0,0,.2) !important;
+}
+
+/* Panel descripción */
+.fav-desc-panel {
+  position: relative;
+  max-width: 420px;
+  margin: 1.5rem auto 0;
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
+  border: 1.5px solid #f0ede8;
+  animation: fadeUp .25s ease;
+  text-align: left;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fav-desc-close {
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  background: none;
+  border: none;
+  font-size: .9rem;
+  color: #aaa;
+  cursor: pointer;
+  transition: color .2s;
+}
+.fav-desc-close:hover { color: #1a1a1a; }
+
+.fav-desc-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: .5rem;
+}
+
+.fav-desc-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: .9rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
 }

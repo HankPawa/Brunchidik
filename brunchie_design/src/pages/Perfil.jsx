@@ -1,13 +1,37 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import "./Perfil.css";
 
+const ESTADO_BADGE = {
+  PENDIENTE:      "badge--yellow",
+  EN_PREPARACION: "badge--blue",
+  EN_CAMINO:      "badge--orange",
+  ENTREGADO:      "badge--green",
+  CANCELADO:      "badge--gray",
+};
+
+const fmt = (n) => `$${Number(n).toLocaleString("es-CO")}`;
+const fmtFecha = (dt) => new Date(dt).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
+
 const Perfil = () => {
   const { user, toggle2fa, logout, changePassword } = useAuth();
   const navigate = useNavigate();
+
+  const [pedidos, setPedidos]         = useState([]);
+  const [pedidosLoading, setPedidosLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user?.suscrito || !user?.id) return;
+    setPedidosLoading(true);
+    fetch(`/api/pedidos/usuario/${user.id}`)
+      .then(r => r.json())
+      .then(data => setPedidos(Array.isArray(data) ? data : []))
+      .catch(() => setPedidos([]))
+      .finally(() => setPedidosLoading(false));
+  }, [user?.id, user?.suscrito]);
 
   const [pwActual, setPwActual]   = useState("");
   const [pwNueva, setPwNueva]     = useState("");
@@ -149,6 +173,56 @@ const Perfil = () => {
                 : <span className="badge badge--gray">2FA desactivada</span>}
             </div>
           </section>
+
+          {/* Historial de pedidos — solo premium */}
+          {user?.suscrito ? (
+            <section className="perfil-card">
+              <h2 className="perfil-section-title">Historial de pedidos</h2>
+              <div className="perfil-divider">
+                <span className="perfil-divider-line" />
+                <span className="perfil-divider-gem">✦</span>
+                <span className="perfil-divider-line" />
+              </div>
+
+              {pedidosLoading ? (
+                <p className="perfil-historial-empty">Cargando pedidos...</p>
+              ) : pedidos.length === 0 ? (
+                <p className="perfil-historial-empty">Aún no tienes pedidos registrados.</p>
+              ) : (
+                <div className="perfil-historial-wrap">
+                  {pedidos.map(p => (
+                    <div key={p.id} className="perfil-pedido-card">
+                      <div className="perfil-pedido-header">
+                        <span className="perfil-pedido-id">Pedido #{p.id}</span>
+                        <span className={`badge ${ESTADO_BADGE[p.estado] || "badge--gray"}`}>
+                          {p.estado?.replace("_", " ")}
+                        </span>
+                      </div>
+                      <div className="perfil-pedido-info">
+                        <span>{fmtFecha(p.fechaCreacion)}</span>
+                        <span>{p.direccion}</span>
+                        <span className="perfil-pedido-total">{fmt(p.total)}</span>
+                      </div>
+                      {p.fechaProgramada && (
+                        <p className="perfil-pedido-programado">
+                          Programado para: {new Date(p.fechaProgramada).toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          ) : (
+            <section className="perfil-card perfil-card--premium-hint">
+              <span className="perfil-premium-icon">✦</span>
+              <div>
+                <p className="perfil-premium-title">Historial de pedidos</p>
+                <p className="perfil-premium-sub">Disponible para miembros Premium.</p>
+              </div>
+              <Link to="/suscripcion" className="perfil-premium-btn">Ver planes</Link>
+            </section>
+          )}
 
           {/* Cerrar sesión */}
           <section className="perfil-card perfil-card--actions">

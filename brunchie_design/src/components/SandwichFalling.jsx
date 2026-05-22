@@ -27,6 +27,19 @@ const SandwichFalling = ({ heroSelector = ".hero-bg", rightOffset = 24 }) => {
     gsap.set(wrapper, { position: "fixed", top: 60, right: rightOffset, left: "auto", x: 0, y: -80, rotation: -12, opacity: 0 });
     gsap.set(caido,   { opacity: 0, scale: 0.8 });
 
+    // Umbral de progreso donde ocurre el impacto (85% del recorrido)
+    const IMPACT = 0.85;
+
+    const swapImagen = (progress) => {
+      if (progress >= IMPACT) {
+        gsap.set(volando, { opacity: 0 });
+        gsap.set(caido,   { opacity: 1, scale: 1 });
+      } else {
+        gsap.set(volando, { opacity: 1 });
+        gsap.set(caido,   { opacity: 0, scale: 0.8 });
+      }
+    };
+
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: hero,
@@ -34,6 +47,9 @@ const SandwichFalling = ({ heroSelector = ".hero-bg", rightOffset = 24 }) => {
         endTrigger: footer,
         end: "top bottom",
         scrub: 1.5,
+
+        // Controla el swap de imagen limpiamente por progreso, sin depender del scrub
+        onUpdate: (self) => swapImagen(self.progress),
 
         onLeave: () => {
           const footerTop = footer.getBoundingClientRect().top + window.scrollY;
@@ -54,8 +70,7 @@ const SandwichFalling = ({ heroSelector = ".hero-bg", rightOffset = 24 }) => {
             top: 60, right: rightOffset, left: "auto",
             y: "57vh", x: 0, rotation: 0, opacity: 1,
           });
-          gsap.set(volando, { opacity: 0 });
-          gsap.set(caido,   { opacity: 1, scale: 1 });
+          // La imagen la controla onUpdate según el progreso actual
         },
 
         onLeaveBack: () => {
@@ -80,18 +95,15 @@ const SandwichFalling = ({ heroSelector = ".hero-bg", rightOffset = 24 }) => {
       y: "20vh", x: 10, rotation: 5,
       ease: "none", duration: 0.25,
     })
-    // Fase 3: cae con aceleración controlada
+    // Fase 3: cae
     .to(wrapper, {
       y: "55vh", x: 20, rotation: 28,
       ease: "power1.in", duration: 0.4,
     })
-    // Fase 4: impacto
-    .to(volando, { opacity: 0, duration: 0.05 }, "-=0.05")
-    .to(caido,   { opacity: 1, scale: 1, duration: 0.08, ease: "back.out(1.5)" }, "<")
-    // Fase 5: queda quieto
+    // Fase 4: queda quieto (sin swap de imagen — lo hace onUpdate)
     .to(wrapper, {
       rotation: 0, x: 0, y: "57vh",
-      duration: 0.1, ease: "power1.out",
+      duration: 0.15, ease: "power1.out",
     });
 
     return () => ScrollTrigger.getAll().forEach(t => t.kill());

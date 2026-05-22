@@ -97,6 +97,7 @@ const Navbar = () => {
               <Link to="/perfil" className="nav-user-btn" onClick={closeMenu}>
                 <span className="nav-user-avatar">{initiales}</span>
                 <span className="nav-user-name">{user.nombre.split(" ")[0]}</span>
+                {user.suscrito && <span className="nav-premium-badge" title="Usuario Premium">✦</span>}
               </Link>
             </div>
           )}

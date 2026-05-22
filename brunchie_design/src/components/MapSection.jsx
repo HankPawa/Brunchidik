@@ -22,8 +22,9 @@ const MapSection = () => (
           <li>
             <span className="map-detail-icon"><Clock size={16} strokeWidth={1.8} /></span>
             <span>
-              Lun – Vie: 8:00 – 18:00<br />
-              Sáb – Dom: 9:00 – 17:00
+              Lun – Vie: 8:00 – 17:00<br />
+              Sábado: 9:00 – 16:00<br />
+              Domingo: Cerrado
             </span>
           </li>
           <li>

@@ -146,11 +146,27 @@ const Checkout = () => {
     return null;
   }
 
-  const horaValida = !programar || !horaProg || (horaProg >= "08:00" && horaProg <= "15:00");
+  const getHorarioPedido = (fechaStr) => {
+    if (!fechaStr) return null;
+    const dia = new Date(fechaStr + "T12:00:00").getDay();
+    if (dia === 0) return null;
+    if (dia === 6) return { min: "09:00", max: "16:00", label: "9:00 AM – 4:00 PM" };
+    return { min: "08:00", max: "17:00", label: "8:00 AM – 5:00 PM" };
+  };
+
+  const horarioPedido = getHorarioPedido(fechaProg);
+  const esDomingoPedido = fechaProg && new Date(fechaProg + "T12:00:00").getDay() === 0;
+  const horaValida = !programar || !horaProg || !horarioPedido ||
+    (horaProg >= horarioPedido.min && horaProg <= horarioPedido.max);
 
   const handleConfirm = async () => {
+    if (programar && esDomingoPedido) {
+      setError("No realizamos entregas los domingos.");
+      setShowModal(false);
+      return;
+    }
     if (programar && horaProg && !horaValida) {
-      setError("La hora de entrega debe ser entre las 8:00 AM y las 3:00 PM.");
+      setError(`La hora de entrega debe ser entre ${horarioPedido?.label || "8:00 AM – 5:00 PM"}.`);
       setShowModal(false);
       return;
     }
@@ -327,15 +343,17 @@ const Checkout = () => {
                     />
                   </div>
                   <div className="checkout-field">
-                    <label>Hora de entrega <span className="checkout-hora-hint">(8:00 AM – 3:00 PM)</span></label>
+                    <label>Hora de entrega {horarioPedido && <span className="checkout-hora-hint">({horarioPedido.label})</span>}</label>
                     <input
                       type="time"
-                      min="08:00"
-                      max="15:00"
+                      min={horarioPedido?.min || "08:00"}
+                      max={horarioPedido?.max || "17:00"}
                       value={horaProg}
                       onChange={(e) => setHoraProg(e.target.value)}
+                      disabled={esDomingoPedido}
                       required={programar}
                     />
+                    {esDomingoPedido && <span className="checkout-hora-hint" style={{color:"#c0392b"}}>No realizamos entregas los domingos</span>}
                   </div>
                 </div>
               )}
@@ -359,7 +377,7 @@ const Checkout = () => {
                 <button
                   type="button"
                   className="checkout-submit-btn"
-                  disabled={!payMethod || !direccion || !telefono || (programar && (!fechaProg || !horaProg || !horaValida))}
+                  disabled={!payMethod || !direccion || !telefono || (programar && (!fechaProg || !horaProg || !horaValida || esDomingoPedido))}
                   onClick={() => setShowModal(true)}
                 >
                   Continuar

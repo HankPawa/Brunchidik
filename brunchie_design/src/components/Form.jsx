@@ -40,7 +40,7 @@ const Form = () => {
           type="text"
           placeholder="Tu nombre"
           value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
+          onChange={(e) => setNombre(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, ""))}
           required
         />
       </label>
@@ -58,9 +58,11 @@ const Form = () => {
         Teléfono
         <input
           type="tel"
-          placeholder="+57 300 000 0000"
+          placeholder="3001234567"
+          inputMode="numeric"
+          maxLength={10}
           value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
+          onChange={(e) => setTelefono(e.target.value.replace(/\D/g, "").slice(0, 10))}
         />
       </label>
       <label>

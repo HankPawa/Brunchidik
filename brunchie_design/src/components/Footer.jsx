@@ -28,8 +28,9 @@ const Footer = () => {
 
           <div className="footer-col">
             <p className="footer-title">Horarios</p>
-            <p className="footer-text">L – V: 8:00 – 18:00</p>
-            <p className="footer-text">S – D: 9:00 – 17:00</p>
+            <p className="footer-text">Lun – Vie: 8:00 – 17:00</p>
+            <p className="footer-text">Sábado: 9:00 – 16:00</p>
+            <p className="footer-text">Domingo: Cerrado</p>
           </div>
         </div>
 

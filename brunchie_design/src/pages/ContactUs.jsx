@@ -44,7 +44,7 @@ const ContactUs = () => {
             <ul className="contact-list">
               <li>
                 <strong>Horario:</strong>
-                <span>Lun – Vie: 8:00 – 15:00</span>
+                <span>Lun – Vie: 8:00 – 17:00</span>
               </li>
               <li>
                 <strong>Sábado:</strong>

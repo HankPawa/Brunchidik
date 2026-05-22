@@ -28,6 +28,18 @@ const Reservas = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
+  // Horario según día: 0=Dom,1=Lun,...,6=Sáb
+  const getHorario = (fechaStr) => {
+    if (!fechaStr) return null;
+    const dia = new Date(fechaStr + "T12:00:00").getDay();
+    if (dia === 0) return null;                          // Domingo: cerrado
+    if (dia === 6) return { min: "09:00", max: "16:00", label: "9:00 AM – 4:00 PM" };
+    return { min: "08:00", max: "17:00", label: "8:00 AM – 5:00 PM" };
+  };
+
+  const horario = getHorario(fecha);
+  const esDomingo = fecha && new Date(fecha + "T12:00:00").getDay() === 0;
+
   const fetchMisReservas = async () => {
     if (!user?.id) return;
     try {
@@ -40,8 +52,16 @@ const Reservas = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    if (esDomingo) {
+      setError("No abrimos los domingos. Por favor elige otro día.");
+      return;
+    }
+    if (horario && (hora < horario.min || hora > horario.max)) {
+      setError(`La hora debe estar entre ${horario.label}.`);
+      return;
+    }
+    setLoading(true);
     try {
       const res = await fetch("/api/reservas", {
         method: "POST",
@@ -91,7 +111,7 @@ const Reservas = () => {
               <div className="reservas-row">
                 <div className="reservas-field">
                   <label>Nombre completo</label>
-                  <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+                  <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, ""))} required />
                 </div>
                 <div className="reservas-field">
                   <label>Correo electrónico</label>
@@ -104,8 +124,17 @@ const Reservas = () => {
                   <input type="date" min={today} value={fecha} onChange={(e) => setFecha(e.target.value)} required />
                 </div>
                 <div className="reservas-field">
-                  <label>Hora</label>
-                  <input type="time" min="08:00" max="17:00" value={hora} onChange={(e) => setHora(e.target.value)} required />
+                  <label>Hora {horario && <span className="reservas-hora-hint">({horario.label})</span>}</label>
+                  <input
+                    type="time"
+                    min={horario?.min || "08:00"}
+                    max={horario?.max || "17:00"}
+                    value={hora}
+                    onChange={(e) => setHora(e.target.value)}
+                    disabled={esDomingo}
+                    required
+                  />
+                  {esDomingo && <span className="reservas-hora-hint reservas-hora-cerrado">No abrimos los domingos</span>}
                 </div>
               </div>
               <div className="reservas-row">
