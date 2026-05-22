@@ -36,7 +36,7 @@ const ContactUs = () => {
             <span className="contact-eyebrow">Encuéntranos</span>
             <h2 className="contact-heading">Visítanos o escríbenos</h2>
             <p className="contact-body">
-              En Brunch & Co. te esperamos con desayunos y almuerzos preparados con
+              En Brunch & Co. te esperamos con desayunos y brunch preparados con
               ingredientes frescos y sabor casero. Ven a relajarte en un ambiente
               acogedor y disfruta de nuestras especialidades.
             </p>
