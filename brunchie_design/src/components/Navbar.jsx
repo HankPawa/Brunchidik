@@ -15,10 +15,16 @@ const Navbar = () => {
   const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
+    const yaAnimado = sessionStorage.getItem("nav_animated");
     const ctx = gsap.context(() => {
-      gsap.from(".nav-animate", {
-        y: -20, opacity: 0, duration: 0.5, stagger: 0.08, ease: "power2.out",
-      });
+      if (!yaAnimado) {
+        gsap.from(".nav-animate", {
+          y: -20, opacity: 0, duration: 0.5, stagger: 0.08, ease: "power2.out",
+          onComplete: () => sessionStorage.setItem("nav_animated", "1"),
+        });
+      } else {
+        gsap.set(".nav-animate", { y: 0, opacity: 1 });
+      }
     }, navRef);
     return () => ctx.revert();
   }, []);
