@@ -106,7 +106,8 @@ const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
                   type="text"
                   placeholder="1234567890"
                   inputMode="numeric"
-                  onInput={e => e.target.value = e.target.value.replace(/\D/g, "")}
+                  maxLength={11}
+                  onInput={e => e.target.value = e.target.value.replace(/\D/g, "").slice(0, 11)}
                 />
               </div>
             </div>
@@ -151,7 +152,7 @@ const Checkout = () => {
     const dia = new Date(fechaStr + "T12:00:00").getDay();
     if (dia === 0) return null;
     if (dia === 6) return { min: "09:00", max: "16:00", label: "9:00 AM – 4:00 PM" };
-    return { min: "08:00", max: "17:00", label: "8:00 AM – 5:00 PM" };
+    return { min: "08:00", max: "16:00", label: "8:00 AM – 4:00 PM" };
   };
 
   const horarioPedido = getHorarioPedido(fechaProg);
@@ -273,7 +274,7 @@ const Checkout = () => {
                   type="text"
                   placeholder="Calle 10 # 5-23, Apto 301"
                   value={direccion}
-                  onChange={(e) => setDireccion(e.target.value)}
+                  onChange={(e) => setDireccion(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s#\-\.]/g, ""))}
                   required
                 />
               </div>
@@ -316,6 +317,9 @@ const Checkout = () => {
                     />
                     Programar pedido para una fecha y hora específica
                   </label>
+                  <p className="checkout-programar-nota">
+                    Pedidos programados disponibles de lunes a sábado hasta las <strong>4:00 PM</strong>. No se realizan entregas los domingos.
+                  </p>
                 </div>
               ) : (
                 <div className="checkout-field">

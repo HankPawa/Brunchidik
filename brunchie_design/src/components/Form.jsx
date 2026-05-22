@@ -50,7 +50,7 @@ const Form = () => {
           type="email"
           placeholder="tucorreo@ejemplo.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value.replace(/[^a-zA-Z0-9@#\-\.]/g, ""))}
           required
         />
       </label>

@@ -103,7 +103,7 @@ const Reservas = () => {
                 </div>
                 <div className="reservas-field">
                   <label>Correo electrónico</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value.replace(/[^a-zA-Z0-9@#\-\.]/g, ""))} required />
                 </div>
               </div>
               <div className="reservas-row">

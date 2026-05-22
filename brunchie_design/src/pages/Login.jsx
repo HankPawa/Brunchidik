@@ -109,11 +109,23 @@ const Login = () => {
             <form className="login-form" onSubmit={handleLogin}>
               <div className="login-field">
                 <label>Correo electrónico</label>
-                <input type="email" placeholder="tucorreo@ejemplo.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input
+                  type="email"
+                  placeholder="tucorreo@ejemplo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value.replace(/[^a-zA-Z0-9@#\-\.]/g, ""))}
+                  required
+                />
               </div>
               <div className="login-field">
                 <label>Contraseña</label>
-                <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
               {loginError && <p className="login-error">{loginError}</p>}
               <button type="submit" className="login-submit-btn" disabled={loginLoading}>
@@ -140,15 +152,33 @@ const Login = () => {
               </div>
               <div className="login-field">
                 <label>Correo electrónico</label>
-                <input type="email" placeholder="tucorreo@ejemplo.com" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} required />
+                <input
+                  type="email"
+                  placeholder="tucorreo@ejemplo.com"
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value.replace(/[^a-zA-Z0-9@#\-\.]/g, ""))}
+                  required
+                />
               </div>
               <div className="login-field">
                 <label>Contraseña</label>
-                <input type="password" placeholder="••••••••" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} required />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={regPassword}
+                  onChange={(e) => setRegPassword(e.target.value)}
+                  required
+                />
               </div>
               <div className="login-field">
                 <label>Confirmar contraseña</label>
-                <input type="password" placeholder="••••••••" value={regConfirm} onChange={(e) => setRegConfirm(e.target.value)} required />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={regConfirm}
+                  onChange={(e) => setRegConfirm(e.target.value)}
+                  required
+                />
               </div>
               {regMsg.text && (
                 <p className={`login-error ${regMsg.ok ? "login-success" : ""}`}>{regMsg.text}</p>
