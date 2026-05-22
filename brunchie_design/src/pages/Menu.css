@@ -384,5 +384,84 @@
   letter-spacing: 0.04em;
 }
 
+/* ── Botón Agregar ── */
+.flip-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin-top: 1rem;
+  width: 100%;
+  padding: .75rem 1rem;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  cursor: pointer;
+  transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+.flip-add-btn:hover {
+  background: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
+}
+.flip-add-btn:active { transform: scale(.97); }
+
+/* ── Carrito flotante (FAB) ── */
+.menu-cart-fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .8rem 1.25rem;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(0,0,0,.3);
+  transition: transform .2s ease, box-shadow .2s ease;
+  animation: fabIn .3s cubic-bezier(.175,.885,.32,1.275);
+}
+.menu-cart-fab:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+
+.menu-cart-fab-count {
+  background: #b08968;
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+@keyframes fabIn {
+  from { transform: scale(.6) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0);     opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .menu-cart-fab { bottom: 1.25rem; right: 1.25rem; padding: .7rem 1rem; font-size: .82rem; }
+  .menu-cart-fab-label { display: none; }
+}
+
 
 

@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import SandwichFalling from "../components/SandwichFalling";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, ShoppingBag } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useCart } from "../context/CartContext";
 import ProductModal from "../components/ProductModal";
 import pancakes from "../assets/pancakes.jpg";
 import avocado from "../assets/avocado.jpg";
@@ -200,6 +201,7 @@ const CategorySlider = ({ categoria, onOpenModal }) => {
 /* ── Página principal ── */
 const Menu = () => {
   const pageRef   = useRef(null);
+  const { count, setIsOpen } = useCart();
   const [modalItem, setModalItem] = useState(null);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -282,10 +284,20 @@ const Menu = () => {
       </section>
 
       <Footer />
+
+      {/* Carrito flotante */}
+      {count > 0 && (
+        <button className="menu-cart-fab" onClick={() => setIsOpen(true)}>
+          <ShoppingBag size={20} strokeWidth={1.8} />
+          <span className="menu-cart-fab-label">Ver carrito</span>
+          <span className="menu-cart-fab-count">{count}</span>
+        </button>
+      )}
+
       {modalItem && (
-        <ProductModal 
-          item={modalItem} 
-          onClose={() => setModalItem(null)} 
+        <ProductModal
+          item={modalItem}
+          onClose={() => setModalItem(null)}
         />
       )}
     </div>
