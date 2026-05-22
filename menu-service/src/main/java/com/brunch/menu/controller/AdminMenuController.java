@@ -5,6 +5,7 @@ import com.brunch.menu.model.MenuItem;
 import com.brunch.menu.repository.CategoriaRepository;
 import com.brunch.menu.repository.MenuItemRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +43,10 @@ public class AdminMenuController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        menuItemRepository.deleteById(id);
+        if (!menuItemRepository.existsById(id)) return ResponseEntity.notFound().build();
+        menuItemRepository.deleteDirectly(id);
         return ResponseEntity.noContent().build();
     }
 

@@ -72,7 +72,12 @@ const AdminPanel = () => {
   };
   const handleDelete = async (id) => {
     if (!confirm("¿Eliminar este producto?")) return;
-    await fetch(`/api/admin/menu/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/menu/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const txt = await res.text().catch(() => res.status);
+      alert(`Error al eliminar: ${res.status} — ${txt}`);
+      return;
+    }
     fetchProductos();
   };
   const handleSubmit = async (e) => {
