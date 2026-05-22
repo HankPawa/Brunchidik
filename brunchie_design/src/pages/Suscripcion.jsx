@@ -41,9 +41,19 @@ const PagoModal = ({ plan, onClose, onConfirm, loading }) => {
 
   const validar = () => {
     if (card.numero.replace(/\s/g, "").length < 16) return "El número de tarjeta debe tener 16 dígitos.";
-    if (!/^\d{2}\/\d{2}$/.test(card.vencimiento))   return "Fecha de vencimiento inválida (MM/AA).";
-    if (card.cvv.length < 3)                          return "CVV debe tener mínimo 3 dígitos.";
-    if (!card.nombre.trim())                          return "Ingresa el nombre tal como aparece en la tarjeta.";
+
+    if (!/^\d{2}\/\d{2}$/.test(card.vencimiento)) return "Fecha de vencimiento inválida (MM/AA).";
+    const [mm, aa] = card.vencimiento.split("/").map(Number);
+    const ahora     = new Date();
+    const mesActual = ahora.getMonth() + 1;
+    const aaActual  = ahora.getFullYear() % 100;
+    const aaMax     = (ahora.getFullYear() + 4) % 100;
+    if (mm < 1 || mm > 12) return "El mes de vencimiento debe estar entre 01 y 12.";
+    if (aa > aaMax)         return `El año no puede superar el ${ahora.getFullYear() + 4}.`;
+    if (aa < aaActual || (aa === aaActual && mm < mesActual)) return "La tarjeta está vencida.";
+
+    if (card.cvv.length < 3)   return "CVV debe tener mínimo 3 dígitos.";
+    if (!card.nombre.trim())   return "Ingresa el nombre tal como aparece en la tarjeta.";
     return "";
   };
 

@@ -17,11 +17,22 @@ const fmt = (n) => `$${Number(n).toLocaleString("es-CO")}`;
 const fmtFecha = (dt) => new Date(dt).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
 
 const Perfil = () => {
-  const { user, toggle2fa, logout, changePassword } = useAuth();
+  const { user, toggle2fa, logout, changePassword, actualizarUsuario } = useAuth();
   const navigate = useNavigate();
 
-  const [pedidos, setPedidos]         = useState([]);
+  const [pedidos, setPedidos]               = useState([]);
   const [pedidosLoading, setPedidosLoading] = useState(false);
+  const [cancelandoSus, setCancelándoSus]   = useState(false);
+
+  const handleCancelarSuscripcion = async () => {
+    if (!confirm("¿Seguro que quieres cancelar tu suscripción Premium?")) return;
+    setCancelándoSus(true);
+    try {
+      const res = await fetch(`/api/usuarios/${user.id}/suscripcion?activo=false`, { method: "PATCH" });
+      if (res.ok) actualizarUsuario({ suscrito: false });
+    } catch {}
+    finally { setCancelándoSus(false); }
+  };
 
   useEffect(() => {
     if (!user?.suscrito || !user?.id) return;
@@ -67,9 +78,21 @@ const Perfil = () => {
           <div className="perfil-header">
             <div className="perfil-avatar">{initiales}</div>
             <div>
-              <h1 className="perfil-nombre">{user?.nombre}</h1>
+              <h1 className="perfil-nombre">
+                {user?.nombre}
+                {user?.suscrito && <span className="perfil-premium-tag">✦ Premium</span>}
+              </h1>
               <p className="perfil-email">{user?.email}</p>
             </div>
+            {user?.suscrito && (
+              <button
+                className="perfil-btn-cancelar-sus"
+                onClick={handleCancelarSuscripcion}
+                disabled={cancelandoSus}
+              >
+                {cancelandoSus ? "Cancelando..." : "Cancelar Premium"}
+              </button>
+            )}
           </div>
 
           {/* Información */}

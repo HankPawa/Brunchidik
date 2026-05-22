@@ -15,8 +15,32 @@ const PAYMENT_METHODS = [
   { id: "pse",      label: "PSE" },
 ];
 
+const validarVencimiento = (vencimiento) => {
+  if (!/^\d{2}\/\d{2}$/.test(vencimiento)) return "Formato inválido (MM/AA).";
+  const [mm, aa] = vencimiento.split("/").map(Number);
+  const ahora     = new Date();
+  const mesActual = ahora.getMonth() + 1;
+  const aaActual  = ahora.getFullYear() % 100;
+  const aaMax     = (ahora.getFullYear() + 4) % 100;
+  if (mm < 1 || mm > 12) return "El mes debe estar entre 01 y 12.";
+  if (aa > aaMax)         return `El año no puede superar el ${ahora.getFullYear() + 4}.`;
+  if (aa < aaActual || (aa === aaActual && mm < mesActual)) return "La tarjeta está vencida.";
+  return "";
+};
+
 const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
   const isCard = method === "debito" || method === "credito";
+  const [vencimiento, setVencimiento] = useState("");
+  const [vencErr, setVencErr]         = useState("");
+
+  const handleConfirmarPago = () => {
+    if (isCard) {
+      const err = validarVencimiento(vencimiento);
+      if (err) { setVencErr(err); return; }
+    }
+    onConfirm();
+  };
+
   return (
     <div className="pay-overlay" onClick={onClose}>
       <div className="pay-modal" onClick={(e) => e.stopPropagation()}>
@@ -54,12 +78,15 @@ const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
                   placeholder="MM/AA"
                   maxLength={5}
                   inputMode="numeric"
-                  onInput={e => {
+                  value={vencimiento}
+                  onChange={e => {
                     let v = e.target.value.replace(/\D/g, "");
-                    if (v.length >= 2) v = v.slice(0,2) + "/" + v.slice(2);
-                    e.target.value = v;
+                    if (v.length >= 2) v = v.slice(0, 2) + "/" + v.slice(2);
+                    setVencimiento(v);
+                    setVencErr("");
                   }}
                 />
+                {vencErr && <span className="pay-field-err">{vencErr}</span>}
               </div>
               <div className="pay-field">
                 <label>CVV</label>
@@ -116,7 +143,7 @@ const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
 
         <div className="pay-modal-actions">
           <button className="pay-btn-cancel" onClick={onClose} disabled={loading}>Cancelar</button>
-          <button className="pay-btn-confirm" onClick={onConfirm} disabled={loading}>
+          <button className="pay-btn-confirm" onClick={handleConfirmarPago} disabled={loading}>
             {loading ? "Procesando..." : "Confirmar pago"}
           </button>
         </div>

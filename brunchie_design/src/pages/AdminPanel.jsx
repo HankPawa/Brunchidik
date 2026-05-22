@@ -23,7 +23,7 @@ const AdminPanel = () => {
   const [tab, setTab] = useState("productos");
   const [uploading, setUploading] = useState(false);
 
-  const handleImageUpload = async (e, setForm, form) => {
+  const handleImageUpload = async (e, setForm) => {
     const file = e.target.files[0];
     if (!file) return;
     setUploading(true);
@@ -31,12 +31,19 @@ const AdminPanel = () => {
     data.append("file", file);
     data.append("upload_preset", CLOUDINARY_PRESET);
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: data });
+      const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: data });
       const json = await res.json();
-      if (json.secure_url) setForm({ ...form, imagenUrl: json.secure_url });
-      else alert("Error al subir la imagen");
-    } catch { alert("Error de conexión con Cloudinary"); }
-    finally { setUploading(false); }
+      if (json.secure_url) {
+        setForm(prev => ({ ...prev, imagenUrl: json.secure_url }));
+      } else {
+        const msg = json.error?.message || JSON.stringify(json);
+        alert(`Error Cloudinary: ${msg}`);
+      }
+    } catch (err) {
+      alert(`Error de conexión: ${err.message}`);
+    } finally {
+      setUploading(false);
+    }
   };
 
   // Productos
@@ -270,7 +277,7 @@ const AdminPanel = () => {
                 <div className="admin-img-upload">
                   <label className="admin-img-upload-btn">
                     {uploading ? "Subiendo..." : "📁 Subir archivo"}
-                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={e => handleImageUpload(e, setForm, form)} disabled={uploading} />
+                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={e => handleImageUpload(e, setForm)} disabled={uploading} />
                   </label>
                   <input type="text" placeholder="O pega una URL..." value={form.imagenUrl} onChange={e => setForm({...form, imagenUrl: e.target.value})} />
                 </div>

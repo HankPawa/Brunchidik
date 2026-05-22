@@ -217,6 +217,7 @@
 }
 .checkout-error { font-family: 'Nunito', sans-serif; font-size: .85rem; color: #c0392b; text-align: center; margin: 0; }
 .checkout-hora-hint { font-weight: 400; color: #aaa; font-size: .78rem; }
+.pay-field-err { font-family: 'Nunito', sans-serif; font-size: .78rem; color: #c0392b; margin-top: .15rem; }
 .checkout-programar-nota { font-family: 'Nunito', sans-serif; font-size: .8rem; color: #888; margin: .4rem 0 0; line-height: 1.5; }
 .checkout-submit-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
 .checkout-submit-btn:not(:disabled):hover { background-color: #333; transform: translateY(-1px); }

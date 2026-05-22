@@ -194,8 +194,11 @@
   border-radius: 50px;
 }
 
-.badge--green { background: #eafaf1; color: #27ae60; }
-.badge--gray  { background: #f0ede8; color: #999; }
+.badge--yellow { background: #fef9e7; color: #7a5800; }
+.badge--blue   { background: #eaf4ff; color: #1a6ea8; }
+.badge--orange { background: #fef5e7; color: #9c4e00; }
+.badge--green  { background: #eafaf1; color: #1a6e3c; }
+.badge--gray   { background: #f0ede8; color: #5a5a5a; }
 
 /* Google account card */
 .perfil-card--google {
@@ -333,6 +336,12 @@
 .perfil-btn-logout:hover { background: #fdf0ee; border-color: #c0392b; }
 
 /* Historial de pedidos */
+.perfil-premium-tag { font-family: 'Nunito', sans-serif; font-size: .72rem; font-weight: 700; color: #b08968; background: #fdf5ec; border: 1px solid #e8cba8; border-radius: 50px; padding: .15rem .55rem; margin-left: .5rem; vertical-align: middle; letter-spacing: .5px; }
+
+.perfil-btn-cancelar-sus { margin-left: auto; padding: .5rem 1.1rem; background: transparent; color: #c0392b; border: 1.5px solid #e0a0a0; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .2s ease, color .2s ease; white-space: nowrap; flex-shrink: 0; }
+.perfil-btn-cancelar-sus:hover { background: #fdf0ee; }
+.perfil-btn-cancelar-sus:disabled { opacity: .6; cursor: not-allowed; }
+
 .perfil-historial-empty { font-family: 'Nunito', sans-serif; font-size: .9rem; color: #aaa; text-align: center; padding: 1.5rem 0; margin: 0; }
 
 .perfil-historial-wrap { display: flex; flex-direction: column; gap: .75rem; }
@@ -357,14 +366,6 @@
 .perfil-premium-btn { margin-left: auto; white-space: nowrap; padding: .45rem 1rem; background: #1a1a1a; color: #fff; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: .82rem; font-weight: 700; text-decoration: none; transition: background .2s ease; flex-shrink: 0; }
 .perfil-premium-btn:hover { background: #333; }
 
-/* Badges de estado pedido */
-.badge--yellow { background: #fef9e7; color: #d4a017; }
-.badge--blue   { background: #eaf4ff; color: #2980b9; }
-.badge--orange { background: #fef5e7; color: #e67e22; }
-.badge--green  { background: #eafaf1; color: #27ae60; }
-.badge--gray   { background: #f0ede8; color: #999; }
-
-.badge { font-family: 'Nunito', sans-serif; font-size: .72rem; font-weight: 700; letter-spacing: .5px; padding: .2rem .6rem; border-radius: 50px; text-transform: uppercase; }
 
 @media (max-width: 500px) {
   .perfil-card--actions { flex-direction: column; }
