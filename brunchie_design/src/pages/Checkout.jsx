@@ -261,8 +261,8 @@ const Checkout = () => {
                   type="text" 
                   value={nombre} 
                   onChange={(e) => {
-                    // Bloquea números: elimina cualquier dígito del 0 al 9
-                    setNombre(e.target.value.replace(/[0-9]/g, ""));
+                    // Permite solo letras y espacios, bloqueando números y caracteres especiales
+                    setNombre(e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, ""));
                   }} 
                   required 
                 />

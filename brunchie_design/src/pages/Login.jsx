@@ -127,7 +127,16 @@ const Login = () => {
             <form className="login-form" onSubmit={handleRegister}>
               <div className="login-field">
                 <label>Nombre completo</label>
-                <input type="text" placeholder="Tu nombre" value={regNombre} onChange={(e) => setRegNombre(e.target.value)} required />
+                <input 
+                  type="text" 
+                  placeholder="Tu nombre" 
+                  value={regNombre} 
+                  onChange={(e) => {
+                    const soloLetras = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, "");
+                    setRegNombre(soloLetras);
+                  }} 
+                  required 
+                />
               </div>
               <div className="login-field">
                 <label>Correo electrónico</label>
