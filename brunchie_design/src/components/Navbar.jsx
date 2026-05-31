@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingBag, LayoutDashboard } from "lucide-react";
+import { ShoppingBag, LayoutDashboard, Sun, Moon } from "lucide-react";
 import gsap from "gsap";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useDarkMode } from "../context/DarkModeContext";
 import "./Navbar.css";
 
 const Navbar = () => {
   const navRef = useRef(null);
   const { count, setIsOpen } = useCart();
   const { user } = useAuth();
+  const { dark, toggle: toggleDark } = useDarkMode();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
@@ -68,6 +70,12 @@ const Navbar = () => {
           <Link to="/about" className="navbar-item nav-link nav-animate" onClick={closeMenu}>Nosotros</Link>
           <Link to="/contact" className="navbar-item nav-link nav-animate" onClick={closeMenu}>Contacto</Link>
           <Link to="/suscripcion" className="navbar-item nav-link nav-animate" onClick={closeMenu}>Premium</Link>
+
+          <div className="navbar-item nav-animate">
+            <button className="dark-toggle-btn" onClick={toggleDark} title={dark ? "Modo claro" : "Modo oscuro"} aria-label={dark ? "Activar modo claro" : "Activar modo oscuro"}>
+              {dark ? <Sun size={18} strokeWidth={1.8} /> : <Moon size={18} strokeWidth={1.8} />}
+            </button>
+          </div>
 
           <div className="navbar-item nav-animate">
             <button className="cart-icon-btn" onClick={() => { setIsOpen(true); closeMenu(); }}>

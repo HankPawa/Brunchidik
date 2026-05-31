@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
@@ -7,6 +9,10 @@ import "./ReservaExitosa.css";
 const ReservaExitosa = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title = "Reserva confirmada | Brunch & Co.";
+    toast.success(`¡Reserva confirmada, ${user?.nombre?.split(" ")[0] || ""}! Te esperamos.`, { duration: 5000 });
+  }, []);
   return (
     <>
       <Navbar />

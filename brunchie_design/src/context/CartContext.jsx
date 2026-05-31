@@ -1,15 +1,23 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext(null);
 
 const SHIPPING = 5000;
+const CART_KEY = "brunch_cart";
 
 const parsePrice = (priceStr) =>
   parseInt(priceStr.replace(/\$|\./g, ""), 10) || 0;
 
 export const CartProvider = ({ children }) => {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || "[]"); }
+    catch { return []; }
+  });
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+  }, [items]);
 
   const addToCart = (item, qty = 1) => {
     setItems((prev) => {

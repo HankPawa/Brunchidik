@@ -101,11 +101,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const toggle2fa = async (activo) => {
-    if (!user?.id) return;
+    if (!user?.id) return { ok: false };
     try {
       const res = await fetch(`/api/usuarios/${user.id}/2fa?activo=${activo}`, { method: "PATCH" });
-      if (res.ok) setUser(await res.json());
-    } catch {}
+      if (res.ok) { setUser(await res.json()); return { ok: true, activo }; }
+      return { ok: false };
+    } catch { return { ok: false }; }
   };
 
   const actualizarUsuario = (datos) => {

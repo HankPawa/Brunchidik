@@ -384,6 +384,30 @@
   letter-spacing: 0.04em;
 }
 
+/* ── Botón favorito ── */
+.flip-fav-btn {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 2;
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.2s ease, transform 0.15s ease, background 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+.flip-fav-btn:hover { color: #e05050; transform: scale(1.12); }
+.flip-fav-btn.is-fav { color: #e05050; }
+
 /* ── Botón Agregar ── */
 .flip-add-btn {
   display: inline-flex;
@@ -461,6 +485,97 @@
 @media (max-width: 480px) {
   .menu-cart-fab { bottom: 1.25rem; right: 1.25rem; padding: .7rem 1rem; font-size: .82rem; }
   .menu-cart-fab-label { display: none; }
+}
+
+/* ── Barra de búsqueda ── */
+.menu-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 480px;
+  margin: 0 auto 2.5rem;
+}
+
+.menu-search-icon {
+  position: absolute;
+  left: 1rem;
+  color: #aaa;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.menu-search-input {
+  width: 100%;
+  padding: 0.75rem 2.75rem 0.75rem 2.75rem;
+  border: 1.5px solid #e8e2da;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  color: #1a1a1a;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.menu-search-input:focus {
+  border-color: #1a1a1a;
+  box-shadow: 0 0 0 3px rgba(26,26,26,0.06);
+}
+.menu-search-input::placeholder { color: #bbb; }
+
+.menu-search-clear {
+  position: absolute;
+  right: 0.85rem;
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: color 0.15s ease;
+}
+.menu-search-clear:hover { color: #1a1a1a; }
+
+.menu-no-results {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  color: #888;
+  text-align: center;
+  padding: 3rem 0;
+}
+
+/* ── Skeleton de carga ── */
+.skeleton {
+  background: linear-gradient(90deg, #ede9e3 25%, #f5f2ee 50%, #ede9e3 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  border-radius: 12px;
+}
+
+.menu-skeleton-wrap { display: flex; flex-direction: column; gap: 3rem; }
+
+.menu-skeleton-category { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.skeleton-title {
+  height: 32px;
+  width: 200px;
+  border-radius: 8px;
+}
+
+.menu-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.skeleton-card { height: 340px; border-radius: 18px; }
+
+@media (max-width: 900px) {
+  .menu-skeleton-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 580px) {
+  .menu-skeleton-grid { grid-template-columns: 1fr; }
 }
 
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -7,6 +7,7 @@ import "./ForgotPassword.css";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  useEffect(() => { document.title = "Recuperar contrasena | Brunch & Co."; }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

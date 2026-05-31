@@ -1,12 +1,29 @@
 @echo off
-echo Iniciando microservicios...
+echo ============================================
+echo   Iniciando Brunch ^& Co. (modo desarrollo)
+echo ============================================
 
-start "usuario-service" cmd /k "cd usuario-service && mvn spring-boot:run"
-start "menu-service"    cmd /k "cd menu-service    && mvn spring-boot:run"
-start "pedido-service"  cmd /k "cd pedido-service  && mvn spring-boot:run"
-start "reserva-service" cmd /k "cd reserva-service && mvn spring-boot:run"
-start "contacto-service" cmd /k "cd contacto-service && mvn spring-boot:run"
+set ROOT=%~dp0
 
-echo Servicios iniciando en ventanas separadas.
-echo Espera a que todos muestren "Started" antes de correr el frontend.
+start "usuario-service"  cmd /k "cd /d %ROOT%usuario-service  && mvn spring-boot:run"
+timeout /t 3 /nobreak >nul
+start "menu-service"     cmd /k "cd /d %ROOT%menu-service     && mvn spring-boot:run"
+timeout /t 3 /nobreak >nul
+start "pedido-service"   cmd /k "cd /d %ROOT%pedido-service   && mvn spring-boot:run"
+timeout /t 3 /nobreak >nul
+start "reserva-service"  cmd /k "cd /d %ROOT%reserva-service  && mvn spring-boot:run"
+timeout /t 3 /nobreak >nul
+start "contacto-service" cmd /k "cd /d %ROOT%contacto-service && mvn spring-boot:run"
+
+echo.
+echo Todos los servicios backend iniciando...
+echo Espera ~30 segundos a que aparezca "Started" en cada ventana.
+echo.
+timeout /t 30 /nobreak
+
+start "frontend" cmd /k "cd /d %ROOT%brunchie_design && npm run dev"
+
+echo.
+echo Frontend iniciando en http://localhost:5173
+echo.
 pause

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
@@ -138,6 +139,7 @@ const PagoModal = ({ plan, onClose, onConfirm, loading }) => {
 const Suscripcion = () => {
   const { user, actualizarUsuario } = useAuth();
   const navigate = useNavigate();
+  useEffect(() => { document.title = "Premium | Brunch & Co."; }, []);
   const [planSeleccionado, setPlanSeleccionado] = useState(null);
   const [loading, setLoading] = useState(false);
   const [exito, setExito] = useState(false);
@@ -152,9 +154,10 @@ const Suscripcion = () => {
       actualizarUsuario(updated);
       setExito(true);
       setPlanSeleccionado(null);
+      toast.success("¡Suscripción activada! Bienvenido a Premium ✦");
       setTimeout(() => navigate("/menu"), 2500);
     } catch {
-      alert("Error al procesar el pago. Inténtalo de nuevo.");
+      toast.error("Error al procesar el pago. Inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }

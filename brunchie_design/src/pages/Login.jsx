@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
+import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
@@ -8,6 +9,7 @@ import "./Login.css";
 
 const Login = () => {
   const [mode, setMode] = useState("login");
+  useEffect(() => { document.title = mode === "login" ? "Iniciar sesión | Brunch & Co." : "Crear cuenta | Brunch & Co."; }, [mode]);
 
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +20,7 @@ const Login = () => {
   const [regEmail, setRegEmail]     = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regConfirm, setRegConfirm] = useState("");
-  const [regMsg, setRegMsg]         = useState({ text: "", ok: false });
+  const [regError, setRegError]     = useState("");
   const [regLoading, setRegLoading] = useState(false);
 
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -45,15 +47,15 @@ const Login = () => {
       return;
     }
     setRegLoading(true);
-    setRegMsg({ text: "", ok: false });
+    setRegError("");
     const result = await register(regNombre, regEmail, regPassword);
     setRegLoading(false);
     if (result.ok) {
-      setRegMsg({ text: "¡Cuenta creada! Ya puedes iniciar sesión.", ok: true });
+      toast.success("¡Cuenta creada! Ya puedes iniciar sesión.");
       setRegNombre(""); setRegEmail(""); setRegPassword(""); setRegConfirm("");
-      setTimeout(() => setMode("login"), 1500);
+      setTimeout(() => setMode("login"), 1200);
     } else {
-      setRegMsg({ text: result.error, ok: false });
+      setRegError(result.error);
     }
   };
 
@@ -180,9 +182,7 @@ const Login = () => {
                   required
                 />
               </div>
-              {regMsg.text && (
-                <p className={`login-error ${regMsg.ok ? "login-success" : ""}`}>{regMsg.text}</p>
-              )}
+              {regError && <p className="login-error">{regError}</p>}
               <button type="submit" className="login-submit-btn" disabled={regLoading}>
                 {regLoading ? "Creando cuenta..." : "Crear cuenta"}
               </button>

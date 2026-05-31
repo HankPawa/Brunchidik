@@ -1,7 +1,10 @@
 package com.brunch.pedido.controller;
 
+import com.brunch.pedido.model.AuditLog;
 import com.brunch.pedido.model.Pedido;
+import com.brunch.pedido.repository.AuditLogRepository;
 import com.brunch.pedido.repository.PedidoRepository;
+import com.brunch.pedido.service.PedidoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -11,9 +14,15 @@ import java.util.List;
 public class AdminPedidoController {
 
     private final PedidoRepository pedidoRepository;
+    private final PedidoService pedidoService;
+    private final AuditLogRepository auditLogRepository;
 
-    public AdminPedidoController(PedidoRepository pedidoRepository) {
-        this.pedidoRepository = pedidoRepository;
+    public AdminPedidoController(PedidoRepository pedidoRepository,
+                                 PedidoService pedidoService,
+                                 AuditLogRepository auditLogRepository) {
+        this.pedidoRepository    = pedidoRepository;
+        this.pedidoService       = pedidoService;
+        this.auditLogRepository  = auditLogRepository;
     }
 
     @GetMapping
@@ -21,10 +30,23 @@ public class AdminPedidoController {
         return pedidoRepository.findAll();
     }
 
+    @GetMapping("/audit")
+    public List<AuditLog> listarAudit() {
+        return auditLogRepository.findTop100ByOrderByFechaDesc();
+    }
+
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Pedido> actualizarEstado(@PathVariable Long id, @RequestParam Pedido.Estado estado) {
-        return pedidoRepository.findById(id)
-                .map(p -> { p.setEstado(estado); return ResponseEntity.ok(pedidoRepository.save(p)); })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            Pedido actualizado = pedidoService.actualizarEstado(id, estado);
+            auditLogRepository.save(new AuditLog(
+                "CAMBIAR_ESTADO_PEDIDO",
+                "Cambió el pedido #" + id + " a " + estado.name(),
+                "pedidos"
+            ));
+            return ResponseEntity.ok(actualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

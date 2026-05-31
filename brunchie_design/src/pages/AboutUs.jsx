@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Heart, Leaf, Users } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -22,6 +23,7 @@ const values = [
 ];
 
 const AboutUs = () => {
+  useEffect(() => { document.title = "Nosotros | Brunch & Co."; }, []);
   return (
     <>
       <Navbar />

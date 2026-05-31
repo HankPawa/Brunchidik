@@ -41,6 +41,18 @@ export default defineConfig({
         target: 'http://localhost:8085',
         changeOrigin: true,
       },
+      '/ws-pedidos': {
+        target: 'http://localhost:8083',
+        ws: true,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ws-pedidos/, '/ws'),
+      },
+      '/ws-reservas': {
+        target: 'http://localhost:8084',
+        ws: true,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ws-reservas/, '/ws'),
+      },
     },
     headers: {
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',

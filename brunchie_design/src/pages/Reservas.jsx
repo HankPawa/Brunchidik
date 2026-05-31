@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
@@ -23,9 +24,9 @@ const Reservas = () => {
   const [ocasion, setOcasion]         = useState("");
   const [notas, setNotas]             = useState("");
   const [loading, setLoading]         = useState(false);
-  const [error, setError]             = useState("");
   const [misReservas, setMisReservas] = useState([]);
 
+  useEffect(() => { document.title = "Reservas | Brunch & Co."; }, []);
   const today = new Date().toISOString().split("T")[0];
 
   const fetchMisReservas = async () => {
@@ -41,7 +42,6 @@ const Reservas = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
     try {
       const res = await fetch("/api/reservas", {
         method: "POST",
@@ -56,7 +56,7 @@ const Reservas = () => {
       if (!res.ok) throw new Error();
       navigate("/reserva-exitosa");
     } catch {
-      setError("No se pudo crear la reserva. Inténtalo de nuevo.");
+      toast.error("No se pudo crear la reserva. Inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -64,8 +64,13 @@ const Reservas = () => {
 
   const handleCancelar = async (id) => {
     if (!confirm("¿Cancelar esta reserva?")) return;
-    await fetch(`/api/reservas/${id}`, { method: "DELETE" });
-    fetchMisReservas();
+    const res = await fetch(`/api/reservas/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      toast.success("Reserva cancelada correctamente.");
+      fetchMisReservas();
+    } else {
+      toast.error("No se pudo cancelar la reserva.");
+    }
   };
 
   const formatFecha = (f) =>
@@ -145,8 +150,6 @@ const Reservas = () => {
                   onChange={(e) => setNotas(e.target.value)}
                 />
               </div>
-
-              {error && <p className="reservas-error">{error}</p>}
 
               <button type="submit" className="reservas-submit-btn" disabled={loading}>
                 {loading ? "Enviando..." : "Confirmar reserva"}

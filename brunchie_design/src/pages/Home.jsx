@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Features from "../components/Features";
@@ -5,8 +6,10 @@ import Favorites from "../components/Favorites";
 import MapSection from "../components/MapSection";
 import Footer from "../components/Footer";
 import SandwichFalling from "../components/SandwichFalling";
+import WhatsApp from "../components/WhatsApp";
 
 const Home = () => {
+  useEffect(() => { document.title = "Brunch & Co. — El mejor brunch de la ciudad"; }, []);
   return (
     <>
       <SandwichFalling heroSelector=".hero-bg" />
@@ -16,6 +19,7 @@ const Home = () => {
       <Favorites />
       <MapSection />
       <Footer />
+      <WhatsApp />
     </>
   );
 };

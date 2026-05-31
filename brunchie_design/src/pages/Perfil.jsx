@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
+import { useWebSocket } from "../hooks/useWebSocket";
 import "./Perfil.css";
 
 const ESTADO_BADGE = {
@@ -13,25 +16,83 @@ const ESTADO_BADGE = {
   CANCELADO:      "badge--gray",
 };
 
+const TIMELINE_STEPS = ["PENDIENTE", "EN_PREPARACION", "EN_CAMINO", "ENTREGADO"];
+const TIMELINE_LABELS = { PENDIENTE: "Pendiente", EN_PREPARACION: "Preparando", EN_CAMINO: "En camino", ENTREGADO: "Entregado" };
+
+const OrderTimeline = ({ estado }) => {
+  if (estado === "CANCELADO") {
+    return <p className="perfil-pedido-cancelado">✕ Pedido cancelado</p>;
+  }
+  const activeIdx = TIMELINE_STEPS.indexOf(estado);
+  return (
+    <div className="pedido-timeline">
+      {TIMELINE_STEPS.map((step, idx) => (
+        <div key={step} className={`pedido-timeline-step${idx <= activeIdx ? " active" : ""}${idx === activeIdx ? " current" : ""}`}>
+          <div className="pedido-timeline-dot" />
+          {idx < TIMELINE_STEPS.length - 1 && <div className="pedido-timeline-line" />}
+          <span className="pedido-timeline-label">{TIMELINE_LABELS[step]}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const fmt = (n) => `$${Number(n).toLocaleString("es-CO")}`;
 const fmtFecha = (dt) => new Date(dt).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
 
+const Countdown = ({ fechaProgramada }) => {
+  const [label, setLabel] = useState("");
+  useEffect(() => {
+    const calc = () => {
+      const diff = new Date(fechaProgramada) - Date.now();
+      if (diff <= 0) { setLabel("¡En camino!"); return; }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setLabel(h > 0 ? `Llega en ${h}h ${m}min` : `Llega en ${m}min ${s}s`);
+    };
+    calc();
+    const id = setInterval(calc, 1000);
+    return () => clearInterval(id);
+  }, [fechaProgramada]);
+  return <span className="perfil-countdown">{label}</span>;
+};
+
 const Perfil = () => {
   const { user, toggle2fa, logout, changePassword, actualizarUsuario } = useAuth();
+  const { favorites, toggle: toggleFav } = useFavorites();
   const navigate = useNavigate();
+
+  useEffect(() => { document.title = "Mi perfil | Brunch & Co."; }, []);
 
   const [pedidos, setPedidos]               = useState([]);
   const [pedidosLoading, setPedidosLoading] = useState(false);
   const [cancelandoSus, setCancelándoSus]   = useState(false);
+
+  const wsTopic = useMemo(
+    () => (user?.id ? [`/topic/usuario/${user.id}/pedido`] : []),
+    [user?.id]
+  );
+  useWebSocket("/ws-pedidos", wsTopic, (_topic, data) => {
+    setPedidos(prev => prev.map(p => p.id === data.id ? data : p));
+  });
 
   const handleCancelarSuscripcion = async () => {
     if (!confirm("¿Seguro que quieres cancelar tu suscripción Premium?")) return;
     setCancelándoSus(true);
     try {
       const res = await fetch(`/api/usuarios/${user.id}/suscripcion?activo=false`, { method: "PATCH" });
-      if (res.ok) actualizarUsuario({ suscrito: false });
-    } catch {}
-    finally { setCancelándoSus(false); }
+      if (res.ok) {
+        actualizarUsuario({ suscrito: false });
+        toast.success("Suscripción Premium cancelada.");
+      } else {
+        toast.error("No se pudo cancelar la suscripción.");
+      }
+    } catch {
+      toast.error("No se pudo cancelar la suscripción.");
+    } finally {
+      setCancelándoSus(false);
+    }
   };
 
   useEffect(() => {
@@ -47,7 +108,6 @@ const Perfil = () => {
   const [pwActual, setPwActual]   = useState("");
   const [pwNueva, setPwNueva]     = useState("");
   const [pwConfirm, setPwConfirm] = useState("");
-  const [pwMsg, setPwMsg]         = useState({ text: "", ok: false });
   const [pwLoading, setPwLoading] = useState(false);
 
   const handleLogout = () => { logout(); navigate("/"); };
@@ -55,14 +115,18 @@ const Perfil = () => {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (pwNueva !== pwConfirm) {
-      setPwMsg({ text: "Las contraseñas nuevas no coinciden.", ok: false });
+      toast.error("Las contraseñas nuevas no coinciden.");
       return;
     }
     setPwLoading(true);
     const result = await changePassword(pwActual, pwNueva);
     setPwLoading(false);
-    setPwMsg(result);
-    if (result.ok) { setPwActual(""); setPwNueva(""); setPwConfirm(""); }
+    if (result.ok) {
+      toast.success(result.text);
+      setPwActual(""); setPwNueva(""); setPwConfirm("");
+    } else {
+      toast.error(result.text);
+    }
   };
 
   const initiales = user?.nombre
@@ -156,9 +220,6 @@ const Perfil = () => {
                   <label>Confirmar nueva contraseña</label>
                   <input type="password" placeholder="••••••••" value={pwConfirm} onChange={(e) => setPwConfirm(e.target.value)} required />
                 </div>
-                {pwMsg.text && (
-                  <p className={`perfil-msg ${pwMsg.ok ? "perfil-msg--ok" : "perfil-msg--err"}`}>{pwMsg.text}</p>
-                )}
                 <button type="submit" className="perfil-btn-pw" disabled={pwLoading}>
                   {pwLoading ? "Guardando..." : "Guardar contraseña"}
                 </button>
@@ -185,7 +246,11 @@ const Perfil = () => {
               </div>
               <button
                 className={`perfil-toggle ${user?.dosFaActivo ? "perfil-toggle--on" : ""}`}
-                onClick={() => toggle2fa(!user?.dosFaActivo)}
+                onClick={async () => {
+                  const res = await toggle2fa(!user?.dosFaActivo);
+                  if (res?.ok) toast.success(res.activo ? "2FA activada correctamente." : "2FA desactivada.");
+                  else toast.error("No se pudo cambiar la configuración de 2FA.");
+                }}
               >
                 <span className="perfil-toggle-thumb" />
               </button>
@@ -217,19 +282,22 @@ const Perfil = () => {
                     <div key={p.id} className="perfil-pedido-card">
                       <div className="perfil-pedido-header">
                         <span className="perfil-pedido-id">Pedido #{p.id}</span>
-                        <span className={`badge ${ESTADO_BADGE[p.estado] || "badge--gray"}`}>
-                          {p.estado?.replace("_", " ")}
-                        </span>
+                        <span className="perfil-pedido-fecha">{fmtFecha(p.fechaCreacion)}</span>
                       </div>
                       <div className="perfil-pedido-info">
-                        <span>{fmtFecha(p.fechaCreacion)}</span>
                         <span>{p.direccion}</span>
                         <span className="perfil-pedido-total">{fmt(p.total)}</span>
                       </div>
+                      <OrderTimeline estado={p.estado} />
                       {p.fechaProgramada && (
-                        <p className="perfil-pedido-programado">
-                          Programado para: {new Date(p.fechaProgramada).toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })}
-                        </p>
+                        <div className="perfil-pedido-programado-row">
+                          <span className="perfil-pedido-programado">
+                            {new Date(p.fechaProgramada).toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })}
+                          </span>
+                          {p.estado !== "ENTREGADO" && p.estado !== "CANCELADO" && (
+                            <Countdown fechaProgramada={p.fechaProgramada} />
+                          )}
+                        </div>
                       )}
                     </div>
                   ))}
@@ -244,6 +312,33 @@ const Perfil = () => {
                 <p className="perfil-premium-sub">Disponible para miembros Premium.</p>
               </div>
               <Link to="/suscripcion" className="perfil-premium-btn">Ver planes</Link>
+            </section>
+          )}
+
+          {/* Favoritos */}
+          {favorites.length > 0 && (
+            <section className="perfil-card">
+              <h2 className="perfil-section-title">Mis favoritos</h2>
+              <div className="perfil-divider">
+                <span className="perfil-divider-line" />
+                <span className="perfil-divider-gem">✦</span>
+                <span className="perfil-divider-line" />
+              </div>
+              <div className="perfil-favoritos-grid">
+                {favorites.map(item => (
+                  <div key={item.id} className="perfil-fav-item">
+                    {item.imagenUrl && (
+                      <img src={item.imagenUrl} alt={item.nombre} className="perfil-fav-img" />
+                    )}
+                    <div className="perfil-fav-info">
+                      <span className="perfil-fav-nombre">{item.nombre}</span>
+                      <span className="perfil-fav-precio">${Number(item.precio).toLocaleString("es-CO")}</span>
+                    </div>
+                    <button className="perfil-fav-remove" onClick={() => toggleFav(item)} aria-label="Quitar de favoritos">♥</button>
+                  </div>
+                ))}
+              </div>
+              <Link to="/menu" className="perfil-fav-link">Ver menú completo</Link>
             </section>
           )}
 

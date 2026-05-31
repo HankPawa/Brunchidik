@@ -2,6 +2,7 @@ package com.brunch.pedido.service;
 
 import com.brunch.pedido.model.Pedido;
 import com.brunch.pedido.repository.PedidoRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -9,9 +10,11 @@ import java.util.List;
 public class PedidoServiceImpl implements PedidoService {
 
     private final PedidoRepository pedidoRepository;
+    private final SimpMessagingTemplate ws;
 
-    public PedidoServiceImpl(PedidoRepository pedidoRepository) {
+    public PedidoServiceImpl(PedidoRepository pedidoRepository, SimpMessagingTemplate ws) {
         this.pedidoRepository = pedidoRepository;
+        this.ws = ws;
     }
 
     @Override
@@ -19,7 +22,9 @@ public class PedidoServiceImpl implements PedidoService {
         if (pedido.getDetalles() != null) {
             pedido.getDetalles().forEach(d -> d.setPedido(pedido));
         }
-        return pedidoRepository.save(pedido);
+        Pedido guardado = pedidoRepository.save(pedido);
+        ws.convertAndSend("/topic/admin/pedidos", guardado);
+        return guardado;
     }
 
     @Override
@@ -37,6 +42,9 @@ public class PedidoServiceImpl implements PedidoService {
     public Pedido actualizarEstado(Long id, Pedido.Estado estado) {
         Pedido pedido = buscarPorId(id);
         pedido.setEstado(estado);
-        return pedidoRepository.save(pedido);
+        Pedido actualizado = pedidoRepository.save(pedido);
+        ws.convertAndSend("/topic/usuario/" + actualizado.getUsuarioId() + "/pedido", actualizado);
+        ws.convertAndSend("/topic/admin/pedidos/estado", actualizado);
+        return actualizado;
     }
 }

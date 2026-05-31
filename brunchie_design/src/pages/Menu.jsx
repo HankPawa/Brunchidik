@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
 import SandwichFalling from "../components/SandwichFalling";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ChevronLeft, ChevronRight, X, ShoppingBag } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, ShoppingBag, Search } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import WhatsApp from "../components/WhatsApp";
 import { useCart } from "../context/CartContext";
+import { useFavorites } from "../context/FavoritesContext";
 import ProductModal from "../components/ProductModal";
 import pancakes from "../assets/pancakes.jpg";
 import avocado from "../assets/avocado.jpg";
@@ -43,7 +46,19 @@ const PAGE_SIZE = 3;
 const FlipCard = ({ item, onOpenModal }) => {
   const [flipped, setFlipped]     = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const { toggle, isFav } = useFavorites();
   const img = imageMap[item.nombre] || item.imagenUrl || null;
+  const fav = isFav(item.id);
+
+  const handleFav = (e) => {
+    e.stopPropagation();
+    const wasFav = isFav(item.id);
+    toggle({ id: item.id, nombre: item.nombre, precio: item.precio, descripcion: item.descripcion, imagenUrl: img });
+    toast(wasFav ? `${item.nombre} eliminado de favoritos` : `${item.nombre} agregado a favoritos`, {
+      icon: wasFav ? "💔" : "♥",
+      duration: 2000,
+    });
+  };
 
   return (
     <div
@@ -54,6 +69,9 @@ const FlipCard = ({ item, onOpenModal }) => {
     >
       <div className="flip-inner">
         <div className="flip-front">
+          <button className={`flip-fav-btn${fav ? " is-fav" : ""}`} onClick={handleFav} aria-label={fav ? "Quitar de favoritos" : "Agregar a favoritos"}>
+            {fav ? "♥" : "♡"}
+          </button>
           {img ? (
             <div className="flip-img-wrap">
               {!imgLoaded && <div className="flip-img-skeleton" />}
@@ -198,6 +216,22 @@ const CategorySlider = ({ categoria, onOpenModal }) => {
   );
 };
 
+/* ── Skeleton de carga ── */
+const MenuSkeleton = () => (
+  <div className="menu-skeleton-wrap">
+    {[1, 2].map((s) => (
+      <div key={s} className="menu-skeleton-category">
+        <div className="skeleton skeleton-title" />
+        <div className="menu-skeleton-grid">
+          {[1, 2, 3].map((c) => (
+            <div key={c} className="skeleton skeleton-card" />
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 /* ── Página principal ── */
 const Menu = () => {
   const pageRef   = useRef(null);
@@ -205,7 +239,9 @@ const Menu = () => {
   const [modalItem, setModalItem] = useState(null);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading]     = useState(true);
+  const [busqueda, setBusqueda]   = useState("");
 
+  useEffect(() => { document.title = "Menú | Brunch & Co."; }, []);
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   useEffect(() => {
@@ -269,17 +305,44 @@ const Menu = () => {
 
       <section className="section has-background-white">
         <div className="container">
+          <div className="menu-search-wrap">
+            <Search size={18} className="menu-search-icon" />
+            <input
+              type="text"
+              className="menu-search-input"
+              placeholder="Buscar platos, bebidas..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+            {busqueda && (
+              <button className="menu-search-clear" onClick={() => setBusqueda("")} aria-label="Limpiar búsqueda">
+                <X size={16} />
+              </button>
+            )}
+          </div>
+
           {loading ? (
-            <p className="menu-loading">Cargando menú...</p>
-          ) : (
-            categorias.map((cat) => (
+            <MenuSkeleton />
+          ) : (() => {
+            const q = busqueda.trim().toLowerCase();
+            const filtradas = q
+              ? categorias
+                  .map((cat) => ({ ...cat, items: (cat.items || []).filter((i) => i.nombre.toLowerCase().includes(q) || (i.descripcion || "").toLowerCase().includes(q)) }))
+                  .filter((cat) => cat.items.length > 0)
+              : categorias;
+
+            if (q && filtradas.length === 0) {
+              return <p className="menu-no-results">No se encontraron resultados para "<strong>{busqueda}</strong>".</p>;
+            }
+
+            return filtradas.map((cat) => (
               <div key={cat.id} className="menu-category">
                 <h2 className="menu-category-title">{cat.nombre}</h2>
                 <div className="divider" />
                 <CategorySlider categoria={cat} onOpenModal={setModalItem} />
               </div>
-            ))
-          )}
+            ));
+          })()}
         </div>
       </section>
 
@@ -293,6 +356,8 @@ const Menu = () => {
           <span className="menu-cart-fab-count">{count}</span>
         </button>
       )}
+
+      <WhatsApp />
 
       {modalItem && (
         <ProductModal

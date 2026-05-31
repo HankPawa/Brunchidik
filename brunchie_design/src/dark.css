@@ -1,0 +1,257 @@
+/* Dark mode — applied when <html class="dark"> */
+
+html.dark { color-scheme: dark; --audit-bg: #161616; --audit-border: #2a2a2a; }
+
+html.dark body {
+  background: #111;
+  color: #e8e2da;
+}
+
+/* ── Navbar ── */
+html.dark .navbar-custom { background-color: #161616 !important; border-bottom-color: #2a2a2a !important; }
+html.dark .navbar-menu.is-active { background: #161616 !important; border-top-color: #2a2a2a !important; }
+html.dark .brand-name { color: #e8e2da !important; }
+html.dark .nav-link { color: #999 !important; }
+html.dark .nav-link:hover { color: #e8e2da !important; background: transparent !important; }
+html.dark .nav-link::after { background-color: #e8e2da; }
+html.dark .reservar-btn { background-color: #c9a84c; color: #111; }
+html.dark .reservar-btn:hover { background-color: #b5923e; }
+html.dark .cart-icon-btn { color: #999; }
+html.dark .cart-icon-btn:hover { color: #e8e2da; }
+html.dark .cart-badge { background-color: #c9a84c; color: #111; }
+html.dark .nav-user-btn { border-color: #333; background: transparent; }
+html.dark .nav-user-btn:hover { border-color: #555; background: #1e1e1e; }
+html.dark .nav-user-avatar { background: #c9a84c; color: #111; }
+html.dark .nav-user-name { color: #e8e2da; }
+html.dark .admin-nav-btn { color: #999; }
+html.dark .admin-nav-btn:hover { background: #2a2a2a; color: #e8e2da; }
+html.dark .nav-burger span { background-color: #e8e2da; }
+html.dark .nav-premium-badge { background: #2a1f0e; border-color: #5a3e1e; color: #c9a84c; }
+
+/* Dark toggle button */
+html.dark .dark-toggle-btn { color: #c9a84c; }
+
+/* ── Bulma overrides ── */
+html.dark .has-background-light { background-color: #161616 !important; }
+html.dark .has-background-white { background-color: #111 !important; }
+html.dark .section { background: #111 !important; }
+
+/* ── Page mains ── */
+html.dark .perfil-main,
+html.dark .admin-main { background: #111; }
+
+/* ── Cards ── */
+html.dark .perfil-card {
+  background: #1e1e1e;
+  box-shadow: 0 4px 20px rgba(0,0,0,.35);
+}
+html.dark .perfil-card--google { border-color: #333 !important; }
+html.dark .perfil-section-title,
+html.dark .perfil-nombre,
+html.dark .perfil-2fa-title,
+html.dark .perfil-info-value,
+html.dark .perfil-pedido-id,
+html.dark .perfil-pedido-total { color: #e8e2da; }
+html.dark .perfil-email,
+html.dark .perfil-info-label,
+html.dark .perfil-2fa-desc,
+html.dark .perfil-info-muted,
+html.dark .perfil-pedido-info { color: #666; }
+html.dark .perfil-info-item { background: #161616; }
+html.dark .perfil-divider-line { background-color: #2a2a2a; }
+html.dark .perfil-field label { color: #999; }
+html.dark .perfil-field input {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+  color: #e8e2da;
+}
+html.dark .perfil-field input:focus { border-color: #c9a84c; }
+html.dark .perfil-toggle { background: #2a2a2a; }
+html.dark .perfil-toggle--on { background: #c9a84c; }
+html.dark .perfil-toggle-thumb { background: #e8e2da; }
+html.dark .perfil-btn-logout { color: #e07070; border-color: #5a2a2a; }
+html.dark .perfil-btn-logout:hover { background: #2a1515; }
+html.dark .perfil-card--premium-hint {
+  background: linear-gradient(135deg, #1e1a14, #2a2014) !important;
+  border-color: #3a3020 !important;
+}
+html.dark .perfil-premium-title { color: #e8e2da; }
+html.dark .perfil-premium-sub { color: #777; }
+html.dark .perfil-pedido-card { border-color: #2a2a2a; }
+html.dark .perfil-historial-empty { color: #555; }
+html.dark .pedido-timeline-label { color: #555; }
+html.dark .pedido-timeline-step.active .pedido-timeline-label,
+html.dark .pedido-timeline-step.current .pedido-timeline-label { color: #c9a84c; font-weight: 700; }
+html.dark .pedido-timeline-step.active .pedido-timeline-dot { background: #c9a84c; border-color: #c9a84c; }
+html.dark .pedido-timeline-step.current .pedido-timeline-dot { background: #111; border-color: #c9a84c; }
+html.dark .pedido-timeline-step.active .pedido-timeline-line { background: #c9a84c; }
+html.dark .pedido-timeline-dot { background: #2a2a2a; border-color: #2a2a2a; }
+html.dark .pedido-timeline-line { background: #2a2a2a; }
+
+/* ── Admin Panel ── */
+html.dark .admin-eyebrow { color: #555; }
+html.dark .admin-title { color: #e8e2da; }
+html.dark .admin-table-wrap { background: #1e1e1e; box-shadow: 0 4px 20px rgba(0,0,0,.35); }
+html.dark .admin-table th { background: #161616; border-bottom-color: #2a2a2a; color: #888; }
+html.dark .admin-table td { color: #aaa; border-bottom-color: #2a2a2a; }
+html.dark .admin-table tr:hover td { background: #252525; }
+html.dark .admin-td-name { color: #e8e2da; }
+html.dark .admin-tabs { border-bottom-color: #2a2a2a; }
+html.dark .admin-tab { color: #555; }
+html.dark .admin-tab:hover,
+html.dark .admin-tab--active { color: #e8e2da; background: #2a2a2a; }
+html.dark .admin-tab-count { background: #c9a84c; color: #111; }
+html.dark .admin-modal { background: #1e1e1e; }
+html.dark .admin-modal-title { color: #e8e2da; }
+html.dark .admin-field label { color: #999; }
+html.dark .admin-field input,
+html.dark .admin-field select,
+html.dark .admin-field textarea { background: #2a2a2a; border-color: #3a3a3a; color: #e8e2da; }
+html.dark .admin-field input:focus,
+html.dark .admin-field select:focus,
+html.dark .admin-field textarea:focus { border-color: #c9a84c; }
+html.dark .admin-btn-cancel { border-color: #3a3a3a; color: #888; }
+html.dark .admin-btn-cancel:hover { border-color: #666; }
+html.dark .admin-btn-edit { background: #2a2a2a; color: #e8e2da; }
+html.dark .admin-btn-edit:hover { background: #333; }
+html.dark .admin-img-upload-btn { background: #2a2a2a; color: #e8e2da; }
+html.dark .admin-img-upload-btn:hover { background: #333; }
+html.dark .admin-img-upload input[type="text"] { background: #2a2a2a; border-color: #3a3a3a; color: #e8e2da; }
+html.dark .admin-estado-select { background: #2a2a2a; border-color: #3a3a3a; color: #e8e2da; }
+html.dark .admin-empty { color: #444; }
+html.dark .admin-filter-input { background: #2a2a2a; border-color: #3a3a3a; color: #e8e2da; }
+html.dark .admin-filter-input::placeholder { color: #555; }
+
+/* ── Report cards ── */
+html.dark .report-kpi-card { background: #1e1e1e; box-shadow: 0 4px 20px rgba(0,0,0,.35); }
+html.dark .report-kpi-card--accent { background: #0a0a0a; }
+html.dark .report-kpi-value { color: #e8e2da; }
+html.dark .report-kpi-card--accent .report-kpi-value { color: #c9a84c; }
+html.dark .report-kpi-label { color: #444; }
+html.dark .report-kpi-card--accent .report-kpi-label { color: rgba(232,226,218,.4); }
+html.dark .report-chart-card { background: #1e1e1e; box-shadow: 0 4px 20px rgba(0,0,0,.35); }
+html.dark .report-chart-title { color: #e8e2da; }
+
+/* ── Calendar ── */
+html.dark .reserva-cal-wrap { background: #1e1e1e; border-color: #2a2a2a; }
+html.dark .reserva-cal-header { border-bottom-color: #2a2a2a; }
+html.dark .reserva-cal-title { color: #e8e2da; }
+html.dark .reserva-cal-nav-btn { color: #aaa; background: #2a2a2a; }
+html.dark .reserva-cal-nav-btn:hover { background: #3a3a3a; color: #e8e2da; }
+html.dark .reserva-cal-weekday { color: #555; }
+html.dark .reserva-cal-day { background: #161616; border-color: #2a2a2a; color: #888; }
+html.dark .reserva-cal-day--has { background: #1e2a1e; border-color: #2a5a2a; }
+html.dark .reserva-cal-daynum { color: #aaa; }
+html.dark .reserva-cal-day--has .reserva-cal-daynum { color: #e8e2da; }
+
+/* ── Menu page ── */
+html.dark .flip-front { background: #1e1e1e !important; box-shadow: 0 4px 20px rgba(0,0,0,.35); }
+html.dark .flip-card:hover .flip-front { box-shadow: 0 10px 32px rgba(0,0,0,.5); }
+html.dark .menu-item-name { color: #e8e2da; }
+html.dark .flip-hint { color: #555; }
+html.dark .flip-back { background: linear-gradient(160deg, #181310 0%, #221a12 100%) !important; box-shadow: 0 4px 20px rgba(0,0,0,.4); }
+html.dark .flip-back-name { color: #e8e2da; }
+html.dark .flip-back-desc { color: #888; }
+html.dark .flip-back-close { color: #555; }
+html.dark .flip-img-skeleton { background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%); }
+html.dark .flip-img-placeholder { background: #2a2a2a; }
+html.dark .skeleton { background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%); }
+html.dark .cat-slider-arrow { background: #2a2a2a; }
+html.dark .cat-slider-arrow:hover:not(:disabled) { background: #3a3a3a; color: #e8e2da; }
+html.dark .cat-slider-arrow:disabled { background: #1a1a1a; color: #666; }
+html.dark .cat-slider-dot { background: #333; }
+html.dark .cat-slider-dot.active { background: #c9a84c; }
+html.dark .menu-search-wrap { background: #1e1e1e; border-color: #2a2a2a; }
+html.dark .menu-search-input { background: transparent; color: #e8e2da; }
+html.dark .menu-search-input::placeholder { color: #555; }
+html.dark .menu-search-icon { color: #555; }
+html.dark .menu-category-title { color: #e8e2da; }
+html.dark .divider { background: #2a2a2a !important; }
+html.dark .cat-ver-todo { color: #c9a84c; border-color: #c9a84c; }
+html.dark .cat-ver-todo:hover { background: #c9a84c; color: #111; }
+html.dark .catalogo-modal { background: #1e1e1e; }
+html.dark .catalogo-title { color: #e8e2da; }
+html.dark .catalogo-close { background: #2a2a2a; color: #e8e2da; }
+html.dark .flip-fav-btn { background: rgba(30,30,30,.85); color: #ccc; border-color: rgba(255,255,255,.1); }
+html.dark .flip-fav-btn.is-fav { color: #e05050; }
+html.dark .menu-no-results { color: #666; }
+
+/* ── Favoritos (sección Home) ── */
+html.dark .fav-section { background-color: #161616 !important; }
+html.dark .fav-card.card { background: #1e1e1e !important; }
+html.dark .fav-card-name { color: #e8e2da; }
+html.dark .fav-card--active { box-shadow: 0 0 0 3px #c9a84c, 0 10px 30px rgba(0,0,0,.4) !important; }
+html.dark .fav-desc-panel { background: #1e1e1e; border-color: #2a2a2a; }
+html.dark .fav-desc-name { color: #e8e2da; }
+html.dark .fav-desc-text { color: #888; }
+html.dark .fav-desc-close { color: #555; }
+html.dark .fav-desc-close:hover { color: #e8e2da; }
+html.dark .fav-title { color: #e8e2da; }
+
+/* ── Favoritos en Perfil ── */
+html.dark .perfil-fav-item { background: #161616; border-color: #2a2a2a; }
+html.dark .perfil-fav-nombre { color: #e8e2da; }
+html.dark .perfil-fav-precio { color: #c9a84c; }
+html.dark .perfil-fav-link { color: #c9a84c; border-color: #c9a84c; }
+html.dark .perfil-fav-link:hover { background: #c9a84c; color: #111; }
+
+/* ── Badges ── */
+html.dark .badge--yellow { background: #2a2000; color: #c9a84c; }
+html.dark .badge--blue   { background: #001a2a; color: #5ab0e0; }
+html.dark .badge--orange { background: #2a1500; color: #e09050; }
+html.dark .badge--green  { background: #002a14; color: #72d99a; }
+html.dark .badge--gray   { background: #2a2a2a; color: #aaa; }
+html.dark .admin-badge.badge--green { background: #002a14; color: #72d99a; }
+html.dark .admin-badge.badge--gray  { background: #2a2a2a; color: #aaa; }
+
+/* ── CartDrawer ── */
+html.dark .cart-drawer { background: #1e1e1e; box-shadow: -4px 0 30px rgba(0,0,0,.5); }
+html.dark .cart-header { border-bottom-color: #2a2a2a; }
+html.dark .cart-title { color: #e8e2da; }
+html.dark .cart-close { color: #666; }
+html.dark .cart-close:hover { color: #e8e2da; }
+html.dark .cart-item-name { color: #e8e2da; }
+html.dark .cart-item-price { color: #888; }
+html.dark .cart-item-qty { background: #2a2a2a; }
+html.dark .cart-item-qty button { color: #e8e2da; }
+html.dark .cart-item-qty button:hover { background: #3a3a3a; }
+html.dark .cart-item-remove { color: #555; }
+html.dark .cart-item-remove:hover { color: #e07070; }
+html.dark .cart-footer { border-top-color: #2a2a2a; }
+html.dark .cart-breakdown-row { color: #888; }
+html.dark .cart-breakdown-total { border-top-color: #2a2a2a; color: #e8e2da; }
+html.dark .cart-total-price { color: #e8e2da; }
+html.dark .cart-clear-btn { border-color: #2a2a2a; color: #666; }
+html.dark .cart-clear-btn:hover { border-color: #c0392b; color: #e07070; }
+
+/* ── Página Reservas ── */
+html.dark .reservas-main { background-color: #111 !important; }
+html.dark .reservas-card { background: #1e1e1e; box-shadow: 0 4px 30px rgba(0,0,0,.35); }
+html.dark .reservas-title { color: #e8e2da; }
+html.dark .reservas-eyebrow { color: #666; }
+html.dark .reservas-sub { color: #777; }
+html.dark .reservas-divider-line { background-color: #2a2a2a; }
+html.dark .reservas-field label { color: #999; }
+html.dark .reservas-field input,
+html.dark .reservas-field select,
+html.dark .reservas-field textarea { background-color: #2a2a2a; border-color: #3a3a3a; color: #e8e2da; }
+html.dark .reservas-field input:focus,
+html.dark .reservas-field select:focus,
+html.dark .reservas-field textarea:focus { border-color: #c9a84c; }
+html.dark .reservas-field input::placeholder,
+html.dark .reservas-field textarea::placeholder { color: #555; }
+html.dark .reservas-field select option { background: #2a2a2a; color: #e8e2da; }
+html.dark .reservas-submit-btn:disabled { background-color: #2a2a2a; color: #666; }
+html.dark .reservas-hora-hint { color: #666; }
+html.dark .mis-reservas { background: #1e1e1e; box-shadow: 0 4px 30px rgba(0,0,0,.35); }
+html.dark .mis-reservas-title { color: #e8e2da; }
+html.dark .mis-reservas-item { border-color: #2a2a2a; }
+html.dark .mis-reservas-fecha { color: #e8e2da; }
+html.dark .mis-reservas-personas { color: #666; }
+html.dark .mis-reservas-cancelar { background: #2a1515; color: #e07070; }
+html.dark .mis-reservas-cancelar:hover { background: #3a1a1a; }
+
+/* ── General inputs ── */
+html.dark input, html.dark select, html.dark textarea {
+  color-scheme: dark;
+}

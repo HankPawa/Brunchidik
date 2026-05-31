@@ -367,6 +367,147 @@
 .perfil-premium-btn:hover { background: #333; }
 
 
+/* Order timeline */
+.pedido-timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin: 0.75rem 0 0.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.pedido-timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  min-width: 60px;
+}
+
+.pedido-timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ddd;
+  border: 2px solid #ddd;
+  flex-shrink: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  z-index: 1;
+}
+
+.pedido-timeline-step.active .pedido-timeline-dot {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+.pedido-timeline-step.current .pedido-timeline-dot {
+  background: #fff;
+  border-color: #1a1a1a;
+  box-shadow: 0 0 0 3px rgba(26,26,26,0.15);
+}
+
+.pedido-timeline-line {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: #ddd;
+  z-index: 0;
+}
+
+.pedido-timeline-step.active .pedido-timeline-line { background: #1a1a1a; }
+
+.pedido-timeline-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  color: #bbb;
+  margin-top: 0.4rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.pedido-timeline-step.active .pedido-timeline-label { color: #1a1a1a; font-weight: 700; }
+.pedido-timeline-step.current .pedido-timeline-label { color: #1a1a1a; font-weight: 700; }
+
+.perfil-pedido-fecha {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.perfil-pedido-cancelado {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  color: #c0392b;
+  margin: 0.5rem 0 0;
+}
+
+/* Countdown */
+.perfil-pedido-programado-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+.perfil-countdown {
+  font-family: 'Nunito', sans-serif;
+  font-size: .78rem;
+  font-weight: 700;
+  color: #fff;
+  background: #1a1a1a;
+  border-radius: 50px;
+  padding: .2rem .65rem;
+  letter-spacing: .3px;
+}
+
+/* Favoritos */
+.perfil-favoritos-grid { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.25rem; }
+
+.perfil-fav-item {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: .6rem .75rem;
+  background: #faf8f5;
+  border: 1.5px solid #f0ede8;
+  border-radius: 12px;
+  transition: border-color .2s ease;
+}
+.perfil-fav-item:hover { border-color: #ddd; }
+
+.perfil-fav-img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+
+.perfil-fav-info { flex: 1; display: flex; flex-direction: column; gap: .15rem; }
+
+.perfil-fav-nombre { font-family: 'Fraunces', serif; font-size: .92rem; font-weight: 700; color: #1a1a1a; }
+
+.perfil-fav-precio { font-family: 'Nunito', sans-serif; font-size: .8rem; font-weight: 700; color: #b08968; }
+
+.perfil-fav-remove {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #e05050;
+  cursor: pointer;
+  padding: .2rem .4rem;
+  border-radius: 50%;
+  transition: transform .15s ease, background .2s ease;
+  flex-shrink: 0;
+}
+.perfil-fav-remove:hover { transform: scale(1.2); background: #fdf0ee; }
+
+.perfil-fav-link {
+  display: inline-block;
+  font-family: 'Nunito', sans-serif;
+  font-size: .85rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  border: 1.5px solid #1a1a1a;
+  border-radius: 50px;
+  padding: .45rem 1.1rem;
+  text-decoration: none;
+  transition: background .2s ease, color .2s ease;
+}
+.perfil-fav-link:hover { background: #1a1a1a; color: #fff; }
+
 @media (max-width: 500px) {
   .perfil-card--actions { flex-direction: column; }
   .perfil-header { flex-direction: column; text-align: center; }

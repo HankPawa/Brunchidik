@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
 import "./CartDrawer.css";
 
@@ -69,7 +70,7 @@ const CartDrawer = () => {
               <button className="cart-checkout-btn" onClick={handleCheckout}>
                 Ir a pagar
               </button>
-              <button className="cart-clear-btn" onClick={clearCart}>
+              <button className="cart-clear-btn" onClick={() => { clearCart(); toast.success("Carrito vaciado."); }}>
                 Vaciar carrito
               </button>
             </div>

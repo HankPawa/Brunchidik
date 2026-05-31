@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useCart } from "../context/CartContext";
@@ -155,6 +156,7 @@ const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
 const Checkout = () => {
   const { items, subtotal, shipping, total, clearCart } = useCart();
   const { user } = useAuth();
+  useEffect(() => { document.title = "Checkout | Brunch & Co."; }, []);
   const navigate = useNavigate();
 
   const [nombre, setNombre]               = useState(user?.nombre || "");
@@ -164,7 +166,6 @@ const Checkout = () => {
   const [payMethod, setPayMethod]         = useState("");
   const [showModal, setShowModal]         = useState(false);
   const [loading, setLoading]             = useState(false);
-  const [error, setError]                 = useState("");
   const [programar, setProgramar]         = useState(false);
   const [fechaProg, setFechaProg]         = useState("");
   const [horaProg, setHoraProg]           = useState("");
@@ -189,17 +190,16 @@ const Checkout = () => {
 
   const handleConfirm = async () => {
     if (programar && esDomingoPedido) {
-      setError("No realizamos entregas los domingos.");
+      toast.error("No realizamos entregas los domingos.");
       setShowModal(false);
       return;
     }
     if (programar && horaProg && !horaValida) {
-      setError(`La hora de entrega debe ser entre ${horarioPedido?.label || "8:00 AM – 5:00 PM"}.`);
+      toast.error(`La hora de entrega debe ser entre ${horarioPedido?.label || "8:00 AM – 5:00 PM"}.`);
       setShowModal(false);
       return;
     }
     setLoading(true);
-    setError("");
     try {
       const body = {
         direccion,
@@ -230,7 +230,7 @@ const Checkout = () => {
       setShowModal(false);
       navigate("/pedido-exitoso");
     } catch {
-      setError("No se pudo procesar el pedido. Inténtalo de nuevo.");
+      toast.error("No se pudo procesar el pedido. Inténtalo de nuevo.");
       setShowModal(false);
     } finally {
       setLoading(false);
@@ -398,8 +398,6 @@ const Checkout = () => {
                   onChange={(e) => setNotas(e.target.value)}
                 />
               </div>
-
-              {error && <p className="checkout-error">{error}</p>}
 
               <div className="checkout-actions">
                 <button type="button" className="checkout-cancel-btn" onClick={() => navigate("/menu")}>

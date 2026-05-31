@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -12,6 +12,7 @@ const VerificarCodigo = () => {
   const [reenvio, setReenvio] = useState("");
   const { verifyCode, reenviarCodigo, pendingUser } = useAuth();
   const navigate = useNavigate();
+  useEffect(() => { document.title = "Verificar codigo | Brunch & Co."; }, []);
 
   if (!pendingUser) {
     navigate("/login");

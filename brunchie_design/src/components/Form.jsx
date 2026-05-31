@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import "../pages/ContactUs.css";
 
 const Form = () => {
@@ -7,12 +8,10 @@ const Form = () => {
   const [telefono, setTelefono] = useState("");
   const [mensaje, setMensaje]   = useState("");
   const [loading, setLoading]   = useState(false);
-  const [msg, setMsg]           = useState({ text: "", ok: false });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMsg({ text: "", ok: false });
 
     try {
       const res = await fetch("/api/contacto", {
@@ -23,10 +22,10 @@ const Form = () => {
 
       if (!res.ok) throw new Error();
 
-      setMsg({ text: "¡Mensaje enviado! Te responderemos pronto.", ok: true });
+      toast.success("¡Mensaje enviado! Te responderemos pronto.");
       setNombre(""); setEmail(""); setTelefono(""); setMensaje("");
     } catch {
-      setMsg({ text: "No se pudo enviar el mensaje. Inténtalo de nuevo.", ok: false });
+      toast.error("No se pudo enviar el mensaje. Inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -74,10 +73,6 @@ const Form = () => {
           required
         />
       </label>
-
-      {msg.text && (
-        <p className={msg.ok ? "contact-form-ok" : "contact-form-err"}>{msg.text}</p>
-      )}
 
       <button type="submit" disabled={loading}>
         {loading ? "Enviando..." : "Enviar mensaje"}

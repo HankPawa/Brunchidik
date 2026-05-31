@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SocialLinks from "../components/SocialLinks";
@@ -5,6 +6,7 @@ import Form from "../components/Form";
 import "./ContactUs.css";
 
 const ContactUs = () => {
+  useEffect(() => { document.title = "Contacto | Brunch & Co."; }, []);
   return (
     <>
       <Navbar />

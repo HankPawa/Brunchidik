@@ -1,8 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { Toaster } from 'react-hot-toast';
 import 'bulma/css/bulma.min.css';
+import './dark.css';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { FavoritesProvider } from './context/FavoritesContext';
+import { DarkModeProvider } from './context/DarkModeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import CartDrawer from './components/CartDrawer';
 import Home from './pages/Home';
@@ -21,13 +25,23 @@ import Perfil from './pages/Perfil';
 import AdminPanel from './pages/AdminPanel';
 import AdminRoute from './components/AdminRoute';
 import Suscripcion from './pages/Suscripcion';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <DarkModeProvider>
       <AuthProvider>
+        <FavoritesProvider>
         <CartProvider>
           <BrowserRouter>
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                style: { fontFamily: "'Nunito', sans-serif", fontSize: "0.9rem" },
+                success: { iconTheme: { primary: "#1a1a1a", secondary: "#fff" } },
+              }}
+            />
             <CartDrawer />
             <Routes>
               <Route path="/" element={<Home />} />
@@ -45,10 +59,13 @@ function App() {
               <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
               <Route path="/reserva-exitosa" element={<ProtectedRoute><ReservaExitosa /></ProtectedRoute>} />
               <Route path="/suscripcion" element={<Suscripcion />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </CartProvider>
+        </FavoritesProvider>
       </AuthProvider>
+      </DarkModeProvider>
     </GoogleOAuthProvider>
   );
 }
