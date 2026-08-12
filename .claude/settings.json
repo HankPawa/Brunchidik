@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(npm ci)",
+      "Bash(npm install)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(mvn package*)",
+      "Bash(mvn compile*)",
+      "Bash(mvn clean*)",
+      "Bash(docker compose up*)",
+      "Bash(docker compose down*)",
+      "Bash(docker compose logs*)",
+      "Bash(docker compose build*)",
+      "Bash(git status)",
+      "Bash(git log*)",
+      "Bash(git diff*)"
+    ]
+  }
+}
