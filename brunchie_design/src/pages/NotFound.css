@@ -1,0 +1,71 @@
+.notfound-main {
+  min-height: calc(100vh - 130px);
+  background: #faf8f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.notfound-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.notfound-bg-code {
+  font-family: 'Fraunces', serif;
+  font-size: 10rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1;
+  opacity: 0.06;
+  user-select: none;
+  pointer-events: none;
+}
+
+.notfound-gem {
+  font-size: 1.6rem;
+  color: #b08968;
+  margin-top: -5.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.notfound-title {
+  font-family: 'Fraunces', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.notfound-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  color: #888;
+  margin: 0;
+  max-width: 380px;
+}
+
+.notfound-btn {
+  margin-top: 0.75rem;
+  padding: 0.85rem 2.5rem;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.notfound-btn:hover { background: #333; transform: translateY(-2px); }
+
+@media (max-width: 480px) {
+  .notfound-bg-code { font-size: 6rem; }
+  .notfound-gem { margin-top: -3.5rem; }
+  .notfound-title { font-size: 1.6rem; }
+}
