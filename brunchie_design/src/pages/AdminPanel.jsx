@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useWebSocket } from "../hooks/useWebSocket";
+import { useAuth } from "../context/AuthContext";
 import {
   BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -117,9 +118,15 @@ const confirmToast = (mensaje, onConfirm) => {
 };
 
 const AdminPanel = () => {
+  const { user } = useAuth();
   const [tab, setTab] = useState("productos");
   const [uploading, setUploading] = useState(false);
   useEffect(() => { document.title = "Admin | Brunch & Co."; }, []);
+
+  const adminFetch = (url, options = {}) => fetch(url, {
+    ...options,
+    headers: { ...(options.headers || {}), "X-Usuario-Id": user?.id ?? "" },
+  });
 
   const handleImageUpload = async (e, setForm) => {
     const file = e.target.files[0];
@@ -167,15 +174,15 @@ const AdminPanel = () => {
   const [auditLogs, setAuditLogs] = useState([]);
 
   const fetchProductos = () => {
-    fetch("/api/admin/menu").then(r => r.json()).then(setItems);
+    adminFetch("/api/admin/menu").then(r => r.json()).then(setItems);
     fetch("/api/categorias").then(r => r.json()).then(setCategorias);
   };
-  const fetchReservas  = () => fetch("/api/admin/reservas").then(r => r.json()).then(setReservas);
-  const fetchPedidos   = () => fetch("/api/admin/pedidos").then(r => r.json()).then(setPedidos);
+  const fetchReservas  = () => adminFetch("/api/admin/reservas").then(r => r.json()).then(setReservas);
+  const fetchPedidos   = () => adminFetch("/api/admin/pedidos").then(r => r.json()).then(setPedidos);
   const fetchAuditLogs = async () => {
     const [menu, pedidos] = await Promise.all([
-      fetch("/api/admin/menu/audit").then(r => r.json()).catch(() => []),
-      fetch("/api/admin/pedidos/audit").then(r => r.json()).catch(() => []),
+      adminFetch("/api/admin/menu/audit").then(r => r.json()).catch(() => []),
+      adminFetch("/api/admin/pedidos/audit").then(r => r.json()).catch(() => []),
     ]);
     const merged = [...menu, ...pedidos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
     setAuditLogs(merged);
@@ -214,7 +221,7 @@ const AdminPanel = () => {
   };
   const handleDelete = (id) => {
     confirmToast("¿Eliminar este producto?", async () => {
-      const res = await fetch(`/api/admin/menu/${id}`, { method: "DELETE" });
+      const res = await adminFetch(`/api/admin/menu/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const txt = await res.text().catch(() => res.status);
         toast.error(`Error al eliminar: ${res.status} — ${txt}`);
@@ -229,7 +236,7 @@ const AdminPanel = () => {
     const url = editId ? `/api/admin/menu/${editId}` : "/api/admin/menu";
     const method = editId ? "PUT" : "POST";
     try {
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" },
+      const res = await adminFetch(url, { method, headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, precio: Number(form.precio), categoriaId: Number(form.categoriaId) }) });
       if (!res.ok) throw new Error();
       setMsg({ text: editId ? "Producto actualizado." : "Producto agregado.", ok: true });
@@ -244,13 +251,13 @@ const AdminPanel = () => {
   // ── Reservas ──
   const handleDeleteReserva = (id) => {
     confirmToast("¿Eliminar esta reserva?", async () => {
-      await fetch(`/api/admin/reservas/${id}`, { method: "DELETE" });
+      await adminFetch(`/api/admin/reservas/${id}`, { method: "DELETE" });
       toast.success("Reserva eliminada.");
       fetchReservas();
     });
   };
   const handleEstadoReserva = async (id, estado) => {
-    const res = await fetch(`/api/admin/reservas/${id}/estado?estado=${estado}`, { method: "PATCH" });
+    const res = await adminFetch(`/api/admin/reservas/${id}/estado?estado=${estado}`, { method: "PATCH" });
     if (!res.ok) {
       const txt = await res.text();
       toast.error(`Error al cambiar estado: ${res.status} - ${txt}`);
@@ -262,7 +269,7 @@ const AdminPanel = () => {
 
   // ── Pedidos ──
   const handleEstadoPedido = async (id, estado) => {
-    await fetch(`/api/admin/pedidos/${id}/estado?estado=${estado}`, { method: "PATCH" });
+    await adminFetch(`/api/admin/pedidos/${id}/estado?estado=${estado}`, { method: "PATCH" });
     fetchPedidos();
   };
 

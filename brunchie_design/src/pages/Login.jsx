@@ -43,7 +43,7 @@ const Login = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     if (regPassword !== regConfirm) {
-      setRegMsg({ text: "Las contraseñas no coinciden.", ok: false });
+      setRegError("Las contraseñas no coinciden.");
       return;
     }
     setRegLoading(true);
@@ -63,11 +63,7 @@ const Login = () => {
     onSuccess: async (tokenResponse) => {
       setGoogleLoading(true);
       try {
-        const infoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-        const googleUser = await infoRes.json();
-        const result = await loginWithGoogle(googleUser);
+        const result = await loginWithGoogle(tokenResponse.access_token);
         if (result === "2fa")     navigate("/verificar-codigo");
         else if (result === "success") navigate("/");
         else setLoginError("Error al iniciar sesión con Google.");
@@ -102,7 +98,7 @@ const Login = () => {
             <button className={`login-tab ${mode === "login" ? "active" : ""}`} onClick={() => { setMode("login"); setLoginError(""); }}>
               Iniciar sesión
             </button>
-            <button className={`login-tab ${mode === "register" ? "active" : ""}`} onClick={() => { setMode("register"); setRegMsg({ text: "", ok: false }); }}>
+            <button className={`login-tab ${mode === "register" ? "active" : ""}`} onClick={() => { setMode("register"); setRegError(""); }}>
               Registrarse
             </button>
           </div>

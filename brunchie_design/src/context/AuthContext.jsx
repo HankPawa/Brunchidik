@@ -31,12 +31,12 @@ export const AuthProvider = ({ children }) => {
     } catch { return "error"; }
   };
 
-  const loginWithGoogle = async (googleUser) => {
+  const loginWithGoogle = async (accessToken) => {
     try {
       const res = await fetch("/api/usuarios/google-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: googleUser.email, nombre: googleUser.name }),
+        body: JSON.stringify({ accessToken }),
       });
       if (!res.ok) return "error";
       const data = await res.json();

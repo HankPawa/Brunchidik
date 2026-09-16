@@ -4,12 +4,19 @@ import com.brunch.usuario.model.Usuario;
 import com.brunch.usuario.repository.UsuarioRepository;
 import com.brunch.usuario.service.CodigoService;
 import com.brunch.usuario.service.EmailService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Map;
 
 @RestController
@@ -21,6 +28,8 @@ public class UsuarioController {
     private final EmailService      emailService;
     private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public UsuarioController(UsuarioRepository usuarioRepository,
                              CodigoService codigoService,
@@ -60,8 +69,34 @@ public class UsuarioController {
 
     @PostMapping("/google-login")
     public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body) {
-        String email  = body.get("email");
-        String nombre = body.get("nombre");
+        String accessToken = body.get("accessToken");
+        if (accessToken == null || accessToken.isBlank()) {
+            return ResponseEntity.badRequest().body("Falta el token de Google");
+        }
+
+        JsonNode googleUser;
+        try {
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create("https://www.googleapis.com/oauth2/v3/userinfo"))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .timeout(Duration.ofSeconds(5))
+                    .GET()
+                    .build();
+            HttpResponse<String> res = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            if (res.statusCode() != 200) {
+                return ResponseEntity.status(401).body("Token de Google inválido");
+            }
+            googleUser = objectMapper.readTree(res.body());
+        } catch (Exception ex) {
+            log.error("Error verificando token de Google: {}", ex.getMessage());
+            return ResponseEntity.status(502).body("No se pudo verificar el token de Google");
+        }
+
+        String email  = googleUser.path("email").asText(null);
+        String nombre = googleUser.path("name").asText(email);
+        if (email == null) {
+            return ResponseEntity.status(401).body("Token de Google inválido");
+        }
 
         Usuario u = usuarioRepository.findByEmail(email).orElseGet(() -> {
             Usuario nuevo = new Usuario();
