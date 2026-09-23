@@ -324,11 +324,14 @@ const Menu = () => {
             <MenuSkeleton />
           ) : (() => {
             const q = busqueda.trim().toLowerCase();
+            // Una categoría sin platos no se muestra: existe para poder
+            // asignarle productos desde el panel de administración.
+            const conProductos = categorias.filter((cat) => (cat.items || []).length > 0);
             const filtradas = q
-              ? categorias
-                  .map((cat) => ({ ...cat, items: (cat.items || []).filter((i) => i.nombre.toLowerCase().includes(q) || (i.descripcion || "").toLowerCase().includes(q)) }))
+              ? conProductos
+                  .map((cat) => ({ ...cat, items: cat.items.filter((i) => i.nombre.toLowerCase().includes(q) || (i.descripcion || "").toLowerCase().includes(q)) }))
                   .filter((cat) => cat.items.length > 0)
-              : categorias;
+              : conProductos;
 
             if (q && filtradas.length === 0) {
               return <p className="menu-no-results">No se encontraron resultados para "<strong>{busqueda}</strong>".</p>;

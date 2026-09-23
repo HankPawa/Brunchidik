@@ -35,6 +35,12 @@ const CATEGORIAS = [
       ["Açaí Bowl", "Base de açaí puro congelado batido hasta crear una textura cremosa, coronada con granola artesanal, coco rallado, frutos frescos y miel de abejas.", 15000],
     ],
   },
+  // Categorías sin platos todavía: se llenan desde el panel de administración.
+  // El menú público solo muestra las que tienen productos.
+  { nombre: "Carnes Rojas", items: [] },
+  { nombre: "Comida de Mar", items: [] },
+  { nombre: "Pollo", items: [] },
+  { nombre: "Arroz", items: [] },
 ];
 
 async function sembrarAdmin() {
@@ -67,11 +73,17 @@ async function sembrarAdmin() {
   console.log(`✔ Administrador ${email} creado`);
 }
 
-// Solo siembra el menú en una base vacía, para no duplicar ni pisar cambios del admin.
+// Crea las categorías que falten, así una base ya existente recibe las nuevas.
+// Los platos solo se siembran junto a su categoría recién creada: nunca se pisa
+// ni se duplica lo que se haya cambiado desde el panel de administración.
 async function sembrarMenu() {
-  if ((await prisma.categoria.count()) > 0) return;
+  let categoriasCreadas = 0;
+  let productosCreados = 0;
 
   for (const { nombre, items } of CATEGORIAS) {
+    const existente = await prisma.categoria.findUnique({ where: { nombre }, select: { id: true } });
+    if (existente) continue;
+
     await prisma.categoria.create({
       data: {
         nombre,
@@ -85,8 +97,13 @@ async function sembrarMenu() {
         },
       },
     });
+    categoriasCreadas += 1;
+    productosCreados += items.length;
   }
-  console.log("✔ Menú inicial creado (4 categorías, 12 productos)");
+
+  if (categoriasCreadas > 0) {
+    console.log(`✔ Menú: ${categoriasCreadas} categoría(s) y ${productosCreados} producto(s) creados`);
+  }
 }
 
 export async function seed() {
