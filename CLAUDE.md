@@ -1,144 +1,112 @@
-al# CLAUDE.md
+# CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project overview
 
-**BrunchDesign** is a full-stack web application for the restaurant **Brunch & Co.** featuring a menu, table reservations, delivery orders, subscriptions, and an admin panel. The backend is split into 5 independent microservices; the frontend is a React SPA.
+**Brunch & Co.** is a full-stack restaurant web app: menu, table reservations, delivery orders and an admin panel. The backend is a single Express app (`api/`); the frontend is a React SPA (`brunchie_design/`).
+
+Migrated from 5 Spring Boot microservices to Express in September 2026. There is no Java in the repo any more.
 
 ---
 
 ## Commands
 
-### Frontend (`brunchie_design/`)
+Run from the repo root:
 
 ```bash
-cd brunchie_design
-npm install          # first time
-npm run dev          # dev server at http://localhost:5173
-npm run build        # production build
-npm run lint         # eslint
+npm run setup     # install everything + migrate + seed (first time)
+npm run dev       # API (8080) and frontend (5173) together
+npm run check     # diagnose Node, deps, .env, PostgreSQL, migrations, Redis
+npm run lint      # eslint on the frontend
+npm run build     # production build of the frontend
 ```
 
-### Backend — each microservice is independent
+Backend-only commands live in `api/`:
 
 ```bash
-# Run any service locally (from its directory):
-cd usuario-service   # or menu-service / pedido-service / reserva-service / contacto-service
-mvn spring-boot:run
-
-# Build without tests (as CI does):
-mvn package -DskipTests -B
+cd api
+npm run dev            # nodemon
+npm run seed           # idempotent seed (admin + menu)
+npm run db:migrate     # prisma migrate deploy
+npx prisma studio      # inspect the database
 ```
-
-### Docker (full stack)
-
-```bash
-# Requires .env in project root with DB_URL, DB_USER, DB_PASSWORD, MAIL_USER, MAIL_PASSWORD
-docker compose up --build          # build and start all
-docker compose up --build frontend # rebuild only the frontend
-docker compose logs -f pedido-service
-```
-
-Required `.env` contents — see `MANUAL.md` §2 for values.
 
 ---
 
 ## Architecture
 
-### Service map
+### Backend (`api/`)
 
-| Service | Port | Package | Responsibility |
-|---|---|---|---|
-| `usuario-service` | 8081 | `com.brunch.usuario` | Auth, 2FA, roles, subscriptions |
-| `menu-service` | 8082 | `com.brunch.menu` | Menu items, categories, admin CRUD |
-| `pedido-service` | 8083 | `com.brunch.pedido` | Orders (normal + scheduled), WebSocket |
-| `reserva-service` | 8084 | `com.brunch.reserva` | Table reservations, WebSocket |
-| `contacto-service` | 8085 | `com.brunch.contacto` | Contact form messages |
-| `frontend` | 80/5173 | `brunchie_design/` | React SPA served by nginx |
-
-### Internal structure (every microservice)
+One Express app, modular by domain. Key layout:
 
 ```
-{service}/src/main/java/com/brunch/{domain}/
-├── {Domain}Application.java
-├── config/          — CorsConfig, DataInitializer (seed data)
-├── filter/          — RateLimitFilter (Redis-backed, every service)
-├── model/           — JPA entities
-├── repository/      — Spring Data JPA
-├── service/         — business logic interface + impl
-└── controller/      — REST controllers
+api/src/
+├── server.js            HTTP server + WebSocket + seed + graceful shutdown
+├── app.js               middleware chain and router mounting
+├── config/              env validation, Prisma client, Redis/memory store
+├── lib/                 jwt, time, serialize (JSON shape), schemas, errors
+├── middleware/          auth, rateLimit, validate, errorHandler
+├── modules/<dominio>/   routes.js / routes.admin.js / controller.js / schemas.js
+├── services/            email, codigo2fa, google
+├── ws/                  hub.js (topic registry), index.js (server)
+└── seed/                idempotent seed data
 ```
 
-### No API gateway
+**Routers are split by exposure**: `routes.js` (public/user) vs `routes.admin.js`, and the admin router mounts `requireAdmin` on the whole `Router()`. Never add an admin endpoint to the public router.
 
-There is no service-mesh or gateway. In dev, Vite proxies requests; in production, nginx does the same routing. The proxy map (both match exactly) is in `brunchie_design/vite.config.js`:
+**`lib/serialize.js` is load-bearing.** Controllers must never return raw Prisma objects. The mappers there fix the exact JSON the frontend consumes: BigInt→Number, Decimal→Number, dates as naive strings without `Z`, `categoriaId` flattened, `categoria.items` renamed, `password` never serialized. Changing a mapper silently breaks the frontend.
 
-- `/api/usuarios` → 8081
-- `/api/categorias`, `/api/menu`, `/api/admin/menu` → 8082
-- `/api/pedidos`, `/api/admin/pedidos` → 8083
-- `/api/reservas`, `/api/admin/reservas` → 8084
-- `/api/contacto` → 8085
-- `/ws-pedidos` → 8083/ws (WebSocket)
-- `/ws-reservas` → 8084/ws (WebSocket)
+**Timestamps have no timezone** in the DB (inherited from Hibernate). `lib/time.js` treats them as local wall-clock carried in a Date's UTC fields. Use `nowNaive()` to write and the `format*` helpers to read; never emit a `Z` suffix.
 
-### No inter-service HTTP calls
+### Authentication
 
-Services do not call each other. Cross-service relationships are stored by plain ID (e.g., `usuarioId` on `Pedido`). If you need to enrich data across services, the frontend fetches each service independently.
+JWT (HS256, 7 days) signed with `JWT_SECRET`. Issued on login, Google login and 2FA verification — **not** on registration. The frontend keeps it in `localStorage["brunch_token"]`, separate from the user object, and `authFetch` in `AuthContext` attaches it and logs out on 401.
 
-### Frontend React context
+Middleware: `requireAuth` → `requireAdmin` (re-reads the role from the DB, so a demoted admin loses access immediately) → `requireSelf(param)` for ownership. `optionalAuth` is used by `POST /api/pedidos` because **checkout allows guests**.
 
-Four contexts wrap the app in `App.jsx`:
-- `AuthContext` — user session (persisted to `localStorage` as `brunch_user`); exposes `login`, `loginWithGoogle`, `register`, `toggle2fa`, `verifyCode`, `logout`
-- `CartContext` — cart items (persisted as `brunch_cart`); computes subtotal/shipping/total
-- `FavoritesContext` — favorited menu items
-- `DarkModeContext` — dark mode toggle
+2FA codes live in Redis (or memory) with a 300s TTL, single use, invalidated after 5 failed attempts.
 
-Route guards: `ProtectedRoute` redirects to `/login` if no user; `AdminRoute` additionally checks `user.rol === "ADMIN"`.
+### WebSocket
 
-### WebSocket (real-time admin panel)
+Single endpoint `/ws` on the API port. JSON protocol: client sends `{type:"auth",token}` then `{type:"subscribe",topics:[...]}`; server pushes `{type:"message",topic,data}`. Topic strings kept from the old STOMP setup:
 
-`pedido-service` and `reserva-service` each expose a STOMP broker at `/ws`. After admin state changes, messages are broadcast to:
-- `/topic/admin/pedidos` — new order created
-- `/topic/admin/pedidos/estado` — order state updated
-- `/topic/usuario/{id}/pedido` — user-specific order update
-- `/topic/admin/reservas` — new reservation created
+- `/topic/admin/pedidos`, `/topic/admin/pedidos/estado`, `/topic/admin/reservas` — require ADMIN
+- `/topic/usuario/{id}/pedido` — only that user
 
-The frontend hook `brunchie_design/src/hooks/useWebSocket.js` connects via the Vite/nginx proxy paths (`/ws-pedidos`, `/ws-reservas`).
+The frontend hook `brunchie_design/src/hooks/useWebSocket.js` keeps **one shared connection** with per-topic reference counting; signature is `(wsPath, topics, onMessage)` with `wsPath` always `"/ws"`.
 
-### Authentication model
+### Data layer
 
-There is **no JWT and no Spring Security**. The `UsuarioController` manually checks BCrypt hashes. The logged-in user object is stored in React state and `localStorage`. **Admin endpoint protection is frontend-only** — `AdminRoute` blocks the UI, but the backend `/api/admin/*` endpoints have no server-side role check.
+Prisma over PostgreSQL with **versioned migrations** in `api/prisma/migrations`. The baseline (`0_init`) was hand-written from the Hibernate schema to preserve IDENTITY columns and CHECK constraints.
 
-### 2FA codes
+Enums (`rol`, `estado`) are `varchar` with CHECK constraints in the DB and `z.enum` in the API — they are not Prisma enums, on purpose. Don't convert them without a migration.
 
-Stored in a `ConcurrentHashMap` inside `CodigoService` (in-memory, not Redis). Codes expire after 5 minutes. **Codes are lost on service restart.**
+### Degraded modes
 
-### Rate limiting
+Redis is optional. Rate limiting **fails open** to an in-memory counter; 2FA **fails closed** with 503 if `REDIS_URL` is set but unreachable (a security control must not silently degrade). With `REDIS_URL` empty, both use memory.
 
-Every service has a `RateLimitFilter` (highest precedence) backed by Redis. Rules per endpoint per IP, e.g.:
-- `POST /api/usuarios/login` → 10 req/60 s
-- `POST /api/usuarios/2fa/enviar` → 5 req/60 s
-- Default → 60 req/60 s
+Mail is optional too: without `MAIL_USER`/`MAIL_PASSWORD` the 2FA code is printed to the console.
 
-### Audit log
+### Frontend (`brunchie_design/`)
 
-`menu-service` and `pedido-service` have an `AuditLog` JPA entity recording admin actions (create/edit/delete product, change order state). Accessible at `GET /api/admin/menu/audit` and `GET /api/admin/pedidos/audit`.
+React 19 + Vite. Four contexts in `App.jsx`: `AuthContext` (session + `authFetch`), `CartContext` (`brunch_cart`), `FavoritesContext`, `DarkModeContext` (toggles `.dark` on `<html>`). Guards: `ProtectedRoute`, `AdminRoute`.
 
-### Database
+Vite proxies `/api` and `/ws` to `http://localhost:8080`.
 
-All services share the same Neon PostgreSQL database. Schema is managed with `ddl-auto=update`. Profile `neon` activates `application-neon.properties` with the real credentials; profile `local` falls back to a local PostgreSQL instance.
+Styling is currently Bulma + per-page CSS files. **A migration to Tailwind is planned** (see the plan in `~/.claude/plans/`): Bulma is only used in `Navbar`, `Hero` and `Favorites`; the real work is ~4.200 lines of custom CSS and the `dark.css` rules.
 
-### External services
+---
 
-| Service | Purpose | Config location |
-|---|---|---|
-| Neon PostgreSQL | Database | `application-neon.properties` in each service |
-| Redis | Rate limiting (all services) | `REDIS_HOST` / `REDIS_PORT` env vars |
-| Resend SMTP | 2FA emails, reservation confirmation | `usuario-service` + `reserva-service` |
-| Cloudinary | Menu item image uploads | cloud `dwhezsxkg`, preset `brunch_menu` (unsigned) |
-| Google OAuth | Social login | `VITE_GOOGLE_CLIENT_ID` env var |
+## Business rules worth knowing
 
-### Subscription / premium features
+- **Scheduled orders** are available to everyone (the old Premium tier was removed in September 2026). Delivery window enforced server-side: Mon-Fri 08:00-16:00, Sat 09:00-16:00, closed Sunday.
+- **Order totals come from the client** and are stored as sent. Known debt: the server should recompute them from real prices.
+- **Audit log** is one shared table with a `servicio` column (`menu` / `pedidos`); each endpoint filters by its own service.
+- Reservation confirmation emails and 2FA emails are best-effort: a failure is logged but never breaks the request.
 
-`Usuario.suscrito` flag gates scheduled orders in `pedido-service`. Scheduled orders require `fechaProgramada` between 08:00 and 15:00. The enforcement is **frontend-only** (the backend accepts any `fechaProgramada`).
+## Conventions
+
+- JavaScript with ES modules, no TypeScript (deliberate: this machine has very little RAM).
+- Error responses are **plain text**, because the frontend displays them directly. The only JSON error is the 429 from the rate limiter.
+- Code comments and user-facing strings are in Spanish; these docs are in English.

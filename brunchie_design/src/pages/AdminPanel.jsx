@@ -118,15 +118,12 @@ const confirmToast = (mensaje, onConfirm) => {
 };
 
 const AdminPanel = () => {
-  const { user } = useAuth();
+  const { authFetch } = useAuth();
   const [tab, setTab] = useState("productos");
   const [uploading, setUploading] = useState(false);
   useEffect(() => { document.title = "Admin | Brunch & Co."; }, []);
 
-  const adminFetch = (url, options = {}) => fetch(url, {
-    ...options,
-    headers: { ...(options.headers || {}), "X-Usuario-Id": user?.id ?? "" },
-  });
+  const adminFetch = authFetch;
 
   const handleImageUpload = async (e, setForm) => {
     const file = e.target.files[0];
@@ -191,25 +188,21 @@ const AdminPanel = () => {
   useEffect(() => { fetchProductos(); fetchReservas(); fetchPedidos(); fetchAuditLogs(); }, []);
 
   // WebSocket: pedidos en tiempo real
-  useWebSocket("/ws-pedidos", ["/topic/admin/pedidos", "/topic/admin/pedidos/estado"], (topic, data) => {
+  // El aviso va fuera del actualizador de estado: React puede ejecutarlo
+  // durante el render, y lanzar un toast ahí actualiza otro componente.
+  useWebSocket("/ws", ["/topic/admin/pedidos", "/topic/admin/pedidos/estado"], (topic, data) => {
     if (topic === "/topic/admin/pedidos") {
-      setPedidos(prev => {
-        if (prev.some(p => p.id === data.id)) return prev;
-        toast("Nuevo pedido recibido", { icon: "🔔", duration: 6000 });
-        return [data, ...prev];
-      });
+      setPedidos(prev => (prev.some(p => p.id === data.id) ? prev : [data, ...prev]));
+      toast("Nuevo pedido recibido", { icon: "🔔", duration: 6000 });
     } else {
       setPedidos(prev => prev.map(p => p.id === data.id ? data : p));
     }
   });
 
   // WebSocket: reservas en tiempo real
-  useWebSocket("/ws-reservas", ["/topic/admin/reservas"], (_topic, data) => {
-    setReservas(prev => {
-      if (prev.some(r => r.id === data.id)) return prev;
-      toast("Nueva reserva recibida", { icon: "📅", duration: 6000 });
-      return [data, ...prev];
-    });
+  useWebSocket("/ws", ["/topic/admin/reservas"], (_topic, data) => {
+    setReservas(prev => (prev.some(r => r.id === data.id) ? prev : [data, ...prev]));
+    toast("Nueva reserva recibida", { icon: "📅", duration: 6000 });
   });
 
   // ── Productos ──

@@ -1,109 +1,70 @@
+# Alternativa opcional para quien prefiera no instalar Node ni PostgreSQL.
+# Para desarrollo local en la máquina, `npm run dev` es mucho más liviano.
+#
+#   docker compose up --build   →   http://localhost
+#
+# Requiere un .env en esta carpeta con al menos JWT_SECRET (ver api/.env.example).
+
 services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-brunch_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD en .env}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    restart: unless-stopped
     command: redis-server --save "" --appendonly no
-
-  usuario-service:
-    build: ./usuario-service
-    ports:
-      - "8081:8081"
-    depends_on:
-      - redis
-    environment:
-      PORT: 8081
-      SPRING_PROFILE: ${SPRING_PROFILE:-neon}
-      DB_URL: ${DB_URL}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
-      MAIL_USER: ${MAIL_USER}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     restart: unless-stopped
 
-  menu-service:
-    build: ./menu-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - redis
+  api:
+    build: ./api
     environment:
-      PORT: 8082
-      SPRING_PROFILE: ${SPRING_PROFILE:-neon}
-      DB_URL: ${DB_URL}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-    restart: unless-stopped
-
-  pedido-service:
-    build: ./pedido-service
-    ports:
-      - "8083:8083"
+      PORT: 8080
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-brunch_db}?schema=public
+      JWT_SECRET: ${JWT_SECRET:?define JWT_SECRET en .env}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      REDIS_URL: redis://redis:6379
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost}
+      MAIL_HOST: ${MAIL_HOST:-smtp.resend.com}
+      MAIL_PORT: ${MAIL_PORT:-465}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-onboarding@resend.dev}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
     depends_on:
-      - redis
-    environment:
-      PORT: 8083
-      SPRING_PROFILE: ${SPRING_PROFILE:-neon}
-      DB_URL: ${DB_URL}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-    restart: unless-stopped
-
-  reserva-service:
-    build: ./reserva-service
-    ports:
-      - "8084:8084"
-    depends_on:
-      - redis
-    environment:
-      PORT: 8084
-      SPRING_PROFILE: ${SPRING_PROFILE:-neon}
-      DB_URL: ${DB_URL}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
-      MAIL_USER: ${MAIL_USER}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-    restart: unless-stopped
-
-  contacto-service:
-    build: ./contacto-service
-    ports:
-      - "8085:8085"
-    depends_on:
-      - redis
-    environment:
-      PORT: 8085
-      SPRING_PROFILE: ${SPRING_PROFILE:-neon}
-      DB_URL: ${DB_URL}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
   frontend:
-    build: ./brunchie_design
+    build:
+      context: ./brunchie_design
+      args:
+        VITE_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     ports:
       - "80:80"
     depends_on:
-      - usuario-service
-      - menu-service
-      - pedido-service
-      - reserva-service
-      - contacto-service
+      - api
     restart: unless-stopped
+
+volumes:
+  db_data:

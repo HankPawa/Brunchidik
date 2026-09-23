@@ -13,7 +13,7 @@ const ESTADO_BADGE = {
 };
 
 const Reservas = () => {
-  const { user } = useAuth();
+  const { user, authFetch } = useAuth();
   const navigate = useNavigate();
 
   const [nombre, setNombre]           = useState(user?.nombre || "");
@@ -32,7 +32,7 @@ const Reservas = () => {
   const fetchMisReservas = async () => {
     if (!user?.id) return;
     try {
-      const res = await fetch(`/api/reservas/usuario/${user.id}`);
+      const res = await authFetch(`/api/reservas/usuario/${user.id}`);
       if (res.ok) setMisReservas(await res.json());
     } catch {}
   };
@@ -43,7 +43,7 @@ const Reservas = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("/api/reservas", {
+      const res = await authFetch("/api/reservas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,7 +64,7 @@ const Reservas = () => {
 
   const handleCancelar = async (id) => {
     if (!confirm("¿Cancelar esta reserva?")) return;
-    const res = await fetch(`/api/reservas/${id}`, { method: "DELETE" });
+    const res = await authFetch(`/api/reservas/${id}`, { method: "DELETE" });
     if (res.ok) {
       toast.success("Reserva cancelada correctamente.");
       fetchMisReservas();

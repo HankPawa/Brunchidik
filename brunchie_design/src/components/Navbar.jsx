@@ -69,7 +69,6 @@ const Navbar = () => {
           <Link to="/menu" className="navbar-item nav-link nav-animate" onClick={closeMenu}>Menú</Link>
           <Link to="/about" className="navbar-item nav-link nav-animate" onClick={closeMenu}>Nosotros</Link>
           <Link to="/contact" className="navbar-item nav-link nav-animate" onClick={closeMenu}>Contacto</Link>
-          <Link to="/suscripcion" className="navbar-item nav-link nav-animate" onClick={closeMenu}>Premium</Link>
 
           <div className="navbar-item nav-animate">
             <button className="dark-toggle-btn" onClick={toggleDark} title={dark ? "Modo claro" : "Modo oscuro"} aria-label={dark ? "Activar modo claro" : "Activar modo oscuro"}>
@@ -111,7 +110,6 @@ const Navbar = () => {
               <Link to="/perfil" className="nav-user-btn" onClick={closeMenu}>
                 <span className="nav-user-avatar">{initiales}</span>
                 <span className="nav-user-name">{user.nombre.split(" ")[0]}</span>
-                {user.suscrito && <span className="nav-premium-badge" title="Usuario Premium">✦</span>}
               </Link>
             </div>
           )}

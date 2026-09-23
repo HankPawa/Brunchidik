@@ -59,7 +59,7 @@ const Countdown = ({ fechaProgramada }) => {
 };
 
 const Perfil = () => {
-  const { user, toggle2fa, logout, changePassword, actualizarUsuario } = useAuth();
+  const { user, toggle2fa, logout, changePassword, authFetch } = useAuth();
   const { favorites, toggle: toggleFav } = useFavorites();
   const navigate = useNavigate();
 
@@ -67,43 +67,24 @@ const Perfil = () => {
 
   const [pedidos, setPedidos]               = useState([]);
   const [pedidosLoading, setPedidosLoading] = useState(false);
-  const [cancelandoSus, setCancelándoSus]   = useState(false);
 
   const wsTopic = useMemo(
     () => (user?.id ? [`/topic/usuario/${user.id}/pedido`] : []),
     [user?.id]
   );
-  useWebSocket("/ws-pedidos", wsTopic, (_topic, data) => {
+  useWebSocket("/ws", wsTopic, (_topic, data) => {
     setPedidos(prev => prev.map(p => p.id === data.id ? data : p));
   });
 
-  const handleCancelarSuscripcion = async () => {
-    if (!confirm("¿Seguro que quieres cancelar tu suscripción Premium?")) return;
-    setCancelándoSus(true);
-    try {
-      const res = await fetch(`/api/usuarios/${user.id}/suscripcion?activo=false`, { method: "PATCH" });
-      if (res.ok) {
-        actualizarUsuario({ suscrito: false });
-        toast.success("Suscripción Premium cancelada.");
-      } else {
-        toast.error("No se pudo cancelar la suscripción.");
-      }
-    } catch {
-      toast.error("No se pudo cancelar la suscripción.");
-    } finally {
-      setCancelándoSus(false);
-    }
-  };
-
   useEffect(() => {
-    if (!user?.suscrito || !user?.id) return;
+    if (!user?.id) return;
     setPedidosLoading(true);
-    fetch(`/api/pedidos/usuario/${user.id}`)
-      .then(r => r.json())
+    authFetch(`/api/pedidos/usuario/${user.id}`)
+      .then(r => (r.ok ? r.json() : []))
       .then(data => setPedidos(Array.isArray(data) ? data : []))
       .catch(() => setPedidos([]))
       .finally(() => setPedidosLoading(false));
-  }, [user?.id, user?.suscrito]);
+  }, [user?.id, authFetch]);
 
   const [pwActual, setPwActual]   = useState("");
   const [pwNueva, setPwNueva]     = useState("");
@@ -142,21 +123,9 @@ const Perfil = () => {
           <div className="perfil-header">
             <div className="perfil-avatar">{initiales}</div>
             <div>
-              <h1 className="perfil-nombre">
-                {user?.nombre}
-                {user?.suscrito && <span className="perfil-premium-tag">✦ Premium</span>}
-              </h1>
+              <h1 className="perfil-nombre">{user?.nombre}</h1>
               <p className="perfil-email">{user?.email}</p>
             </div>
-            {user?.suscrito && (
-              <button
-                className="perfil-btn-cancelar-sus"
-                onClick={handleCancelarSuscripcion}
-                disabled={cancelandoSus}
-              >
-                {cancelandoSus ? "Cancelando..." : "Cancelar Premium"}
-              </button>
-            )}
           </div>
 
           {/* Información */}
@@ -262,58 +231,47 @@ const Perfil = () => {
             </div>
           </section>
 
-          {/* Historial de pedidos — solo premium */}
-          {user?.suscrito ? (
-            <section className="perfil-card">
-              <h2 className="perfil-section-title">Historial de pedidos</h2>
-              <div className="perfil-divider">
-                <span className="perfil-divider-line" />
-                <span className="perfil-divider-gem">✦</span>
-                <span className="perfil-divider-line" />
-              </div>
+          {/* Historial de pedidos */}
+          <section className="perfil-card">
+            <h2 className="perfil-section-title">Historial de pedidos</h2>
+            <div className="perfil-divider">
+              <span className="perfil-divider-line" />
+              <span className="perfil-divider-gem">✦</span>
+              <span className="perfil-divider-line" />
+            </div>
 
-              {pedidosLoading ? (
-                <p className="perfil-historial-empty">Cargando pedidos...</p>
-              ) : pedidos.length === 0 ? (
-                <p className="perfil-historial-empty">Aún no tienes pedidos registrados.</p>
-              ) : (
-                <div className="perfil-historial-wrap">
-                  {pedidos.map(p => (
-                    <div key={p.id} className="perfil-pedido-card">
-                      <div className="perfil-pedido-header">
-                        <span className="perfil-pedido-id">Pedido #{p.id}</span>
-                        <span className="perfil-pedido-fecha">{fmtFecha(p.fechaCreacion)}</span>
-                      </div>
-                      <div className="perfil-pedido-info">
-                        <span>{p.direccion}</span>
-                        <span className="perfil-pedido-total">{fmt(p.total)}</span>
-                      </div>
-                      <OrderTimeline estado={p.estado} />
-                      {p.fechaProgramada && (
-                        <div className="perfil-pedido-programado-row">
-                          <span className="perfil-pedido-programado">
-                            {new Date(p.fechaProgramada).toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })}
-                          </span>
-                          {p.estado !== "ENTREGADO" && p.estado !== "CANCELADO" && (
-                            <Countdown fechaProgramada={p.fechaProgramada} />
-                          )}
-                        </div>
-                      )}
+            {pedidosLoading ? (
+              <p className="perfil-historial-empty">Cargando pedidos...</p>
+            ) : pedidos.length === 0 ? (
+              <p className="perfil-historial-empty">Aún no tienes pedidos registrados.</p>
+            ) : (
+              <div className="perfil-historial-wrap">
+                {pedidos.map(p => (
+                  <div key={p.id} className="perfil-pedido-card">
+                    <div className="perfil-pedido-header">
+                      <span className="perfil-pedido-id">Pedido #{p.id}</span>
+                      <span className="perfil-pedido-fecha">{fmtFecha(p.fechaCreacion)}</span>
                     </div>
-                  ))}
-                </div>
-              )}
-            </section>
-          ) : (
-            <section className="perfil-card perfil-card--premium-hint">
-              <span className="perfil-premium-icon">✦</span>
-              <div>
-                <p className="perfil-premium-title">Historial de pedidos</p>
-                <p className="perfil-premium-sub">Disponible para miembros Premium.</p>
+                    <div className="perfil-pedido-info">
+                      <span>{p.direccion}</span>
+                      <span className="perfil-pedido-total">{fmt(p.total)}</span>
+                    </div>
+                    <OrderTimeline estado={p.estado} />
+                    {p.fechaProgramada && (
+                      <div className="perfil-pedido-programado-row">
+                        <span className="perfil-pedido-programado">
+                          {new Date(p.fechaProgramada).toLocaleString("es-CO", { dateStyle: "short", timeStyle: "short" })}
+                        </span>
+                        {p.estado !== "ENTREGADO" && p.estado !== "CANCELADO" && (
+                          <Countdown fechaProgramada={p.fechaProgramada} />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-              <Link to="/suscripcion" className="perfil-premium-btn">Ver planes</Link>
-            </section>
-          )}
+            )}
+          </section>
 
           {/* Favoritos */}
           {favorites.length > 0 && (

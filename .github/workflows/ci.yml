@@ -7,89 +7,94 @@ on:
     branches: [main]
 
 jobs:
-  usuario-service:
-    name: Build usuario-service
+  api:
+    name: API
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build
-        working-directory: usuario-service
-        run: mvn package -DskipTests -B
 
-  menu-service:
-    name: Build menu-service
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build
-        working-directory: menu-service
-        run: mvn package -DskipTests -B
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: brunch_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+        ports:
+          - 5432:5432
 
-  pedido-service:
-    name: Build pedido-service
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build
-        working-directory: pedido-service
-        run: mvn package -DskipTests -B
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/brunch_db?schema=public
+      JWT_SECRET: clave-de-integracion-continua-con-longitud-suficiente
+      ADMIN_EMAIL: admin@brunch.com
+      ADMIN_PASSWORD: cambiar-en-produccion
 
-  reserva-service:
-    name: Build reserva-service
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-node@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build
-        working-directory: reserva-service
-        run: mvn package -DskipTests -B
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
 
-  contacto-service:
-    name: Build contacto-service
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-      - name: Build
-        working-directory: contacto-service
-        run: mvn package -DskipTests -B
+      - name: Instalar dependencias
+        working-directory: api
+        run: npm ci
+
+      # Verifica que las migraciones versionadas reconstruyen el esquema desde cero.
+      - name: Aplicar migraciones
+        working-directory: api
+        run: npx prisma migrate deploy
+
+      - name: Comprobar que el esquema coincide con las migraciones
+        working-directory: api
+        run: |
+          DIFF=$(npx prisma migrate diff --from-url "$DATABASE_URL" --to-schema-datamodel prisma/schema.prisma --script)
+          echo "$DIFF"
+          echo "$DIFF" | grep -q "empty migration" || { echo "::error::El esquema y las migraciones no coinciden"; exit 1; }
+
+      - name: Sembrar datos
+        working-directory: api
+        run: npm run seed
+
+      - name: Arrancar la API y comprobar que responde
+        working-directory: api
+        run: |
+          node src/server.js &
+          for i in $(seq 1 30); do
+            sleep 1
+            if curl -sf http://localhost:8080/api/health > /dev/null; then
+              echo "API arriba"
+              curl -sf http://localhost:8080/api/categorias | head -c 200
+              exit 0
+            fi
+          done
+          echo "::error::La API no respondió a tiempo"
+          exit 1
 
   frontend:
-    name: Build frontend
+    name: Frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
           cache: npm
           cache-dependency-path: brunchie_design/package-lock.json
-      - name: Install dependencies
+
+      - name: Instalar dependencias
         working-directory: brunchie_design
         run: npm ci
+
+      - name: Lint
+        working-directory: brunchie_design
+        run: npm run lint
+        continue-on-error: true
+
       - name: Build
         working-directory: brunchie_design
         env:

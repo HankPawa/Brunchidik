@@ -1,48 +1,152 @@
 import { useEffect, useRef, useState } from "react";
-import { Client } from "@stomp/stompjs";
 
 /**
- * Connects to a STOMP endpoint via native WebSocket and subscribes to topics.
- * @param {string} wsPath  - Proxy path, e.g. "/ws-pedidos"
- * @param {string[]} topics - STOMP topics to subscribe to
- * @param {(topic: string, data: any) => void} onMessage - Called on each message
- * @returns {boolean} connected state
+ * Cliente WebSocket con protocolo JSON por topic.
+ *
+ * Una sola conexión compartida por toda la app (antes AdminPanel y Perfil
+ * abrían tres), con conteo de referencias por topic: la conexión se abre con el
+ * primer topic y se cierra cuando ya nadie escucha.
+ *
+ * Protocolo: {type:"auth"|"subscribe"|"unsubscribe"|"ping"} hacia el servidor,
+ * {type:"ready"|"subscribed"|"message"|"pong"|"error"} de vuelta.
+ */
+
+const RECONEXION_MS = [1000, 2000, 5000];
+
+const listeners = new Map(); // topic -> Set<callback>
+const estadoListeners = new Set(); // callbacks que siguen el estado de conexión
+
+let socket = null;
+let autenticado = false;
+let intentos = 0;
+let reintento = null;
+let cierrePendiente = null;
+
+const topicsActivos = () => [...listeners.keys()];
+const avisarEstado = (conectado) => estadoListeners.forEach((fn) => fn(conectado));
+const enviar = (payload) => socket?.readyState === WebSocket.OPEN && socket.send(JSON.stringify(payload));
+
+function programarReconexion() {
+  if (reintento || topicsActivos().length === 0) return;
+  const espera = RECONEXION_MS[Math.min(intentos, RECONEXION_MS.length - 1)];
+  intentos += 1;
+  reintento = setTimeout(() => {
+    reintento = null;
+    conectar();
+  }, espera);
+}
+
+function conectar() {
+  if (socket || topicsActivos().length === 0) return;
+
+  const token = localStorage.getItem("brunch_token");
+  if (!token) return; // sin sesión no hay nada que escuchar
+
+  const protocolo = window.location.protocol === "https:" ? "wss:" : "ws:";
+  socket = new WebSocket(`${protocolo}//${window.location.host}/ws`);
+
+  socket.addEventListener("open", () => {
+    autenticado = false;
+    enviar({ type: "auth", token });
+  });
+
+  socket.addEventListener("message", (event) => {
+    let mensaje;
+    try {
+      mensaje = JSON.parse(event.data);
+    } catch {
+      return;
+    }
+
+    if (mensaje.type === "ready") {
+      autenticado = true;
+      intentos = 0;
+      enviar({ type: "subscribe", topics: topicsActivos() });
+      avisarEstado(true);
+      return;
+    }
+    if (mensaje.type === "message") {
+      listeners.get(mensaje.topic)?.forEach((fn) => fn(mensaje.topic, mensaje.data));
+      return;
+    }
+    if (mensaje.type === "error" && !autenticado) {
+      console.warn("WebSocket:", mensaje.message);
+    }
+  });
+
+  socket.addEventListener("close", () => {
+    socket = null;
+    autenticado = false;
+    avisarEstado(false);
+    programarReconexion();
+  });
+
+  socket.addEventListener("error", () => socket?.close());
+}
+
+function suscribir(topic, callback) {
+  clearTimeout(cierrePendiente);
+  cierrePendiente = null;
+
+  const nuevo = !listeners.has(topic);
+  if (nuevo) listeners.set(topic, new Set());
+  listeners.get(topic).add(callback);
+
+  if (!socket) conectar();
+  else if (autenticado && nuevo) enviar({ type: "subscribe", topics: [topic] });
+}
+
+function desuscribir(topic, callback) {
+  const callbacks = listeners.get(topic);
+  if (!callbacks) return;
+
+  callbacks.delete(callback);
+  if (callbacks.size > 0) return;
+
+  listeners.delete(topic);
+  enviar({ type: "unsubscribe", topics: [topic] });
+
+  // Margen antes de cerrar: en desarrollo React monta, desmonta y vuelve a
+  // montar los efectos, y cerrar un socket a medio abrir ensucia la consola.
+  if (topicsActivos().length === 0 && !cierrePendiente) {
+    cierrePendiente = setTimeout(() => {
+      cierrePendiente = null;
+      if (topicsActivos().length > 0) return;
+      clearTimeout(reintento);
+      reintento = null;
+      socket?.close();
+      socket = null;
+    }, 500);
+  }
+}
+
+/**
+ * @param {string} wsPath  Ruta del WebSocket (hoy siempre "/ws").
+ * @param {string[]} topics Topics a escuchar.
+ * @param {(topic: string, data: any) => void} onMessage
+ * @returns {boolean} si la conexión está lista
  */
 export const useWebSocket = (wsPath, topics, onMessage) => {
-  const onMessageRef = useRef(onMessage);
-  useEffect(() => { onMessageRef.current = onMessage; });
+  const [conectado, setConectado] = useState(autenticado);
+  const topicsKey = JSON.stringify(topics ?? []);
 
-  const [connected, setConnected] = useState(false);
-  const topicsKey = JSON.stringify(topics);
+  // El callback se lee de la ref en cada mensaje, así cambiarlo no re-suscribe.
+  const onMessageRef = useRef(onMessage);
+  onMessageRef.current = onMessage;
 
   useEffect(() => {
-    if (!wsPath || !topics || topics.length === 0) return;
+    estadoListeners.add(setConectado);
+    return () => estadoListeners.delete(setConectado);
+  }, []);
 
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const brokerURL = `${protocol}//${window.location.host}${wsPath}`;
+  useEffect(() => {
+    const lista = JSON.parse(topicsKey);
+    if (!wsPath || lista.length === 0) return;
 
-    const client = new Client({
-      brokerURL,
-      reconnectDelay: 5000,
-      onConnect: () => {
-        setConnected(true);
-        JSON.parse(topicsKey).forEach((topic) => {
-          client.subscribe(topic, (frame) => {
-            try {
-              onMessageRef.current(topic, JSON.parse(frame.body));
-            } catch {
-              onMessageRef.current(topic, frame.body);
-            }
-          });
-        });
-      },
-      onDisconnect: () => setConnected(false),
-      onStompError: () => setConnected(false),
-    });
-
-    client.activate();
-    return () => { client.deactivate(); };
+    const handler = (topic, data) => onMessageRef.current(topic, data);
+    lista.forEach((topic) => suscribir(topic, handler));
+    return () => lista.forEach((topic) => desuscribir(topic, handler));
   }, [wsPath, topicsKey]);
 
-  return connected;
+  return conectado;
 };

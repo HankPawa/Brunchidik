@@ -1,0 +1,24 @@
+{
+  "name": "brunch-and-co",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Brunch & Co. — API Express + frontend React",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "setup": "npm install && npm --prefix api install && npm --prefix brunchie_design install && npm --prefix api run db:setup",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm --prefix api run dev\" \"npm --prefix brunchie_design run dev\"",
+    "dev:api": "npm --prefix api run dev",
+    "dev:web": "npm --prefix brunchie_design run dev",
+    "build": "npm --prefix brunchie_design run build",
+    "lint": "npm --prefix brunchie_design run lint",
+    "check": "node scripts/check-setup.js",
+    "db:migrate": "npm --prefix api run db:migrate",
+    "db:seed": "npm --prefix api run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}

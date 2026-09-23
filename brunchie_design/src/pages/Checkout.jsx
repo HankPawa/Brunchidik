@@ -155,7 +155,7 @@ const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
 
 const Checkout = () => {
   const { items, subtotal, shipping, total, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, authFetch } = useAuth();
   useEffect(() => { document.title = "Checkout | Brunch & Co."; }, []);
   const navigate = useNavigate();
 
@@ -219,7 +219,7 @@ const Checkout = () => {
         body.fechaProgramada = `${fechaProg}T${horaProg}:00`;
       }
 
-      const res = await fetch("/api/pedidos", {
+      const res = await authFetch("/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -334,32 +334,19 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {user?.suscrito ? (
-                <div className="checkout-field">
-                  <label className="checkout-toggle-label">
-                    <input
-                      type="checkbox"
-                      checked={programar}
-                      onChange={(e) => setProgramar(e.target.checked)}
-                    />
-                    Programar pedido para una fecha y hora específica
-                  </label>
-                  <p className="checkout-programar-nota">
-                    Pedidos programados disponibles de lunes a sábado hasta las <strong>4:00 PM</strong>. No se realizan entregas los domingos.
-                  </p>
-                </div>
-              ) : (
-                <div className="checkout-field">
-                  <div className="checkout-premium-banner">
-                    <span className="checkout-premium-icon">✦</span>
-                    <div>
-                      <p className="checkout-premium-texto">¿Quieres programar tu pedido?</p>
-                      <p className="checkout-premium-sub">Esta función es exclusiva para miembros Premium.</p>
-                    </div>
-                    <a href="/suscripcion" className="checkout-premium-btn">Ver planes</a>
-                  </div>
-                </div>
-              )}
+              <div className="checkout-field">
+                <label className="checkout-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={programar}
+                    onChange={(e) => setProgramar(e.target.checked)}
+                  />
+                  Programar pedido para una fecha y hora específica
+                </label>
+                <p className="checkout-programar-nota">
+                  Pedidos programados disponibles de lunes a sábado hasta las <strong>4:00 PM</strong>. No se realizan entregas los domingos.
+                </p>
+              </div>
 
               {programar && (
                 <div className="checkout-row">

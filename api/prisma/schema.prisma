@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Valores permitidos (reforzados por CHECK en la base y por zod en la API):
+//   usuarios.rol     -> ADMIN | USUARIO
+//   pedidos.estado   -> PENDIENTE | EN_PREPARACION | EN_CAMINO | ENTREGADO | CANCELADO
+//   reservas.estado  -> PENDIENTE | CONFIRMADA | CANCELADA
+
+model Usuario {
+  id           BigInt   @id @default(autoincrement())
+  nombre       String   @db.VarChar(255)
+  email        String   @unique(map: "ukkfsp0s1tflm1cwlj8idhqsad0") @db.VarChar(255)
+  password     String   @db.VarChar(255)
+  dosFaActivo  Boolean  @map("dos_fa_activo")
+  cuentaGoogle Boolean  @map("cuenta_google")
+  rol          String?  @db.VarChar(255)
+
+  @@map("usuarios")
+}
+
+model Categoria {
+  id     BigInt     @id @default(autoincrement())
+  nombre String     @unique(map: "ukqcog8b7hps1hioi9onqwjdt6y") @db.VarChar(255)
+  items  MenuItem[]
+
+  @@map("categorias")
+}
+
+model MenuItem {
+  id          BigInt     @id @default(autoincrement())
+  nombre      String     @db.VarChar(255)
+  descripcion String?
+  precio      Decimal?   @db.Decimal(38, 2)
+  imagenUrl   String?    @map("imagen_url") @db.VarChar(255)
+  disponible  Boolean
+  categoriaId BigInt?    @map("categoria_id")
+  categoria   Categoria? @relation(fields: [categoriaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk8jufm10ou3keb2efyccs8tsee")
+
+  @@map("menu_items")
+}
+
+model Pedido {
+  id              BigInt          @id @default(autoincrement())
+  direccion       String          @db.VarChar(255)
+  telefono        String          @db.VarChar(255)
+  metodoPago      String?         @map("metodo_pago") @db.VarChar(255)
+  notas           String?         @db.VarChar(255)
+  total           Decimal?        @db.Decimal(38, 2)
+  estado          String?         @db.VarChar(255)
+  fechaCreacion   DateTime?       @map("fecha_creacion") @db.Timestamp(6)
+  fechaProgramada DateTime?       @map("fecha_programada") @db.Timestamp(6)
+  usuarioId       BigInt?         @map("usuario_id")
+  detalles        DetallePedido[]
+
+  @@map("pedidos")
+}
+
+model DetallePedido {
+  id             BigInt   @id @default(autoincrement())
+  cantidad       Int
+  precioUnitario Decimal? @map("precio_unitario") @db.Decimal(38, 2)
+  menuItemId     BigInt?  @map("menu_item_id")
+  pedidoId       BigInt?  @map("pedido_id")
+  pedido         Pedido?  @relation(fields: [pedidoId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk4qmqlxyy78kjl4ec4wjnfmggu")
+
+  @@map("detalles_pedido")
+}
+
+model Reserva {
+  id        BigInt   @id @default(autoincrement())
+  nombre    String   @db.VarChar(255)
+  email     String   @db.VarChar(255)
+  fecha     DateTime @db.Date
+  hora      DateTime @db.Time(6)
+  personas  Int
+  ocasion   String?  @db.VarChar(255)
+  notas     String?  @db.VarChar(255)
+  estado    String?  @default("PENDIENTE") @db.VarChar(20)
+  usuarioId BigInt?  @map("usuario_id")
+
+  @@map("reservas")
+}
+
+model MensajeContacto {
+  id         BigInt    @id @default(autoincrement())
+  nombre     String    @db.VarChar(255)
+  email      String    @db.VarChar(255)
+  telefono   String?   @db.VarChar(255)
+  mensaje    String
+  fechaEnvio DateTime? @map("fecha_envio") @db.Timestamp(6)
+
+  @@map("mensajes_contacto")
+}
+
+model AuditLog {
+  id       BigInt   @id @default(autoincrement())
+  accion   String   @db.VarChar(255)
+  detalle  String   @db.VarChar(500)
+  fecha    DateTime @db.Timestamp(6)
+  servicio String   @db.VarChar(255)
+
+  @@map("audit_logs")
+}

@@ -1,294 +1,168 @@
 # Manual de instalación y uso — Brunch & Co.
 
-## Requisitos previos
+## 1. Requisitos
 
 | Herramienta | Versión | Descarga |
 |---|---|---|
-| Docker Desktop | Cualquiera | https://www.docker.com/products/docker-desktop |
+| Node.js | 20 o superior | https://nodejs.org |
+| PostgreSQL | 15 o superior | https://www.postgresql.org/download/ |
 | Git | Cualquiera | https://git-scm.com |
 
-> Docker incluye todo lo necesario (Java, Maven, Node.js, nginx). No se requiere instalarlos por separado.
+Redis es **opcional**: si no está, el limitador de peticiones y los códigos de verificación funcionan en memoria.
+
+> ¿Prefieres no instalar nada? Hay una alternativa con Docker en la sección 8.
 
 ---
 
-## 1. Clonar el repositorio
+## 2. Clonar el repositorio
 
 ```bash
-git clone https://github.com/HankPawa/BrunchDesign.git
-cd BrunchDesign
-```
-
-Si ya lo tienes clonado, actualiza con:
-
-```bash
-git pull origin main
+git clone https://github.com/HankPawa/Brunchidik.git
+cd Brunchidik
 ```
 
 ---
 
-## 2. Crear el archivo `.env`
+## 3. Configurar las credenciales
 
-El archivo `.env` contiene las credenciales y **no está incluido en el repositorio**. Debe crearse manualmente en la raíz del proyecto cada vez que se clona o limpia el repo.
+Las credenciales **no están en el repositorio**. Hay que crear dos archivos a partir de sus plantillas.
 
-Crear el archivo `BrunchDesign/.env` con el siguiente contenido:
+**`api/.env`** (backend):
 
-```env
-DB_URL=jdbc:postgresql://ep-morning-pond-apcz3rm8-pooler.c-7.us-east-1.aws.neon.tech/brunch_db?sslmode=require
-DB_USER=neondb_owner
-DB_PASSWORD=npg_7aSCWVt0YKFG
-SPRING_PROFILE=neon
-MAIL_USER=resend
-MAIL_PASSWORD=re_P2yy2shc_PzAqDvwsKSxr1qQceZ2QwiK4
+```bash
+cp api/.env.example api/.env
 ```
 
-> Sin este archivo, el sistema no puede conectarse a la base de datos ni enviar correos 2FA.
+Valores obligatorios:
+
+| Variable | Qué poner |
+|---|---|
+| `DATABASE_URL` | `postgresql://USUARIO:CONTRASEÑA@localhost:5432/brunch_db?schema=public` |
+| `JWT_SECRET` | Cadena aleatoria de 32+ caracteres. Genérala con:<br>`node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | El administrador que quieres crear |
+
+Opcionales: `REDIS_URL`, `MAIL_*` (envío de correos), `GOOGLE_CLIENT_ID`, `CORS_ORIGINS`.
+
+**`brunchie_design/.env`** (frontend), solo si vas a usar el login con Google:
+
+```bash
+cp brunchie_design/.env.example brunchie_design/.env
+```
+
+y pon tu `VITE_GOOGLE_CLIENT_ID`.
 
 ---
 
-## 3. Levantar la aplicación
-
-Con Docker Desktop abierto, ejecutar desde la raíz del proyecto:
+## 4. Crear la base de datos e instalar
 
 ```bash
+createdb brunch_db      # o CREATE DATABASE brunch_db; desde psql
+npm run setup
+```
+
+`npm run setup` instala las dependencias, aplica las migraciones y siembra el administrador y el menú inicial (4 categorías, 12 productos). Es idempotente: puedes repetirlo sin duplicar datos.
+
+---
+
+## 5. Levantar la aplicación
+
+```bash
+npm run dev
+```
+
+- Frontend: **http://localhost:5173**
+- API: **http://localhost:8080**
+
+Para detener: `Ctrl + C`.
+
+Si algo falla, ejecuta `npm run check`: revisa versión de Node, dependencias, variables de entorno, conexión a PostgreSQL, migraciones pendientes y Redis, e indica exactamente qué falta.
+
+---
+
+## 6. Funcionalidades
+
+### 6.1 Cuentas
+- Registro e inicio de sesión con correo y contraseña (cifrada con bcrypt).
+- Inicio de sesión con Google. El servidor verifica el token contra Google: nunca confía en el correo que envía el navegador.
+- Verificación en dos pasos (2FA) opcional: código de 6 dígitos por correo, válido 5 minutos, de un solo uso, que se invalida tras 5 intentos fallidos.
+- Cambio de contraseña desde el perfil.
+
+### 6.2 Menú
+Catálogo por categorías, buscador, modal de detalle y favoritos. Las imágenes se suben a Cloudinary desde el panel de administración.
+
+### 6.3 Pedidos
+El usuario arma su carrito y paga en el checkout indicando dirección, teléfono, método de pago y notas. **No hace falta tener cuenta para pedir**, pero si inicias sesión el pedido queda asociado a ti y puedes seguir su estado en tiempo real desde el perfil.
+
+**Pedidos programados:** cualquiera puede elegir fecha y hora de entrega. El horario lo valida el servidor: lunes a viernes de 8:00 a 16:00, sábados de 9:00 a 16:00; los domingos no hay entregas.
+
+### 6.4 Reservas
+Reserva de mesa indicando fecha futura, hora, número de personas y ocasión. Llega un correo de confirmación y el usuario puede cancelar sus propias reservas desde `/reservas`.
+
+### 6.5 Panel de administración (`/admin`)
+Solo para usuarios con rol ADMIN. Pestañas:
+
+- **Productos** — crear, editar y eliminar platos, con imagen y disponibilidad.
+- **Reservas** — tabla y vista de calendario, cambio de estado y eliminación, exportación a CSV.
+- **Pedidos** — cambio de estado (Pendiente → En preparación → En camino → Entregado / Cancelado), exportación a CSV.
+- **Reportes** — ingresos, pedidos por estado, métodos de pago y reservas por ocasión.
+- **Actividad** — registro de auditoría de las acciones administrativas.
+
+Los pedidos y reservas nuevos aparecen **en vivo**, sin recargar.
+
+### 6.6 Contacto
+Formulario en `/contact` que guarda los mensajes en la base de datos.
+
+---
+
+## 7. Endpoints principales
+
+| Método | Ruta | Acceso |
+|---|---|---|
+| `POST` | `/api/usuarios/registro`, `/login`, `/google-login`, `/2fa/enviar`, `/2fa/verificar` | Público |
+| `PATCH` | `/api/usuarios/{id}/password`, `/{id}/2fa?activo=` | El propio usuario |
+| `GET` | `/api/categorias`, `/api/menu`, `/api/menu/{id}` | Público |
+| `POST` | `/api/pedidos` | Público (si hay sesión, queda asociado) |
+| `GET` | `/api/pedidos/usuario/{id}` | El propio usuario |
+| `POST` | `/api/reservas` | Con sesión |
+| `GET` | `/api/reservas/usuario/{id}` | El propio usuario |
+| `DELETE` | `/api/reservas/{id}` | El dueño de la reserva |
+| `POST` | `/api/contacto` | Público |
+| — | `/api/admin/menu`, `/api/admin/pedidos`, `/api/admin/reservas` | Solo ADMIN |
+
+Todas las rutas protegidas esperan la cabecera `Authorization: Bearer <token>`.
+
+---
+
+## 8. Alternativa con Docker
+
+```bash
+cp .env.example .env     # completa POSTGRES_PASSWORD y JWT_SECRET
 docker compose up --build
 ```
 
-Este comando levanta los 6 contenedores de la aplicación:
-
-| Contenedor | Puerto | Descripción |
-|---|---|---|
-| `usuario-service` | 8081 | Autenticación, usuarios, 2FA, suscripción |
-| `menu-service` | 8082 | Menú y categorías |
-| `pedido-service` | 8083 | Pedidos a domicilio (normales y programados) |
-| `reserva-service` | 8084 | Reservas de mesa |
-| `contacto-service` | 8085 | Formulario de contacto |
-| `frontend` | 80 | Aplicación React + nginx |
-
-> La primera vez tarda varios minutos descargando las imágenes y compilando.  
-> Las siguientes veces es más rápido (sin `--build`).
-
-Cuando todos los servicios muestren `Started XxxApplication`, abrir en el navegador:
-
-**http://localhost**
+Levanta PostgreSQL, Redis, la API y el frontend servido por nginx en **http://localhost**. Para detener: `docker compose down`.
 
 ---
 
-## 4. Detener la aplicación
+## 9. Problemas comunes
 
-```bash
-docker compose down
-```
+**`npm run dev` falla diciendo que falta una variable**
+→ Falta completar `api/.env`. Ejecuta `npm run check` para ver cuál.
 
----
+**"No se pudo conectar a PostgreSQL"**
+→ PostgreSQL no está corriendo o `DATABASE_URL` apunta a otra base. Ojo: debe empezar por `postgresql://`, no por `jdbc:`.
 
-## 5. Credenciales de prueba
+**"Faltan tablas en la base"**
+→ `npm run db:migrate` y luego `npm run db:seed`.
 
-### Usuario administrador
+**El puerto 8080 está ocupado**
+→ Cambia `PORT` en `api/.env` y el destino del proxy en `brunchie_design/vite.config.js`.
 
-| Campo | Valor |
-|---|---|
-| Email | `admin@brunch.com` |
-| Contraseña | `brunch123` |
-| Rol | ADMIN — accede al panel en `/admin` |
+**Los correos de 2FA no llegan**
+→ Sin `MAIL_USER`/`MAIL_PASSWORD` no se envían correos: el código aparece en la consola del backend. Con Resend, el plan gratuito solo permite enviar a la dirección verificada de la cuenta.
 
-### Usuario de prueba con suscripción activa
+**El panel no actualiza en vivo**
+→ Revisa la consola del navegador: el WebSocket necesita sesión válida; si el token expiró, vuelve a iniciar sesión.
 
-| Campo | Valor |
-|---|---|
-| Email | Registrar uno nuevo desde `/login` |
-| Suscripción | Activar desde `/suscripcion` |
-
----
-
-## 6. Funcionalidades del sistema
-
-### 6.1 Autenticación y usuarios
-
-- **Registro / Login** — formulario con email y contraseña (cifrada con BCrypt).
-- **Login con Google** — autenticación OAuth mediante Google.
-- **Verificación en dos pasos (2FA)** — el usuario puede activar 2FA desde su perfil. Al hacer login, el sistema envía un código de 6 dígitos al correo del usuario mediante Resend SMTP. El código expira en 5 minutos.
-- **Cambio de contraseña** — desde la sección de perfil, ingresando la contraseña actual.
-- **Recuperación de contraseña** — flujo por enlace enviado al correo (`/forgot-password` → `/reset-password`).
-
-### 6.2 Menú
-
-- Catálogo de productos organizado por categorías.
-- Slider por categoría con paginación.
-- Modal de catálogo completo por categoría.
-- Animación de sándwich al hacer scroll (GSAP).
-- Imágenes optimizadas con lazy loading y skeleton shimmer.
-
-### 6.3 Pedidos
-
-- El usuario agrega productos al carrito y procede al checkout.
-- En el checkout ingresa dirección, teléfono, notas y método de pago.
-- **Pedido programado (Premium)** — los usuarios con suscripción activa pueden marcar la casilla "Programar pedido para una fecha y hora específica". La hora de entrega debe estar entre las **8:00 AM y las 3:00 PM**.
-
-### 6.4 Suscripción Premium
-
-- Planes disponibles: **Mensual** ($29.900/mes) y **Anual** ($249.900/año).
-- El pago se simula con un formulario de tarjeta con validación completa (número 16 dígitos, vencimiento MM/AA, CVV, nombre).
-- Al suscribirse, el usuario desbloquea la función de pedidos programados.
-- Desde `/suscripcion`, los usuarios no autenticados ven el botón **"Iniciar sesión para suscribirse"**.
-
-### 6.5 Reservas
-
-- El usuario puede crear una reserva indicando fecha futura, hora, número de personas y ocasión.
-- El usuario puede cancelar sus reservas activas desde su perfil.
-- El administrador puede cambiar el estado de cada reserva (PENDIENTE → CONFIRMADA → CANCELADA) y eliminarlas.
-
-### 6.6 Panel de administración (`/admin`)
-
-Accesible solo con rol ADMIN. Tiene **3 pestañas**:
-
-**Productos**
-- Ver todos los productos del menú con nombre, categoría, precio y disponibilidad.
-- Agregar producto: nombre, descripción, precio, categoría, imagen (subida directa a Cloudinary o URL) y disponibilidad.
-- Editar y eliminar productos existentes.
-
-**Reservas**
-- Tabla con columnas: Cliente, Email, Fecha, Hora, Personas, Ocasión, Estado, Acciones.
-- Cambiar estado desde un selector (PENDIENTE / CONFIRMADA / CANCELADA).
-- Eliminar reservas.
-
-**Pedidos**
-- Tabla con columnas: ID, Dirección, Teléfono, Pago, Total, Programado, Estado.
-- Cambiar estado desde un selector (PENDIENTE / EN_PREPARACION / EN_CAMINO / ENTREGADO / CANCELADO).
-- La columna "Programado" muestra la fecha y hora del pedido programado, o "—" si es inmediato.
-
-### 6.7 Contacto
-
-- Formulario de contacto en `/contact` que envía mensajes al microservicio `contacto-service`.
-
----
-
-## 7. Arquitectura del proyecto
-
-El backend está dividido en **5 microservicios independientes**, cada uno con su propio servidor, modelos y conexión a base de datos:
-
-```
-BrunchDesign/
-├── usuario-service/        ← Microservicio de usuarios (puerto 8081)
-├── menu-service/           ← Microservicio de menú y categorías (puerto 8082)
-├── pedido-service/         ← Microservicio de pedidos (puerto 8083)
-├── reserva-service/        ← Microservicio de reservas (puerto 8084)
-├── contacto-service/       ← Microservicio de mensajes de contacto (puerto 8085)
-├── brunchie_design/        ← Aplicación React (frontend, puerto 80)
-├── docker-compose.yml      ← Orquestación de todos los servicios
-└── .env                    ← Variables de entorno (NO incluido en el repo)
-```
-
-Cada microservicio tiene la misma estructura interna:
-
-```
-{servicio}/
-├── src/main/java/com/brunch/{dominio}/
-│   ├── {Dominio}Application.java   ← Punto de entrada
-│   ├── config/                     ← CORS y datos iniciales
-│   ├── model/                      ← Entidades JPA
-│   ├── repository/                 ← Acceso a base de datos
-│   ├── service/                    ← Lógica de negocio
-│   └── controller/                 ← Endpoints REST
-└── src/main/resources/
-    ├── application.properties
-    └── application-neon.properties ← Conexión a PostgreSQL (Neon)
-```
-
-### Stack tecnológico
-
-| Capa | Tecnología |
-|---|---|
-| Frontend | React 18 + Vite, GSAP + ScrollTrigger, React Router |
-| Backend | Spring Boot 3.4, Java 21 (Temurin), JPA/Hibernate |
-| Base de datos | PostgreSQL — Neon Cloud |
-| Proxy / Servidor | nginx (reverse proxy + SPA serving) |
-| Orquestación | Docker Compose |
-| Correo | Resend SMTP (smtp.resend.com:465 SSL) |
-| Imágenes | Cloudinary (cloud: `dwhezsxkg`, preset: `brunch_menu`) |
-| CI/CD | GitHub Actions |
-
----
-
-## 8. Endpoints principales de la API
-
-### Usuarios (`/api/usuarios`)
-
-| Método | URL | Descripción |
-|---|---|---|
-| `POST` | `/api/usuarios/registro` | Registro de usuario |
-| `POST` | `/api/usuarios/login` | Inicio de sesión |
-| `POST` | `/api/usuarios/google-login` | Login con Google |
-| `POST` | `/api/usuarios/2fa/enviar` | Enviar código 2FA por correo |
-| `POST` | `/api/usuarios/2fa/verificar` | Verificar código 2FA |
-| `PATCH` | `/api/usuarios/{id}/2fa?activo=` | Activar / desactivar 2FA |
-| `PATCH` | `/api/usuarios/{id}/suscripcion?activo=` | Activar / desactivar suscripción |
-| `PATCH` | `/api/usuarios/{id}/password` | Cambiar contraseña |
-
-### Menú (`/api/menu`, `/api/categorias`)
-
-| Método | URL | Descripción |
-|---|---|---|
-| `GET` | `/api/categorias` | Listar categorías |
-| `GET` | `/api/menu` | Ítems disponibles |
-| `GET` | `/api/admin/menu` | Todos los ítems (admin) |
-| `POST` | `/api/admin/menu` | Agregar producto (admin) |
-| `PUT` | `/api/admin/menu/{id}` | Editar producto (admin) |
-| `DELETE` | `/api/admin/menu/{id}` | Eliminar producto (admin) |
-
-### Pedidos (`/api/pedidos`)
-
-| Método | URL | Descripción |
-|---|---|---|
-| `POST` | `/api/pedidos` | Crear pedido (normal o programado) |
-| `GET` | `/api/pedidos/usuario/{id}` | Pedidos de un usuario |
-| `GET` | `/api/admin/pedidos` | Todos los pedidos (admin) |
-| `PATCH` | `/api/admin/pedidos/{id}/estado?estado=` | Cambiar estado (admin) |
-
-### Reservas (`/api/reservas`)
-
-| Método | URL | Descripción |
-|---|---|---|
-| `POST` | `/api/reservas` | Crear reserva |
-| `GET` | `/api/reservas/usuario/{id}` | Reservas de un usuario |
-| `PATCH` | `/api/reservas/{id}/estado` | Cancelar reserva (usuario) |
-| `GET` | `/api/admin/reservas` | Todas las reservas (admin) |
-| `PATCH` | `/api/admin/reservas/{id}/estado?estado=` | Cambiar estado (admin) |
-| `DELETE` | `/api/admin/reservas/{id}` | Eliminar reserva (admin) |
-
-### Contacto (`/api/contacto`)
-
-| Método | URL | Descripción |
-|---|---|---|
-| `POST` | `/api/contacto` | Enviar mensaje de contacto |
-
----
-
-## 9. Solución de problemas comunes
-
-**`docker` no se reconoce en la terminal:**
-→ Agregar `C:\Program Files\Docker\Docker\resources\bin` al PATH del sistema y reabrir la terminal.
-
-**El frontend no carga o da error de nginx:**
-→ Verificar que todos los microservicios estén corriendo antes de acceder al navegador.
-
-**Error de conexión a la base de datos:**
-→ Verificar que el archivo `.env` exista en la raíz con las variables `DB_URL`, `DB_USER` y `DB_PASSWORD`.
-
-**El correo 2FA no llega:**
-→ El plan gratuito de Resend solo permite enviar a la dirección verificada del propietario de la cuenta. Para enviar a cualquier correo, verificar un dominio en resend.com/domains.
-
-**Las imágenes del admin panel no se suben:**
-→ Verificar que el preset `brunch_menu` esté creado como **unsigned** en el dashboard de Cloudinary (cloud: `dwhezsxkg`).
-
-**Quiero reconstruir solo el frontend:**
-```bash
-docker compose up --build frontend
-```
-
-**Quiero ver los logs de un servicio específico:**
-```bash
-docker compose logs -f usuario-service
-```
-
-**El archivo `.env` desapareció después de un `git pull`:**
-→ Recrearlo manualmente con el contenido de la sección 2 de este manual.
+**Redis no está corriendo**
+→ No pasa nada: el límite de peticiones usa memoria. Solo el 2FA se detiene si `REDIS_URL` está configurada pero Redis no responde; déjala vacía para trabajar sin Redis.

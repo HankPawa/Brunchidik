@@ -252,7 +252,6 @@ const Menu = () => {
         return r.json();
       })
       .then((data) => {
-        console.log("Datos del menú cargados:", data);
         setCategorias(data);
       })
       .catch((err) => {

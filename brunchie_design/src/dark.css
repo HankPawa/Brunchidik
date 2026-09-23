@@ -26,7 +26,6 @@ html.dark .nav-user-name { color: #e8e2da; }
 html.dark .admin-nav-btn { color: #999; }
 html.dark .admin-nav-btn:hover { background: #2a2a2a; color: #e8e2da; }
 html.dark .nav-burger span { background-color: #e8e2da; }
-html.dark .nav-premium-badge { background: #2a1f0e; border-color: #5a3e1e; color: #c9a84c; }
 
 /* Dark toggle button */
 html.dark .dark-toggle-btn { color: #c9a84c; }
@@ -71,12 +70,6 @@ html.dark .perfil-toggle--on { background: #c9a84c; }
 html.dark .perfil-toggle-thumb { background: #e8e2da; }
 html.dark .perfil-btn-logout { color: #e07070; border-color: #5a2a2a; }
 html.dark .perfil-btn-logout:hover { background: #2a1515; }
-html.dark .perfil-card--premium-hint {
-  background: linear-gradient(135deg, #1e1a14, #2a2014) !important;
-  border-color: #3a3020 !important;
-}
-html.dark .perfil-premium-title { color: #e8e2da; }
-html.dark .perfil-premium-sub { color: #777; }
 html.dark .perfil-pedido-card { border-color: #2a2a2a; }
 html.dark .perfil-historial-empty { color: #555; }
 html.dark .pedido-timeline-label { color: #555; }

@@ -1,0 +1,34 @@
+{
+  "name": "brunch-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "nodemon --watch src --ext js src/server.js",
+    "start": "node src/server.js",
+    "seed": "node src/seed/run.js",
+    "check": "node scripts/check-env.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:setup": "prisma migrate deploy && node src/seed/run.js",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "ioredis": "^5.6.1",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^10.0.10",
+    "ws": "^8.21.3",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prisma": "6.19.3"
+  }
+}
