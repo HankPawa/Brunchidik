@@ -12,7 +12,7 @@ const VerificarCodigo = () => {
   const [reenvio, setReenvio] = useState("");
   const { verifyCode, reenviarCodigo, pendingUser } = useAuth();
   const navigate = useNavigate();
-  useEffect(() => { document.title = "Verificar codigo | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Verificar codigo | Montis Plaza"; }, []);
 
   if (!pendingUser) {
     navigate("/login");

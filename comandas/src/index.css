@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Paleta heredada de la web del restaurante, para que las dos apps se
+   reconozcan como del mismo sitio. */
+@theme {
+  --color-tinta: #1a1a1a;
+  --color-tinta-suave: #2a2a2a;
+  --color-crema: #faf8f5;
+  --color-crema-borde: #f0ede8;
+  --color-dorado: #c9a84c;
+  --color-alerta: #c0392b;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  /* Sin rebote elástico ni zoom por doble toque: se usa con el dedo. */
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

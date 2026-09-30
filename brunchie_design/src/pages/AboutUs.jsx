@@ -23,7 +23,7 @@ const values = [
 ];
 
 const AboutUs = () => {
-  useEffect(() => { document.title = "Nosotros | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Nosotros | Montis Plaza"; }, []);
   return (
     <>
       <Navbar />
@@ -51,7 +51,7 @@ const AboutUs = () => {
             <span className="about-eyebrow">Cómo empezamos</span>
             <h2 className="about-section-title">Un sueño que nació en una mesa familiar</h2>
             <p>
-              Brunch & Co. nació de la idea sencilla de que el desayuno merece más tiempo, más sabor
+              Montis Plaza nació de la idea sencilla de que el desayuno merece más tiempo, más sabor
               y más compañía. Lo que comenzó como reuniones de familia los fines de semana se
               convirtió en un espacio abierto para todos: un lugar donde la prisa no tiene lugar y
               cada taza de café se sirve con calma.
@@ -115,7 +115,7 @@ const AboutUs = () => {
             Queremos que cada visita sea un pequeño paréntesis en tu día: un momento para respirar,
             disfrutar y recordar por qué vale la pena tomarse el tiempo.
           </blockquote>
-          <p className="about-promise-attr">— El equipo de Brunch & Co.</p>
+          <p className="about-promise-attr">— El equipo de Montis Plaza</p>
         </div>
       </section>
 

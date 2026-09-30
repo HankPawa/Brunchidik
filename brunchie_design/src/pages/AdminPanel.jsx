@@ -121,7 +121,7 @@ const AdminPanel = () => {
   const { authFetch } = useAuth();
   const [tab, setTab] = useState("productos");
   const [uploading, setUploading] = useState(false);
-  useEffect(() => { document.title = "Admin | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Admin | Montis Plaza"; }, []);
 
   const adminFetch = authFetch;
 

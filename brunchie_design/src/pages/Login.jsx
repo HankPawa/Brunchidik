@@ -9,7 +9,7 @@ import "./Login.css";
 
 const Login = () => {
   const [mode, setMode] = useState("login");
-  useEffect(() => { document.title = mode === "login" ? "Iniciar sesión | Brunch & Co." : "Crear cuenta | Brunch & Co."; }, [mode]);
+  useEffect(() => { document.title = mode === "login" ? "Iniciar sesión | Montis Plaza" : "Crear cuenta | Montis Plaza"; }, [mode]);
 
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");

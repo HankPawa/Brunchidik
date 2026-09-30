@@ -9,7 +9,7 @@ import SandwichFalling from "../components/SandwichFalling";
 import WhatsApp from "../components/WhatsApp";
 
 const Home = () => {
-  useEffect(() => { document.title = "Brunch & Co. — El mejor brunch de la ciudad"; }, []);
+  useEffect(() => { document.title = "Montis Plaza — El mejor brunch de la ciudad"; }, []);
   return (
     <>
       <SandwichFalling heroSelector=".hero-bg" />

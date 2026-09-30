@@ -21,14 +21,14 @@ async function enviar({ to, subject, text }) {
 export function enviarCodigo2FA(destinatario, codigo) {
   return enviar({
     to: destinatario,
-    subject: "Tu código de verificación — Brunch & Co.",
+    subject: "Tu código de verificación — Montis Plaza",
     text:
       "Hola,\n\n" +
       "Tu código de verificación es:\n\n" +
       `    ${codigo}\n\n` +
       "Este código expira en 5 minutos.\n" +
       "Si no fuiste tú, ignora este mensaje.\n\n" +
-      "— Brunch & Co.",
+      "— Montis Plaza",
   });
 }
 
@@ -46,15 +46,15 @@ export function enviarConfirmacionReserva(reserva) {
 
   return enviar({
     to: reserva.email,
-    subject: "Reserva confirmada — Brunch & Co.",
+    subject: "Reserva confirmada — Montis Plaza",
     text:
       `Hola, ${reserva.nombre}!\n\n` +
-      "Tu reserva en Brunch & Co. ha sido registrada con éxito.\n\n" +
+      "Tu reserva en Montis Plaza ha sido registrada con éxito.\n\n" +
       `  Fecha:    ${fecha}\n` +
       `  Hora:     ${hora}\n` +
       `  Personas: ${reserva.personas}\n` +
       ocasion +
       "\nTe esperamos. Si necesitas hacer cambios, contáctanos por WhatsApp.\n\n" +
-      "— Brunch & Co.",
+      "— Montis Plaza",
   });
 }

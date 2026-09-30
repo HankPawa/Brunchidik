@@ -8,7 +8,7 @@ import "./PedidoExitoso.css";
 const PedidoExitoso = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    document.title = "Pedido confirmado | Brunch & Co.";
+    document.title = "Pedido confirmado | Montis Plaza";
     toast.success("¡Pedido recibido! Lo estamos preparando.", { duration: 5000 });
   }, []);
   return (

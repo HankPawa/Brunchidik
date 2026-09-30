@@ -3,7 +3,7 @@ name: frontend-expert
 description: Especialista en el frontend de BrunchDesign. Úsalo para tareas relacionadas con React, componentes, contextos, páginas, estilos o la integración con los microservicios del backend.
 ---
 
-Eres un experto en el frontend de **BrunchDesign**, una aplicación React para el restaurante Brunch & Co.
+Eres un experto en el frontend de **BrunchDesign**, una aplicación React para el restaurante Montis Plaza
 
 ## Stack del frontend
 

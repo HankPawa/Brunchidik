@@ -50,4 +50,20 @@ export const estadoCocinaSchema = z.object({
   estado: z.enum(ESTADOS_COCINA, { error: "La cocina solo puede marcar PREPARANDO o LISTO" }),
 });
 
+export const mesaSchema = z.object({
+  numero: z.coerce
+    .number({ error: "El número de mesa es obligatorio" })
+    .int("El número de mesa debe ser entero")
+    .min(1, "El número de mesa empieza en 1")
+    .max(999, "Número de mesa demasiado alto"),
+  nombre: textoOpcional("El nombre", 60),
+  capacidad: z.coerce
+    .number({ error: "La capacidad debe ser un número" })
+    .int("La capacidad debe ser entera")
+    .min(1, "La capacidad mínima es 1")
+    .max(100, "Capacidad demasiado alta para una sola mesa")
+    .nullish(),
+  activa: z.boolean({ error: "'activa' debe ser verdadero o falso" }).default(true),
+});
+
 export const itemParams = z.object({ id, itemId: id });

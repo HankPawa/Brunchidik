@@ -1,4 +1,4 @@
-# Manual de instalación y uso — Brunch & Co.
+# Manual de instalación y uso — Montis Plaza
 
 ## 1. Requisitos
 

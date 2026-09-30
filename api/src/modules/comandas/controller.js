@@ -39,6 +39,75 @@ export async function listarMesas(req, res) {
   res.json(mesas.map(toMesa));
 }
 
+// --- Mesas (admin) ---
+
+const conComandaAbierta = { comandas: { where: { estado: "ABIERTA" }, select: { id: true } } };
+
+// El admin ve también las mesas fuera de servicio: son las que tiene que reactivar.
+export async function listarMesasAdmin(req, res) {
+  const mesas = await prisma.mesa.findMany({
+    orderBy: { numero: "asc" },
+    include: conComandaAbierta,
+  });
+  res.json(mesas.map(toMesa));
+}
+
+async function buscarMesa(id) {
+  const mesa = await prisma.mesa.findUnique({ where: { id }, include: conComandaAbierta });
+  if (!mesa) throw noEncontrado("Mesa no encontrada");
+  return mesa;
+}
+
+// El número de mesa es único: es lo que el mesero canta a la cocina.
+const mesaDuplicada = (err, numero) =>
+  err.code === "P2002" ? new ApiError(409, `Ya existe la mesa ${numero}`) : err;
+
+export async function crearMesa(req, res) {
+  const datos = req.valid.body;
+  try {
+    const mesa = await prisma.mesa.create({ data: datos, include: conComandaAbierta });
+    await audit.registrar("CREAR_MESA", `Creó la mesa ${mesa.numero}`, audit.SERVICIO_COMANDAS);
+    res.json(toMesa(mesa));
+  } catch (err) {
+    throw mesaDuplicada(err, datos.numero);
+  }
+}
+
+export async function editarMesa(req, res) {
+  const { id } = req.valid.params;
+  const datos = req.valid.body;
+  const previa = await buscarMesa(id);
+
+  // Sacar de servicio una mesa con gente sentada dejaría la cuenta huérfana.
+  if (!datos.activa && previa.comandas.length > 0) {
+    throw new ApiError(409, `La mesa ${previa.numero} tiene una cuenta abierta: ciérrala antes de desactivarla`);
+  }
+
+  try {
+    const mesa = await prisma.mesa.update({ where: { id }, data: datos, include: conComandaAbierta });
+    await audit.registrar("EDITAR_MESA", `Editó la mesa ${mesa.numero}`, audit.SERVICIO_COMANDAS);
+    res.json(toMesa(mesa));
+  } catch (err) {
+    throw mesaDuplicada(err, datos.numero);
+  }
+}
+
+// Igual que con los insumos: solo se borra lo que no tiene historia. Una mesa con
+// ventas se desactiva, porque borrarla se llevaría las comandas por delante.
+export async function eliminarMesa(req, res) {
+  const { id } = req.valid.params;
+  const mesa = await buscarMesa(id);
+
+  const comandas = await prisma.comanda.count({ where: { mesaId: id } });
+  if (comandas > 0) {
+    throw new ApiError(409, `La mesa ${mesa.numero} ya tiene ${comandas} comanda(s) registradas. Desactívala en vez de borrarla.`);
+  }
+
+  await prisma.mesa.delete({ where: { id } });
+  await audit.registrar("ELIMINAR_MESA", `Eliminó la mesa ${mesa.numero}`, audit.SERVICIO_COMANDAS);
+  res.status(204).end();
+}
+
 // --- Comandas ---
 
 export async function abrir(req, res) {
@@ -93,19 +162,42 @@ export async function agregarItem(req, res) {
     throw new ApiError(409, `"${plato.nombre}" no está disponible en el salón`);
   }
 
-  // Nombre y precio se congelan aquí: cambiar la carta mañana no reescribe esta venta.
-  await prisma.comandaItem.create({
-    data: {
+  const precio = plato.precio ?? 0;
+
+  // El mesero toca el mismo plato varias veces seguidas: eso es "tres truchas",
+  // no tres renglones de uno. Se agrupa solo si coinciden plato, notas y precio;
+  // una nota distinta es un plato distinto para la cocina.
+  const repetido = await prisma.comandaItem.findFirst({
+    where: {
       comandaId: id,
       menuItemId: plato.id,
-      nombreItem: plato.nombre,
-      precioUnitario: plato.precio ?? 0,
-      cantidad,
-      notas,
       estado: "BORRADOR",
-      fechaCreacion: nowNaive(),
+      notas: notas ?? null,
+      precioUnitario: precio,
     },
+    orderBy: { id: "asc" },
   });
+
+  if (repetido) {
+    await prisma.comandaItem.update({
+      where: { id: repetido.id },
+      data: { cantidad: { increment: cantidad } },
+    });
+  } else {
+    // Nombre y precio se congelan aquí: cambiar la carta mañana no reescribe esta venta.
+    await prisma.comandaItem.create({
+      data: {
+        comandaId: id,
+        menuItemId: plato.id,
+        nombreItem: plato.nombre,
+        precioUnitario: precio,
+        cantidad,
+        notas: notas ?? null,
+        estado: "BORRADOR",
+        fechaCreacion: nowNaive(),
+      },
+    });
+  }
 
   responder(res, await buscarComanda(id));
 }

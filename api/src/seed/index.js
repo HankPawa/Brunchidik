@@ -74,7 +74,7 @@ async function sembrarPersonal() {
   if (!email || !password) {
     console.warn("⚠ ADMIN_EMAIL/ADMIN_PASSWORD vacías: no se crea el usuario administrador");
   } else {
-    await sembrarUsuario({ email, password, nombre: "Admin Brunch", rol: ROL.ADMIN });
+    await sembrarUsuario({ email, password, nombre: "Admin Montis Plaza", rol: ROL.ADMIN });
   }
 
   for (const [rol, cuenta] of Object.entries(env.personal)) {

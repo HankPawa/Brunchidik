@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-**Brunch & Co.** is a full-stack restaurant web app: menu, table reservations, delivery orders and an admin panel. The backend is a single Express app (`api/`); the frontend is a React SPA (`brunchie_design/`).
+**Montis Plaza** is a full-stack restaurant web app: menu, table reservations, delivery orders and an admin panel. The backend is a single Express app (`api/`); the frontend is a React SPA (`brunchie_design/`).
 
 Migrated from 5 Spring Boot microservices to Express in September 2026. There is no Java in the repo any more.
 

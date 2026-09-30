@@ -54,10 +54,12 @@ export function readEnv() {
     jwtSecret,
     jwtExpiresIn: read("JWT_EXPIRES_IN") ?? "7d",
     redisUrl,
-    corsOrigins: (read("CORS_ORIGINS") ?? "http://localhost:5173")
+    corsOrigins: (read("CORS_ORIGINS") ?? "http://localhost:5173,http://localhost:5174")
       .split(",")
       .map((o) => o.trim())
       .filter(Boolean),
+    // Carpeta con la interfaz ya compilada. Vacía en desarrollo.
+    staticDir: read("STATIC_DIR") ?? null,
     googleClientId,
     mail: {
       enabled: mailEnabled,

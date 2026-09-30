@@ -6,7 +6,7 @@ import Form from "../components/Form";
 import "./ContactUs.css";
 
 const ContactUs = () => {
-  useEffect(() => { document.title = "Contacto | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Contacto | Montis Plaza"; }, []);
   return (
     <>
       <Navbar />
@@ -27,7 +27,7 @@ const ContactUs = () => {
         </video>
         <div className="menu-hero-overlay">
           <h1 className="contact-hero-title">Contáctanos</h1>
-          <p className="menu-hero-sub">En Brunch & Co. somos una familia unida dispuesta a ayudarte</p>
+          <p className="menu-hero-sub">En Montis Plaza somos una familia unida dispuesta a ayudarte</p>
         </div>
       </section>
 
@@ -38,7 +38,7 @@ const ContactUs = () => {
             <span className="contact-eyebrow">Encuéntranos</span>
             <h2 className="contact-heading">Visítanos o escríbenos</h2>
             <p className="contact-body">
-              En Brunch & Co. te esperamos con desayunos y brunch preparados con
+              En Montis Plaza te esperamos con desayunos y brunch preparados con
               ingredientes frescos y sabor casero. Ven a relajarte en un ambiente
               acogedor y disfruta de nuestras especialidades.
             </p>
@@ -58,7 +58,7 @@ const ContactUs = () => {
               </li>
               <li>
                 <strong>Dirección:</strong>
-                <span>Calle del Sabor 123, Ciudad del Brunch</span>
+                <span>Calle del Sabor 123, Ciudad</span>
               </li>
             </ul>
 

@@ -10,7 +10,7 @@ const ReservaExitosa = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    document.title = "Reserva confirmada | Brunch & Co.";
+    document.title = "Reserva confirmada | Montis Plaza";
     toast.success(`¡Reserva confirmada, ${user?.nombre?.split(" ")[0] || ""}! Te esperamos.`, { duration: 5000 });
   }, []);
   return (

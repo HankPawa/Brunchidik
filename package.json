@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Brunch & Co. — API Express + frontend React",
+  "description": "Montis Plaza — API Express + frontend React",
   "engines": {
     "node": ">=20"
   },

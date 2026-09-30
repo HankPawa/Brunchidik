@@ -1,6 +1,6 @@
-# Brunch & Co.
+# Montis Plaza
 
-Aplicación web del restaurante **Brunch & Co.**: menú, reservas de mesa, pedidos a domicilio y panel de administración.
+Aplicación web del restaurante **Montis Plaza**: menú, reservas de mesa, pedidos a domicilio y panel de administración.
 
 - **Backend:** Node.js + Express, Prisma y PostgreSQL, con WebSocket para el panel en tiempo real.
 - **Frontend:** React 19 + Vite.

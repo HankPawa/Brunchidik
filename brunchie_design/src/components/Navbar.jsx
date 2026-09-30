@@ -49,7 +49,7 @@ const Navbar = () => {
   return (
     <nav ref={navRef} className="navbar navbar-custom" role="navigation">
       <div className="navbar-brand">
-        <Link to="/" className="navbar-item nav-animate brand-name" onClick={closeMenu}>Brunch & Co.</Link>
+        <Link to="/" className="navbar-item nav-animate brand-name" onClick={closeMenu}>Montis Plaza</Link>
 
         <button
           className={`nav-burger${menuOpen ? " is-active" : ""}`}

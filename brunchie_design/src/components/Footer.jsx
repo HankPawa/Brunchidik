@@ -16,7 +16,7 @@ const Footer = () => {
 
         <div className="footer-cols">
           <div className="footer-col">
-            <p className="footer-title">Brunch & Co.</p>
+            <p className="footer-title">Montis Plaza</p>
             <p className="footer-text">El mejor brunch de la ciudad</p>
           </div>
 
@@ -35,7 +35,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>© 2026 Brunch & Co.</p>
+          <p>© 2026 Montis Plaza</p>
         </div>
 
       </div>

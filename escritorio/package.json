@@ -1,0 +1,19 @@
+{
+  "name": "brunch-escritorio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Montis Plaza Comandas — aplicación de escritorio para el PC del local",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node lanzar.js",
+    "start": "node lanzar.js"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11"
+  },
+  "productName": "Montis Plaza Comandas",
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
+}

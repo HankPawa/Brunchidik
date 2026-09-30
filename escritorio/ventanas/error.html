@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Montis Plaza · Comandas</title>
+    <style>
+      :root {
+        --tinta: #1a1a1a;
+        --crema: #faf8f5;
+        --borde: #f0ede8;
+        --alerta: #c0392b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 32px;
+        background: var(--crema);
+        color: var(--tinta);
+        font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+        user-select: none;
+      }
+      h1 { margin: 0 0 4px; font-size: 20px; }
+      .marca { margin: 0 0 24px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #a0a0a0; }
+      .detalle {
+        margin: 0 0 20px;
+        padding: 12px 14px;
+        border: 1px solid rgba(192, 57, 43, .3);
+        border-radius: 12px;
+        background: rgba(192, 57, 43, .08);
+        color: var(--alerta);
+        font-family: ui-monospace, Consolas, monospace;
+        font-size: 13px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        user-select: text;
+      }
+      h2 { margin: 0 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #707070; }
+      ol { margin: 0; padding-left: 20px; }
+      li { margin-bottom: 8px; user-select: text; }
+      footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--borde); font-size: 13px; color: #808080; }
+    </style>
+  </head>
+  <body>
+    <p class="marca">Montis Plaza · Comandas</p>
+    <h1 id="titulo">No se pudo iniciar</h1>
+    <p class="detalle" id="detalle"></p>
+    <div id="ayuda" hidden>
+      <h2>Qué puedes hacer</h2>
+      <ol id="consejos"></ol>
+    </div>
+    <footer>Corrige el problema y vuelve a abrir el programa.</footer>
+
+    <script>
+      const datos = new URLSearchParams(location.search);
+      document.getElementById("titulo").textContent = datos.get("titulo") || "No se pudo iniciar";
+
+      const detalle = datos.get("detalle") || "";
+      const cajaDetalle = document.getElementById("detalle");
+      if (detalle) cajaDetalle.textContent = detalle;
+      else cajaDetalle.hidden = true;
+
+      let consejos = [];
+      try {
+        consejos = JSON.parse(datos.get("consejos") || "[]");
+      } catch {
+        // Sin consejos legibles: se muestra solo el detalle.
+      }
+      if (consejos.length > 0) {
+        document.getElementById("ayuda").hidden = false;
+        const lista = document.getElementById("consejos");
+        for (const consejo of consejos) {
+          const item = document.createElement("li");
+          item.textContent = consejo;
+          lista.appendChild(item);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import "./NotFound.css";
 
 const NotFound = () => {
-  useEffect(() => { document.title = "Página no encontrada | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Página no encontrada | Montis Plaza"; }, []);
 
   return (
     <>

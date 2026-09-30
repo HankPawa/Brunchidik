@@ -156,7 +156,7 @@ const PaymentModal = ({ method, onClose, onConfirm, loading }) => {
 const Checkout = () => {
   const { items, subtotal, shipping, total, clearCart } = useCart();
   const { user, authFetch } = useAuth();
-  useEffect(() => { document.title = "Checkout | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Checkout | Montis Plaza"; }, []);
   const navigate = useNavigate();
 
   const [nombre, setNombre]               = useState(user?.nombre || "");

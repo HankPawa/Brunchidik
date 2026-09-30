@@ -16,6 +16,16 @@ export async function listarCategorias(req, res) {
   res.json(categorias.map(toCategoria));
 }
 
+// Carta del salón: lo que el mesero puede vender en mesa. Las categorías vacías
+// no se envían para que la app no muestre pestañas sin platos.
+export async function listarSalon(req, res) {
+  const categorias = await prisma.categoria.findMany({
+    ...porId,
+    include: { items: { ...porId, where: { disponible: true, visibleSalon: true } } },
+  });
+  res.json(categorias.filter((c) => c.items.length > 0).map(toCategoria));
+}
+
 export async function listarDisponibles(req, res) {
   const items = await prisma.menuItem.findMany({ ...porId, where: { disponible: true, visibleWeb: true } });
   res.json(items.map(toMenuItem));

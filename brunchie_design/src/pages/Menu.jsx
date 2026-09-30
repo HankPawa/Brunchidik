@@ -241,7 +241,7 @@ const Menu = () => {
   const [loading, setLoading]     = useState(true);
   const [busqueda, setBusqueda]   = useState("");
 
-  useEffect(() => { document.title = "Menú | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Menú | Montis Plaza"; }, []);
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   useEffect(() => {

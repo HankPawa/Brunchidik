@@ -63,7 +63,7 @@ const Perfil = () => {
   const { favorites, toggle: toggleFav } = useFavorites();
   const navigate = useNavigate();
 
-  useEffect(() => { document.title = "Mi perfil | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Mi perfil | Montis Plaza"; }, []);
 
   const [pedidos, setPedidos]               = useState([]);
   const [pedidosLoading, setPedidosLoading] = useState(false);

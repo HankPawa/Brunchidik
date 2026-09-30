@@ -42,7 +42,7 @@ const Hero = () => {
       </video>
       <div className="overlay">
         <div className="hero-body has-text-centered">
-          <h1 className="title has-text-white hero-title">Brunch & Co.</h1>
+          <h1 className="title has-text-white hero-title">Montis Plaza</h1>
           <p className="subtitle has-text-white hero-subtitle">
             Donde cada mañana se convierte en una experiencia especial
           </p>

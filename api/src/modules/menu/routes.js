@@ -1,10 +1,15 @@
 import { Router } from "express";
+import { ROL } from "../../lib/roles.js";
 import { idParams } from "../../lib/schemas.js";
+import { requireRol } from "../../middleware/auth.js";
 import { validate } from "../../middleware/validate.js";
 import * as c from "./controller.js";
 
 export const categoriasRouter = Router();
 categoriasRouter.get("/", c.listarCategorias);
+
+export const menuSalonRouter = Router();
+menuSalonRouter.get("/", requireRol(ROL.MESERO, ROL.COCINA, ROL.ADMIN), c.listarSalon);
 
 export const menuRouter = Router();
 menuRouter.get("/", c.listarDisponibles);

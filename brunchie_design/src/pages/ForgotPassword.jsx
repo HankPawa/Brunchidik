@@ -7,7 +7,7 @@ import "./ForgotPassword.css";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
-  useEffect(() => { document.title = "Recuperar contrasena | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Recuperar contrasena | Montis Plaza"; }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

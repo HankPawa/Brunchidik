@@ -26,7 +26,7 @@ const Reservas = () => {
   const [loading, setLoading]         = useState(false);
   const [misReservas, setMisReservas] = useState([]);
 
-  useEffect(() => { document.title = "Reservas | Brunch & Co."; }, []);
+  useEffect(() => { document.title = "Reservas | Montis Plaza"; }, []);
   const today = new Date().toISOString().split("T")[0];
 
   const fetchMisReservas = async () => {
