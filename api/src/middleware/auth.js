@@ -1,6 +1,7 @@
 import { prisma } from "../config/prisma.js";
 import { ApiError } from "../lib/errors.js";
 import { verifyToken } from "../lib/jwt.js";
+import { ROL } from "../lib/roles.js";
 
 const SESION_INVALIDA = "Sesión inválida o expirada";
 
@@ -29,19 +30,25 @@ export function optionalAuth(req, res, next) {
   next();
 }
 
-// El rol se vuelve a leer de la base: un admin degradado pierde el acceso al
-// instante, sin esperar a que caduque su token.
-export async function requireAdmin(req, res, next) {
-  authenticate(req);
-  const usuario = await prisma.usuario.findUnique({
-    where: { id: req.user.id },
-    select: { rol: true },
-  });
-  if (usuario?.rol !== "ADMIN") {
-    throw new ApiError(403, "Acceso restringido a administradores");
-  }
-  next();
-}
+// El rol se vuelve a leer de la base en cada petición: a quien se le cambie el
+// rol pierde el acceso al instante, sin esperar a que caduque su token.
+export const requireRol =
+  (...roles) =>
+  async (req, res, next) => {
+    authenticate(req);
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: req.user.id },
+      select: { rol: true },
+    });
+    if (!usuario || !roles.includes(usuario.rol)) {
+      throw new ApiError(403, "No tienes permiso para esta acción");
+    }
+    // El rol de la base manda sobre el del token.
+    req.user.rol = usuario.rol;
+    next();
+  };
+
+export const requireAdmin = requireRol(ROL.ADMIN);
 
 export const requireSelf =
   (param = "id") =>

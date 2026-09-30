@@ -33,14 +33,19 @@ model Categoria {
 }
 
 model MenuItem {
-  id          BigInt     @id @default(autoincrement())
-  nombre      String     @db.VarChar(255)
-  descripcion String?
-  precio      Decimal?   @db.Decimal(38, 2)
-  imagenUrl   String?    @map("imagen_url") @db.VarChar(255)
-  disponible  Boolean
-  categoriaId BigInt?    @map("categoria_id")
-  categoria   Categoria? @relation(fields: [categoriaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk8jufm10ou3keb2efyccs8tsee")
+  id           BigInt       @id @default(autoincrement())
+  nombre       String       @db.VarChar(255)
+  descripcion  String?
+  precio       Decimal?     @db.Decimal(38, 2)
+  imagenUrl    String?      @map("imagen_url") @db.VarChar(255)
+  disponible   Boolean
+  // Dónde se ofrece el plato: la carta de la web y la del salón pueden diferir.
+  visibleWeb   Boolean      @default(true) @map("visible_web")
+  visibleSalon Boolean      @default(true) @map("visible_salon")
+  categoriaId  BigInt?      @map("categoria_id")
+  categoria    Categoria?   @relation(fields: [categoriaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk8jufm10ou3keb2efyccs8tsee")
+  receta       RecetaItem[]
+  comandaItems ComandaItem[]
 
   @@map("menu_items")
 }
@@ -106,4 +111,113 @@ model AuditLog {
   servicio String   @db.VarChar(255)
 
   @@map("audit_logs")
+}
+
+// ── Inventario ────────────────────────────────────────────────────────────────
+// La unidad se fija en el insumo y la receta la hereda: no hay conversiones
+// automáticas (gramos contra kilos es la causa número uno de descuadres).
+
+model Insumo {
+  id          BigInt                 @id @default(autoincrement())
+  nombre      String                 @unique @db.VarChar(255)
+  unidad      String                 @db.VarChar(4) // G | ML | UND
+  stock       Decimal                @default(0) @db.Decimal(14, 3)
+  stockMinimo Decimal                @default(0) @map("stock_minimo") @db.Decimal(14, 3)
+  activo      Boolean                @default(true)
+  recetas     RecetaItem[]
+  movimientos MovimientoInventario[]
+
+  @@map("insumos")
+}
+
+// La receta de un plato es el conjunto de sus filas; no hay cabecera aparte.
+model RecetaItem {
+  id         BigInt   @id @default(autoincrement())
+  menuItemId BigInt   @map("menu_item_id")
+  insumoId   BigInt   @map("insumo_id")
+  cantidad   Decimal  @db.Decimal(14, 3)
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  insumo     Insumo   @relation(fields: [insumoId], references: [id], onDelete: Restrict)
+
+  @@unique([menuItemId, insumoId])
+  @@map("receta_items")
+}
+
+// Libro de movimientos: da trazabilidad y permite revertir un consumo por lo que
+// realmente se descontó, aunque la receta haya cambiado después.
+// `cantidad` lleva signo (negativa al consumir).
+model MovimientoInventario {
+  id              BigInt   @id @default(autoincrement())
+  insumoId        BigInt   @map("insumo_id")
+  tipo            String   @db.VarChar(12) // CONSUMO | DEVOLUCION | AJUSTE | COMPRA
+  cantidad        Decimal  @db.Decimal(14, 3)
+  stockResultante Decimal  @map("stock_resultante") @db.Decimal(14, 3)
+  motivo          String?  @db.VarChar(255)
+  comandaItemId   BigInt?  @map("comanda_item_id")
+  usuarioId       BigInt?  @map("usuario_id")
+  fecha           DateTime @db.Timestamp(6)
+  insumo          Insumo   @relation(fields: [insumoId], references: [id], onDelete: Restrict)
+
+  @@index([insumoId, fecha])
+  @@index([comandaItemId])
+  @@map("movimientos_inventario")
+}
+
+// ── Salón: mesas y comandas ───────────────────────────────────────────────────
+
+model Mesa {
+  id        BigInt    @id @default(autoincrement())
+  numero    Int       @unique
+  nombre    String?   @db.VarChar(50)
+  capacidad Int       @default(4)
+  activa    Boolean   @default(true)
+  comandas  Comanda[]
+
+  @@map("mesas")
+}
+
+// No hay columna "ocupada" en Mesa: la mesa está ocupada si tiene una comanda
+// ABIERTA. Una sola fuente de verdad, imposible de desincronizar.
+model Comanda {
+  id            BigInt        @id @default(autoincrement())
+  mesaId        BigInt        @map("mesa_id")
+  meseroId      BigInt        @map("mesero_id")
+  estado        String        @default("ABIERTA") @db.VarChar(10) // ABIERTA | CERRADA | ANULADA
+  comensales    Int?
+  notas         String?       @db.VarChar(255)
+  total         Decimal?      @db.Decimal(38, 2)
+  metodoPago    String?       @map("metodo_pago") @db.VarChar(14)
+  tieneFaltante Boolean       @default(false) @map("tiene_faltante")
+  fechaApertura DateTime      @map("fecha_apertura") @db.Timestamp(6)
+  fechaCierre   DateTime?     @map("fecha_cierre") @db.Timestamp(6)
+  mesa          Mesa          @relation(fields: [mesaId], references: [id], onDelete: Restrict)
+  items         ComandaItem[]
+
+  @@index([estado])
+  @@index([fechaApertura])
+  @@map("comandas")
+}
+
+// El nombre y el precio se copian del plato al añadirlo: editar la carta no
+// puede reescribir lo que ya se vendió. Por eso menuItemId puede quedar en nulo.
+model ComandaItem {
+  id                 BigInt    @id @default(autoincrement())
+  comandaId          BigInt    @map("comanda_id")
+  menuItemId         BigInt?   @map("menu_item_id")
+  nombreItem         String    @map("nombre_item") @db.VarChar(255)
+  precioUnitario     Decimal   @map("precio_unitario") @db.Decimal(38, 2)
+  cantidad           Int
+  notas              String?   @db.VarChar(255)
+  estado             String    @default("BORRADOR") @db.VarChar(12) // BORRADOR | PENDIENTE | PREPARANDO | LISTO | ENTREGADO | CANCELADO
+  faltoStock         Boolean   @default(false) @map("falto_stock")
+  inventarioAplicado Boolean   @default(false) @map("inventario_aplicado")
+  fechaCreacion      DateTime  @map("fecha_creacion") @db.Timestamp(6)
+  fechaEnvio         DateTime? @map("fecha_envio") @db.Timestamp(6)
+  fechaListo         DateTime? @map("fecha_listo") @db.Timestamp(6)
+  comanda            Comanda   @relation(fields: [comandaId], references: [id], onDelete: Cascade)
+  menuItem           MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+
+  @@index([comandaId])
+  @@index([estado, fechaEnvio])
+  @@map("comanda_items")
 }

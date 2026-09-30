@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { env } from "../config/env.js";
 import { prisma } from "../config/prisma.js";
+import { ROL } from "../lib/roles.js";
 
 const CATEGORIAS = [
   {
@@ -43,34 +44,48 @@ const CATEGORIAS = [
   { nombre: "Arroz", items: [] },
 ];
 
-async function sembrarAdmin() {
-  const { email, password } = env.admin;
-  if (!email || !password) {
-    console.warn("⚠ ADMIN_EMAIL/ADMIN_PASSWORD vacías: no se crea el usuario administrador");
-    return;
-  }
-
+// Crea la cuenta si no existe; si ya existe, solo se asegura de que tenga el rol
+// correcto. Nunca se pisa la contraseña de una cuenta existente.
+async function sembrarUsuario({ email, password, nombre, rol }) {
   const existente = await prisma.usuario.findUnique({ where: { email } });
   if (existente) {
-    // Nunca se pisa la contraseña de un admin existente; solo se asegura el rol.
-    if (existente.rol !== "ADMIN") {
-      await prisma.usuario.update({ where: { email }, data: { rol: "ADMIN" } });
-      console.log(`✔ ${email} promovido a ADMIN`);
+    if (existente.rol !== rol) {
+      await prisma.usuario.update({ where: { email }, data: { rol } });
+      console.log(`✔ ${email} ahora tiene rol ${rol}`);
     }
     return;
   }
 
   await prisma.usuario.create({
     data: {
-      nombre: "Admin Brunch",
+      nombre,
       email,
       password: await bcrypt.hash(password, 10),
       dosFaActivo: false,
       cuentaGoogle: false,
-      rol: "ADMIN",
+      rol,
     },
   });
-  console.log(`✔ Administrador ${email} creado`);
+  console.log(`✔ Usuario ${email} creado con rol ${rol}`);
+}
+
+async function sembrarPersonal() {
+  const { email, password } = env.admin;
+  if (!email || !password) {
+    console.warn("⚠ ADMIN_EMAIL/ADMIN_PASSWORD vacías: no se crea el usuario administrador");
+  } else {
+    await sembrarUsuario({ email, password, nombre: "Admin Brunch", rol: ROL.ADMIN });
+  }
+
+  for (const [rol, cuenta] of Object.entries(env.personal)) {
+    if (!cuenta.email || !cuenta.password) continue;
+    await sembrarUsuario({
+      email: cuenta.email,
+      password: cuenta.password,
+      nombre: rol === ROL.MESERO ? "Mesero" : "Cocina",
+      rol,
+    });
+  }
 }
 
 // Crea las categorías que falten, así una base ya existente recibe las nuevas.
@@ -106,7 +121,22 @@ async function sembrarMenu() {
   }
 }
 
+// Mesas del salón. Solo se crean si no hay ninguna: renumerarlas o quitarlas
+// es decisión del restaurante, no de la semilla.
+async function sembrarMesas() {
+  if ((await prisma.mesa.count()) > 0) return;
+
+  await prisma.mesa.createMany({
+    data: Array.from({ length: 10 }, (_, i) => ({
+      numero: i + 1,
+      capacidad: i >= 8 ? 6 : 4,
+    })),
+  });
+  console.log("✔ 10 mesas creadas");
+}
+
 export async function seed() {
-  await sembrarAdmin();
+  await sembrarPersonal();
   await sembrarMenu();
+  await sembrarMesas();
 }

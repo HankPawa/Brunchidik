@@ -2,7 +2,9 @@ import express from "express";
 import { env } from "./config/env.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { rateLimit } from "./middleware/rateLimit.js";
+import { cocinaRouter, comandasRouter, mesasRouter } from "./modules/comandas/routes.js";
 import { contactoRouter } from "./modules/contacto/routes.js";
+import { adminInsumosRouter, adminRecetasRouter } from "./modules/inventario/routes.admin.js";
 import { adminMenuRouter } from "./modules/menu/routes.admin.js";
 import { categoriasRouter, menuRouter } from "./modules/menu/routes.js";
 import { adminPedidosRouter } from "./modules/pedidos/routes.admin.js";
@@ -52,7 +54,12 @@ export function createApp() {
   app.use("/api/pedidos", pedidosRouter);
   app.use("/api/reservas", reservasRouter);
   app.use("/api/contacto", contactoRouter);
+  app.use("/api/mesas", mesasRouter);
+  app.use("/api/comandas", comandasRouter);
+  app.use("/api/cocina", cocinaRouter);
   app.use("/api/admin/menu", adminMenuRouter);
+  app.use("/api/admin/insumos", adminInsumosRouter);
+  app.use("/api/admin/recetas", adminRecetasRouter);
   app.use("/api/admin/pedidos", adminPedidosRouter);
   app.use("/api/admin/reservas", adminReservasRouter);
 

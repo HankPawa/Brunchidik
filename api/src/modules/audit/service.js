@@ -4,6 +4,8 @@ import { nowNaive } from "../../lib/time.js";
 
 export const SERVICIO_MENU = "menu";
 export const SERVICIO_PEDIDOS = "pedidos";
+export const SERVICIO_INVENTARIO = "inventario";
+export const SERVICIO_COMANDAS = "comandas";
 
 export function registrar(accion, detalle, servicio) {
   return prisma.auditLog.create({

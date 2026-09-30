@@ -9,6 +9,9 @@ export const menuItemSchema = z.object({
     .min(0, "El precio no puede ser negativo")
     .max(999_999_999, "El precio es demasiado alto"),
   disponible: z.boolean({ error: "'disponible' debe ser verdadero o falso" }).default(true),
+  // Dónde se ofrece: carta de la web, carta del salón o ambas.
+  visibleWeb: z.boolean({ error: "'visibleWeb' debe ser verdadero o falso" }).default(true),
+  visibleSalon: z.boolean({ error: "'visibleSalon' debe ser verdadero o falso" }).default(true),
   categoriaId: id,
   imagenUrl: textoOpcional("La URL de la imagen"),
 });

@@ -72,6 +72,12 @@ export function readEnv() {
       email: read("ADMIN_EMAIL"),
       password: read("ADMIN_PASSWORD"),
     },
+    // Cuentas del personal del salón. Opcionales: si faltan, la semilla las
+    // omite y se crean a mano desde la administración.
+    personal: {
+      MESERO: { email: read("MESERO_EMAIL"), password: read("MESERO_PASSWORD") },
+      COCINA: { email: read("COCINA_EMAIL"), password: read("COCINA_PASSWORD") },
+    },
   };
 
   return { values, problems, warnings };

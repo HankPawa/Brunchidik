@@ -7,13 +7,17 @@ const porId = { orderBy: { id: "asc" } };
 
 // --- Público ---
 
+// Carta de la web: solo lo marcado como visible ahí.
 export async function listarCategorias(req, res) {
-  const categorias = await prisma.categoria.findMany({ ...porId, include: { items: porId } });
+  const categorias = await prisma.categoria.findMany({
+    ...porId,
+    include: { items: { ...porId, where: { visibleWeb: true } } },
+  });
   res.json(categorias.map(toCategoria));
 }
 
 export async function listarDisponibles(req, res) {
-  const items = await prisma.menuItem.findMany({ ...porId, where: { disponible: true } });
+  const items = await prisma.menuItem.findMany({ ...porId, where: { disponible: true, visibleWeb: true } });
   res.json(items.map(toMenuItem));
 }
 
