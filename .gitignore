@@ -4,7 +4,8 @@
 
 # Node
 node_modules/
-brunchie_design/dist/
+# Resultado de compilacion: se regenera, no se versiona
+dist/
 npm-debug.log*
 
 # Prisma / base de datos
@@ -26,5 +27,6 @@ Thumbs.db
 *.suo
 *.sw?
 
-# Claude Code
+# Claude Code (solo local: no debe subirse nada de esto)
 .claude/
+CLAUDE.md

@@ -1,9 +1,13 @@
 # Montis Plaza
 
-Aplicación web del restaurante **Montis Plaza**: menú, reservas de mesa, pedidos a domicilio y panel de administración.
+Dos aplicaciones del restaurante **Montis Plaza** sobre una misma API y una misma base de datos:
 
-- **Backend:** Node.js + Express, Prisma y PostgreSQL, con WebSocket para el panel en tiempo real.
-- **Frontend:** React 19 + Vite.
+- **Web pública** — menú, reservas de mesa, pedidos a domicilio y panel de administración.
+- **Comandas** — la herramienta del salón: el mesero toma el pedido en la mesa desde el celular, la cocina lo ve aparecer en vivo y cada plato vendido descuenta sus insumos del inventario. Se entrega como **aplicación de escritorio** para el PC del local.
+
+- **Backend:** Node.js + Express, Prisma y PostgreSQL, con WebSocket para el tiempo real.
+- **Frontends:** React 19 + Vite (la web pública con Bulma, comandas con Tailwind).
+- **Escritorio:** Electron, con el servidor Express corriendo dentro del propio ejecutable.
 
 ---
 
@@ -21,12 +25,21 @@ cp api/.env.example api/.env     # y completa DATABASE_URL, JWT_SECRET, ADMIN_*
 # 3. Instalar dependencias, aplicar migraciones y sembrar datos
 npm run setup
 
-# 4. Levantar backend y frontend a la vez
+# 4. Levantar API, web pública y comandas a la vez
 npm run dev
 ```
 
-- Frontend: **http://localhost:5173**
+- Web pública: **http://localhost:5173**
+- Comandas: **http://localhost:5174**
 - API: **http://localhost:8080**
+
+Para la app de escritorio, que abre su propia ventana y trae la API dentro:
+
+```bash
+npm run escritorio
+```
+
+Al arrancar imprime la dirección de la red local (`http://TU-IP:8080`): es la que los meseros abren en el celular, conectados al mismo WiFi.
 
 ¿Algo no arranca? `npm run check` revisa Node, dependencias, variables de entorno, PostgreSQL, migraciones y Redis, y dice qué falta.
 
@@ -34,13 +47,14 @@ npm run dev
 
 | Comando | Qué hace |
 |---|---|
-| `npm run dev` | Backend y frontend a la vez |
-| `npm run dev:api` / `npm run dev:web` | Solo uno de los dos |
+| `npm run dev` | API, web pública y comandas a la vez |
+| `npm run dev:api` / `dev:web` / `dev:comandas` | Solo uno de los tres |
+| `npm run escritorio` | Compila comandas y abre la aplicación de escritorio |
 | `npm run check` | Diagnóstico de la instalación |
 | `npm run db:migrate` | Aplica migraciones pendientes |
-| `npm run db:seed` | Siembra admin y menú inicial (idempotente) |
-| `npm run build` | Compila el frontend a producción |
-| `npm run lint` | ESLint sobre el frontend |
+| `npm run db:seed` | Siembra admin, personal, menú y mesas (idempotente) |
+| `npm run build` | Compila los dos frontends a producción |
+| `npm run lint` | ESLint sobre los dos frontends |
 
 ### Con Docker (opcional)
 
@@ -62,10 +76,11 @@ Ninguna credencial está escrita en el código: todo sale de `api/.env` (o del `
 | `DATABASE_URL` | sí | Conexión a PostgreSQL (formato Prisma, no JDBC) |
 | `JWT_SECRET` | sí | Firma de los tokens de sesión (mínimo 32 caracteres) |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | para la semilla | Usuario administrador inicial |
+| `MESERO_*`, `COCINA_*` | para la semilla | Cuentas del personal del salón (correo y contraseña) |
 | `REDIS_URL` | no | Si está vacía, el rate limiting y los códigos 2FA quedan en memoria |
 | `MAIL_*` | no | Sin ellas no se envían correos; el código 2FA se imprime en la consola |
 | `GOOGLE_CLIENT_ID` | no | Verifica que el token de Google se emitió para esta app |
-| `CORS_ORIGINS` | no | Orígenes permitidos (por defecto `http://localhost:5173`) |
+| `CORS_ORIGINS` | no | Orígenes permitidos (por defecto `http://localhost:5173,http://localhost:5174`). **El WebSocket valida el `Origin` contra esta lista**: si falta un origen, el tiempo real falla aunque el HTTP funcione |
 
 El frontend usa además `brunchie_design/.env` con `VITE_GOOGLE_CLIENT_ID` (ver `.env.example` de esa carpeta).
 
@@ -75,17 +90,20 @@ El frontend usa además `brunchie_design/.env` con `VITE_GOOGLE_CLIENT_ID` (ver 
 
 ```
 Brunchidik/
-├── api/                    Backend Express
+├── api/                    Backend Express (lo usan las dos aplicaciones)
 │   ├── prisma/             Esquema y migraciones versionadas
 │   └── src/
-│       ├── modules/        Un módulo por dominio (usuarios, menu, pedidos, reservas, contacto)
-│       ├── middleware/     Autenticación, rate limiting, validación, errores
+│       ├── modules/        Un módulo por dominio (usuarios, menu, pedidos, reservas,
+│       │                   contacto, comandas, inventario, reportes)
+│       ├── middleware/     Autenticación, roles, rate limiting, validación, errores
 │       ├── services/       Correo, códigos 2FA, verificación de Google
 │       ├── ws/             Servidor WebSocket y registro de topics
 │       └── lib/            JWT, fechas, serialización del JSON de la API
-├── brunchie_design/        Frontend React + Vite
+├── brunchie_design/        Web pública — React + Vite + Bulma
+├── comandas/               App del salón — React + Vite + Tailwind
+├── escritorio/             Envoltorio Electron: abre la ventana y levanta la API dentro
 ├── scripts/check-setup.js  Diagnóstico de la instalación
-└── docker-compose.yml      Alternativa con contenedores
+└── docker-compose.yml      Alternativa con contenedores (solo API y web pública)
 ```
 
 ### Autenticación

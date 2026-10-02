@@ -11,6 +11,14 @@ html.dark body {
 html.dark .navbar-custom { background-color: #161616 !important; border-bottom-color: #2a2a2a !important; }
 html.dark .navbar-menu.is-active { background: #161616 !important; border-top-color: #2a2a2a !important; }
 html.dark .brand-name { color: #e8e2da !important; }
+/* Bulma pinta un fondo casi blanco en a.navbar-item:hover; en oscuro eso hace
+   que el elemento parezca del tema claro. Se neutraliza para toda la barra. */
+html.dark a.navbar-item:hover,
+html.dark a.navbar-item:focus,
+html.dark .navbar-link:hover { background-color: transparent !important; color: #e8e2da !important; }
+/* La marca resalta en dorado, igual que el resto de acentos del tema oscuro.
+   Va después y con el selector `a.` para ganar a la regla general de arriba. */
+html.dark a.brand-name:hover { color: #c9a84c !important; background-color: transparent !important; }
 html.dark .nav-link { color: #999 !important; }
 html.dark .nav-link:hover { color: #e8e2da !important; background: transparent !important; }
 html.dark .nav-link::after { background-color: #e8e2da; }
@@ -168,6 +176,55 @@ html.dark .catalogo-close { background: #2a2a2a; color: #e8e2da; }
 html.dark .flip-fav-btn { background: rgba(30,30,30,.85); color: #ccc; border-color: rgba(255,255,255,.1); }
 html.dark .flip-fav-btn.is-fav { color: #e05050; }
 html.dark .menu-no-results { color: #666; }
+
+/* ── Features (sección «¿Por qué elegirnos?» del Home) ── */
+html.dark .features-section { background: linear-gradient(160deg, #161616 0%, #111 100%); }
+html.dark .features-deco { color: rgba(201, 168, 76, 0.07); }
+html.dark .features-eyebrow { color: #c9a84c; }
+html.dark .features-title { color: #e8e2da; }
+html.dark .divider-line { background: linear-gradient(to right, transparent, #c9a84c); }
+html.dark .divider-line--right { background: linear-gradient(to left, transparent, #c9a84c); }
+html.dark .divider-gem { color: #c9a84c; }
+
+html.dark .feature-card + .feature-card::before {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(201, 168, 76, 0.28) 30%,
+    rgba(201, 168, 76, 0.28) 70%,
+    transparent
+  );
+}
+
+html.dark .feature-icon-wrap {
+  background: #1e1e1e;
+  border-color: rgba(201, 168, 76, 0.22);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), inset 0 1px 3px rgba(255, 255, 255, 0.04);
+}
+
+/* Los iconos traen color="#2e2622" escrito en el JSX (Features.jsx): sin
+   forzarlo aquí quedarían casi negros sobre un círculo oscuro. */
+html.dark .feature-icon-wrap svg { color: #e8e2da !important; stroke: #e8e2da !important; }
+html.dark .feature-card:hover .feature-icon-wrap { background: #c9a84c; box-shadow: 0 10px 32px rgba(201, 168, 76, 0.22); }
+html.dark .feature-card:hover .feature-icon-wrap svg { color: #111 !important; stroke: #111 !important; }
+
+html.dark .feature-card-title { color: #e8e2da; }
+html.dark .feature-accent-line { background: #c9a84c; }
+html.dark .feature-card-desc { color: #999; }
+
+/* En móvil el separador es horizontal: la regla de arriba lo pintaría en
+   vertical porque gana en especificidad. */
+@media (max-width: 768px) {
+  html.dark .feature-card + .feature-card::before {
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(201, 168, 76, 0.28) 30%,
+      rgba(201, 168, 76, 0.28) 70%,
+      transparent
+    );
+  }
+}
 
 /* ── Favoritos (sección Home) ── */
 html.dark .fav-section { background-color: #161616 !important; }

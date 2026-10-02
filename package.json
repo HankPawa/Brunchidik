@@ -8,12 +8,14 @@
     "node": ">=20"
   },
   "scripts": {
-    "setup": "npm install && npm --prefix api install && npm --prefix brunchie_design install && npm --prefix api run db:setup",
-    "dev": "concurrently -n api,web -c cyan,magenta \"npm --prefix api run dev\" \"npm --prefix brunchie_design run dev\"",
+    "setup": "npm install && npm --prefix api install && npm --prefix brunchie_design install && npm --prefix comandas install && npm --prefix escritorio install && npm --prefix api run db:setup",
+    "dev": "concurrently -n api,web,comandas -c cyan,magenta,yellow \"npm --prefix api run dev\" \"npm --prefix brunchie_design run dev\" \"npm --prefix comandas run dev\"",
     "dev:api": "npm --prefix api run dev",
     "dev:web": "npm --prefix brunchie_design run dev",
-    "build": "npm --prefix brunchie_design run build",
-    "lint": "npm --prefix brunchie_design run lint",
+    "dev:comandas": "npm --prefix comandas run dev",
+    "escritorio": "npm --prefix comandas run build && npm --prefix escritorio start",
+    "build": "npm --prefix brunchie_design run build && npm --prefix comandas run build",
+    "lint": "npm --prefix brunchie_design run lint && npm --prefix comandas run lint",
     "check": "node scripts/check-setup.js",
     "db:migrate": "npm --prefix api run db:migrate",
     "db:seed": "npm --prefix api run seed"

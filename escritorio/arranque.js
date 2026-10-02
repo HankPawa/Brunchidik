@@ -113,6 +113,19 @@ export async function arrancar({
   urlDesarrollo,
   origenesExtra = [],
 }) {
+  // Sin la interfaz compilada la ventana abriría en blanco y sin explicación.
+  // Se comprueba antes que nada porque es lo primero que falla en un clon nuevo.
+  if (directorioEstatico && !urlDesarrollo && !fs.existsSync(path.join(directorioEstatico, "index.html"))) {
+    throw new FalloArranque(
+      "Falta la interfaz compilada",
+      `No se encontró index.html en: ${directorioEstatico}`,
+      [
+        "Compílala con: npm --prefix comandas run build",
+        "O usa «npm run escritorio» desde la raíz, que la compila antes de abrir.",
+      ],
+    );
+  }
+
   const config = asegurarConfiguracion({ rutaConfig, envDesarrollo });
   const puerto = Number(config.PORT) || PUERTO_POR_DEFECTO;
   const direcciones = direccionesDeRed(puerto);

@@ -39,7 +39,9 @@ else fallo(`Node.js ${process.versions.node} es demasiado antiguo`, "Instala Nod
 
 for (const [nombre, carpeta] of [
   ["api", "api"],
-  ["frontend", "brunchie_design"],
+  ["web pública", "brunchie_design"],
+  ["comandas", "comandas"],
+  ["escritorio", "escritorio"],
 ]) {
   if (existsSync(path.join(raiz, carpeta, "node_modules"))) ok(`Dependencias de ${nombre} instaladas`);
   else fallo(`Faltan las dependencias de ${nombre}`, `npm --prefix ${carpeta} install`);

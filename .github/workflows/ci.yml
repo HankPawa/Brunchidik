@@ -76,7 +76,7 @@ jobs:
           exit 1
 
   frontend:
-    name: Frontend
+    name: Web pública
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -99,4 +99,27 @@ jobs:
         working-directory: brunchie_design
         env:
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+        run: npm run build
+
+  comandas:
+    name: Comandas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: comandas/package-lock.json
+
+      - name: Instalar dependencias
+        working-directory: comandas
+        run: npm ci
+
+      - name: Lint
+        working-directory: comandas
+        run: npm run lint
+
+      - name: Build
+        working-directory: comandas
         run: npm run build
