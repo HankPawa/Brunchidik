@@ -92,7 +92,11 @@ export const AuthProvider = ({ children }) => {
     async (email, password) => {
       try {
         const res = await jsonPost("/api/usuarios/login", { email, password });
-        if (!res.ok) return "invalid";
+        // Solo un 401 significa que las credenciales están mal. Tratar cualquier
+        // fallo como "incorrectas" acusaba al usuario cuando el servidor estaba
+        // caído, que es justo cuando menos ayuda ese mensaje.
+        if (res.status === 401) return "invalid";
+        if (!res.ok) return "error";
         return procesarLogin(await res.json());
       } catch {
         return "error";

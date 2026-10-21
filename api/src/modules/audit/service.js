@@ -6,6 +6,7 @@ export const SERVICIO_MENU = "menu";
 export const SERVICIO_PEDIDOS = "pedidos";
 export const SERVICIO_INVENTARIO = "inventario";
 export const SERVICIO_COMANDAS = "comandas";
+export const SERVICIO_CAJA = "caja";
 
 export function registrar(accion, detalle, servicio) {
   return prisma.auditLog.create({

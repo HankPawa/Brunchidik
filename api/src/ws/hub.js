@@ -6,6 +6,7 @@ export const TOPICS = {
   adminPedidosEstado: "/topic/admin/pedidos/estado",
   adminReservas: "/topic/admin/reservas",
   adminInventario: "/topic/admin/inventario",
+  caja: "/topic/admin/caja",
   pedidoUsuario: (usuarioId) => `/topic/usuario/${usuarioId}/pedido`,
   // Salón: la cocina ve los platos que entran; el salón, los que quedan listos.
   cocina: "/topic/cocina",

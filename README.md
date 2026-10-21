@@ -16,16 +16,13 @@ Dos aplicaciones del restaurante **Montis Plaza** sobre una misma API y una mism
 Necesitas **Node.js 20+** y **PostgreSQL** corriendo. Redis es opcional.
 
 ```bash
-# 1. Crear la base de datos (una sola vez)
-createdb brunch_db
+# 1. Configurar el backend
+cp api/.env.example api/.env     # y completa DATABASE_URL, JWT_SECRET, ADMIN_*, MESERO_*, COCINA_*
 
-# 2. Configurar el backend
-cp api/.env.example api/.env     # y completa DATABASE_URL, JWT_SECRET, ADMIN_*
-
-# 3. Instalar dependencias, aplicar migraciones y sembrar datos
+# 2. Instalar todo, crear la base, migrar y sembrar
 npm run setup
 
-# 4. Levantar API, web pública y comandas a la vez
+# 3. Levantar API, web pública y comandas a la vez
 npm run dev
 ```
 

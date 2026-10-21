@@ -10,6 +10,14 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./AdminPanel.css";
 
+// El salón vive en dos sitios distintos según cómo se arranque: con `npm run
+// dev` lo sirve Vite en el 5174, y empaquetado lo sirve la app de escritorio en
+// el mismo puerto de la API. Apuntar siempre al 8080 llevaba a la API desnuda,
+// que responde con una página de error. VITE_COMANDAS_URL manda sobre ambos:
+// en el restaurante se pone ahí la IP del PC servidor.
+const URL_COMANDAS =
+  import.meta.env.VITE_COMANDAS_URL || (import.meta.env.DEV ? "http://localhost:5174" : "http://localhost:8080");
+
 /* ── Helpers ── */
 const exportCSV = (rows, cols, filename) => {
   const header = cols.map(c => `"${c.label}"`).join(",");
@@ -311,9 +319,20 @@ const AdminPanel = () => {
                 {{ productos: "Gestión de productos", reservas: "Gestión de reservas", pedidos: "Gestión de pedidos", reportes: "Reportes y métricas", actividad: "Registro de actividad" }[tab]}
               </h1>
             </div>
-            {tab === "productos" && (
-              <button className="admin-add-btn" onClick={openAdd}>+ Agregar producto</button>
-            )}
+            <div className="admin-header-acciones">
+              <a
+                className="admin-salon-btn"
+                href={URL_COMANDAS}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Comandas, cocina e inventario del salón"
+              >
+                Ir al salón ↗
+              </a>
+              {tab === "productos" && (
+                <button className="admin-add-btn" onClick={openAdd}>+ Agregar producto</button>
+              )}
+            </div>
           </div>
 
           {/* Tabs */}

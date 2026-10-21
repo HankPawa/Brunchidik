@@ -6,6 +6,7 @@ import { rateLimit } from "./middleware/rateLimit.js";
 import { adminMesasRouter } from "./modules/comandas/routes.admin.js";
 import { cocinaRouter, comandasRouter, mesasRouter } from "./modules/comandas/routes.js";
 import { contactoRouter } from "./modules/contacto/routes.js";
+import { adminCajaRouter } from "./modules/caja/routes.admin.js";
 import { adminInsumosRouter, adminRecetasRouter } from "./modules/inventario/routes.admin.js";
 import { adminMenuRouter } from "./modules/menu/routes.admin.js";
 import { categoriasRouter, menuRouter, menuSalonRouter } from "./modules/menu/routes.js";
@@ -66,6 +67,7 @@ export function createApp() {
   app.use("/api/admin/recetas", adminRecetasRouter);
   app.use("/api/admin/mesas", adminMesasRouter);
   app.use("/api/admin/reportes", adminReportesRouter);
+  app.use("/api/admin/caja", adminCajaRouter);
   app.use("/api/admin/pedidos", adminPedidosRouter);
   app.use("/api/admin/reservas", adminReservasRouter);
 

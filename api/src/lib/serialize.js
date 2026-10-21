@@ -161,3 +161,30 @@ export const toAuditLog = (a) => ({
   fecha: formatDateTime(a.fecha),
   servicio: a.servicio,
 });
+
+export const toMovimientoCaja = (m) => ({
+  id: num(m.id),
+  arqueoId: num(m.arqueoId),
+  tipo: m.tipo,
+  concepto: m.concepto,
+  monto: num(m.monto),
+  usuarioId: num(m.usuarioId),
+  anulado: m.anulado,
+  fecha: formatDateTime(m.fecha),
+});
+
+// El cuadre (esperado, contado, diferencia) no va aquí: lo calcula
+// modules/caja/service.js, porque depende de las ventas del intervalo y no solo
+// de la fila.
+export const toArqueo = (a) => ({
+  id: num(a.id),
+  estado: a.estado,
+  baseInicial: num(a.baseInicial),
+  abiertoPor: num(a.abiertoPor),
+  cerradoPor: num(a.cerradoPor),
+  notasApertura: a.notasApertura,
+  notasCierre: a.notasCierre,
+  fechaApertura: formatDateTime(a.fechaApertura),
+  fechaCierre: formatDateTime(a.fechaCierre),
+  movimientos: (a.movimientos ?? []).map(toMovimientoCaja),
+});

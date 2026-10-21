@@ -13,8 +13,9 @@
     "check": "node scripts/check-env.js",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
-    "db:setup": "prisma migrate deploy && node src/seed/run.js",
-    "postinstall": "prisma generate"
+    "db:setup": "node scripts/crear-base.js && prisma migrate deploy && node src/seed/run.js",
+    "postinstall": "prisma generate",
+    "db:create": "node scripts/crear-base.js"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",

@@ -4,6 +4,7 @@ import { ROL } from "../../lib/roles.js";
 import { toComanda, toComandaItem, toMesa, totalDeItems } from "../../lib/serialize.js";
 import { nowNaive } from "../../lib/time.js";
 import { publicar, TOPICS } from "../../ws/hub.js";
+import { publicarCaja } from "../caja/service.js";
 import { aplicarMovimiento } from "../inventario/service.js";
 import * as audit from "../audit/service.js";
 
@@ -389,6 +390,9 @@ export async function cerrar(req, res) {
 
   const json = toComanda(cerrada);
   publicar(TOPICS.salon, json);
+  // El cobro cambia el esperado de caja: se avisa para que el arqueo se
+  // actualice sin recargar. Nunca rompe el cierre de la comanda.
+  publicarCaja();
   await audit.registrar(
     "CERRAR_COMANDA",
     `Cerró la comanda #${id} (mesa ${comanda.mesa.numero}) por ${total} en ${metodoPago}`,

@@ -54,7 +54,10 @@ export const AuthProvider = ({ children }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      if (!res.ok) return { ok: false, error: "Correo o contraseña incorrectos." };
+      // Solo un 401 son credenciales malas; lo demás es un problema del
+      // servidor y decirlo así ahorra buscar donde no es.
+      if (res.status === 401) return { ok: false, error: "Correo o contraseña incorrectos." };
+      if (!res.ok) return { ok: false, error: "No se pudo conectar con el servidor. ¿Está abierta la aplicación del salón?" };
 
       const data = await res.json();
       // El 2FA es para los clientes de la web; el personal no lo usa.

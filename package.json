@@ -18,6 +18,7 @@
     "lint": "npm --prefix brunchie_design run lint && npm --prefix comandas run lint",
     "check": "node scripts/check-setup.js",
     "db:migrate": "npm --prefix api run db:migrate",
+    "db:create": "npm --prefix api run db:create",
     "db:seed": "npm --prefix api run seed"
   },
   "devDependencies": {

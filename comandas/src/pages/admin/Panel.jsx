@@ -10,6 +10,7 @@ const ATAJOS = [
 ];
 
 const SECCIONES = [
+  { a: "/admin/caja", texto: "Caja" },
   { a: "/admin/reportes", texto: "Reportes" },
   { a: "/admin/platos", texto: "Platos" },
   { a: "/admin/insumos", texto: "Insumos" },

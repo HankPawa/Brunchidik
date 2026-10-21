@@ -13,13 +13,13 @@ datasource db {
 //   reservas.estado  -> PENDIENTE | CONFIRMADA | CANCELADA
 
 model Usuario {
-  id           BigInt   @id @default(autoincrement())
-  nombre       String   @db.VarChar(255)
-  email        String   @unique(map: "ukkfsp0s1tflm1cwlj8idhqsad0") @db.VarChar(255)
-  password     String   @db.VarChar(255)
-  dosFaActivo  Boolean  @map("dos_fa_activo")
-  cuentaGoogle Boolean  @map("cuenta_google")
-  rol          String?  @db.VarChar(255)
+  id           BigInt  @id @default(autoincrement())
+  nombre       String  @db.VarChar(255)
+  email        String  @unique(map: "ukkfsp0s1tflm1cwlj8idhqsad0") @db.VarChar(255)
+  password     String  @db.VarChar(255)
+  dosFaActivo  Boolean @map("dos_fa_activo")
+  cuentaGoogle Boolean @map("cuenta_google")
+  rol          String? @db.VarChar(255)
 
   @@map("usuarios")
 }
@@ -33,17 +33,17 @@ model Categoria {
 }
 
 model MenuItem {
-  id           BigInt       @id @default(autoincrement())
-  nombre       String       @db.VarChar(255)
+  id           BigInt        @id @default(autoincrement())
+  nombre       String        @db.VarChar(255)
   descripcion  String?
-  precio       Decimal?     @db.Decimal(38, 2)
-  imagenUrl    String?      @map("imagen_url") @db.VarChar(255)
+  precio       Decimal?      @db.Decimal(38, 2)
+  imagenUrl    String?       @map("imagen_url") @db.VarChar(255)
   disponible   Boolean
   // Dónde se ofrece el plato: la carta de la web y la del salón pueden diferir.
-  visibleWeb   Boolean      @default(true) @map("visible_web")
-  visibleSalon Boolean      @default(true) @map("visible_salon")
-  categoriaId  BigInt?      @map("categoria_id")
-  categoria    Categoria?   @relation(fields: [categoriaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk8jufm10ou3keb2efyccs8tsee")
+  visibleWeb   Boolean       @default(true) @map("visible_web")
+  visibleSalon Boolean       @default(true) @map("visible_salon")
+  categoriaId  BigInt?       @map("categoria_id")
+  categoria    Categoria?    @relation(fields: [categoriaId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk8jufm10ou3keb2efyccs8tsee")
   receta       RecetaItem[]
   comandaItems ComandaItem[]
 
@@ -220,4 +220,59 @@ model ComandaItem {
   @@index([comandaId])
   @@index([estado, fechaEnvio])
   @@map("comanda_items")
+}
+
+// ── Arqueo de caja ────────────────────────────────────────────────────────────
+// Un arqueo al día: se abre con una base, se cierra contando el dinero y se
+// compara contra lo que la venta dice que debería haber.
+//
+// Lo esperado NO se guarda mientras la caja está abierta: se calcula al vuelo a
+// partir de las comandas cerradas dentro del intervalo. Guardarlo antes de
+// tiempo sería arrastrar una copia que se desactualiza con cada cobro. Solo al
+// cerrar se congela, porque a partir de ahí el arqueo es un documento contable
+// y no puede cambiar aunque alguien edite una comanda después.
+model Arqueo {
+  id          BigInt  @id @default(autoincrement())
+  estado      String  @default("ABIERTO") @db.VarChar(8) // ABIERTO | CERRADO
+  baseInicial Decimal @map("base_inicial") @db.Decimal(38, 2)
+  abiertoPor  BigInt  @map("abierto_por")
+  cerradoPor  BigInt? @map("cerrado_por")
+
+  // Lo que la caja dice que debería haber. Se congela al cerrar.
+  esperadoEfectivo      Decimal? @map("esperado_efectivo") @db.Decimal(38, 2)
+  esperadoTarjeta       Decimal? @map("esperado_tarjeta") @db.Decimal(38, 2)
+  esperadoTransferencia Decimal? @map("esperado_transferencia") @db.Decimal(38, 2)
+
+  // Lo que de verdad se contó al cerrar.
+  contadoEfectivo      Decimal? @map("contado_efectivo") @db.Decimal(38, 2)
+  contadoTarjeta       Decimal? @map("contado_tarjeta") @db.Decimal(38, 2)
+  contadoTransferencia Decimal? @map("contado_transferencia") @db.Decimal(38, 2)
+
+  notasApertura String?   @map("notas_apertura") @db.VarChar(255)
+  notasCierre   String?   @map("notas_cierre") @db.VarChar(255)
+  fechaApertura DateTime  @map("fecha_apertura") @db.Timestamp(6)
+  fechaCierre   DateTime? @map("fecha_cierre") @db.Timestamp(6)
+
+  movimientos MovimientoCaja[]
+
+  @@index([estado])
+  @@index([fechaApertura])
+  @@map("arqueos")
+}
+
+// Entradas y salidas de dinero que no son ventas: pagar al proveedor, retirar
+// para consignar, meter cambio. Sin esto el efectivo nunca cuadra.
+model MovimientoCaja {
+  id        BigInt   @id @default(autoincrement())
+  arqueoId  BigInt   @map("arqueo_id")
+  tipo      String   @db.VarChar(8) // INGRESO | EGRESO
+  concepto  String   @db.VarChar(255)
+  monto     Decimal  @db.Decimal(38, 2)
+  usuarioId BigInt   @map("usuario_id")
+  anulado   Boolean  @default(false)
+  fecha     DateTime @db.Timestamp(6)
+  arqueo    Arqueo   @relation(fields: [arqueoId], references: [id], onDelete: Cascade)
+
+  @@index([arqueoId])
+  @@map("movimientos_caja")
 }

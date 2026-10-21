@@ -8,6 +8,7 @@ import Mesas from "./pages/Mesas";
 import Comanda from "./pages/Comanda";
 import Cocina from "./pages/Cocina";
 import Panel from "./pages/admin/Panel";
+import Caja from "./pages/admin/Caja";
 import Reportes from "./pages/admin/Reportes";
 import Platos from "./pages/admin/Platos";
 import Insumos from "./pages/admin/Insumos";
@@ -62,7 +63,8 @@ export default function App() {
               </RutaProtegida>
             }
           >
-            <Route index element={<Navigate to="/admin/reportes" replace />} />
+            <Route index element={<Navigate to="/admin/caja" replace />} />
+            <Route path="caja" element={<Caja />} />
             <Route path="reportes" element={<Reportes />} />
             <Route path="platos" element={<Platos />} />
             <Route path="insumos" element={<Insumos />} />
