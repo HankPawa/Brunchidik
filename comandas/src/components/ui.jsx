@@ -2,14 +2,20 @@ import { Loader2, X } from "lucide-react";
 import { useEffect } from "react";
 import { COLOR_ESTADO, ETIQUETA_ESTADO } from "../lib/formato";
 
-// Piezas compartidas. Todo lo pulsable mide al menos 48px: se usa con el dedo,
-// muchas veces con prisa y con las manos ocupadas.
+// Piezas compartidas.
+//
+// Dos reglas que ordenan este archivo:
+//  - Todo lo pulsable mide al menos 48px: se usa con el dedo, con prisa y a
+//    veces con las manos ocupadas.
+//  - El radio distingue el papel de cada pieza: las baldosas (mesas, tickets)
+//    son generosas, los controles son firmes y las filas de una cuenta no
+//    llevan radio porque no son tarjetas, son renglones.
 
 const VARIANTES = {
-  primario: "bg-tinta text-white active:bg-tinta-suave disabled:bg-neutral-400",
-  secundario: "bg-white text-tinta border border-crema-borde active:bg-crema disabled:text-neutral-400",
-  peligro: "bg-alerta text-white active:brightness-90 disabled:bg-neutral-400",
-  dorado: "bg-dorado text-tinta active:brightness-95 disabled:bg-neutral-400",
+  primario: "bg-tinta text-white active:bg-rio-hondo disabled:bg-filete disabled:text-tinta-2",
+  secundario: "bg-mantel text-tinta border border-filete active:bg-sala disabled:text-tinta-2",
+  peligro: "bg-brasa text-white active:brightness-90 disabled:bg-filete disabled:text-tinta-2",
+  dorado: "bg-rio text-white active:bg-rio-hondo disabled:bg-filete disabled:text-tinta-2",
 };
 
 export function Boton({ variante = "primario", cargando = false, className = "", children, ...props }) {
@@ -17,29 +23,30 @@ export function Boton({ variante = "primario", cargando = false, className = "",
     <button
       {...props}
       disabled={props.disabled || cargando}
-      className={`min-h-12 rounded-xl px-5 font-semibold transition disabled:cursor-not-allowed ${VARIANTES[variante]} ${className}`}
+      className={`min-h-12 rounded-lg px-5 text-[15px] font-bold tracking-[-0.01em] transition disabled:cursor-not-allowed ${VARIANTES[variante]} ${className}`}
     >
       {cargando ? <Loader2 className="mx-auto animate-spin" size={20} /> : children}
     </button>
   );
 }
 
-export function Cargando({ texto = "Cargando..." }) {
+export function Cargando({ texto = "Cargando" }) {
   return (
-    <div className="flex items-center justify-center gap-3 p-10 text-neutral-500">
+    <div className="flex items-center justify-center gap-3 p-12 text-tinta-2">
       <Loader2 className="animate-spin" size={20} />
       {texto}
     </div>
   );
 }
 
+// Un error dice qué pasó y cómo salir de ahí. No se disculpa.
 export function Aviso({ children, onReintentar, className = "m-4" }) {
   if (!children) return null;
   return (
-    <div className={`rounded-xl border border-alerta/30 bg-alerta/10 p-4 text-alerta ${className}`}>
-      <p className="font-medium">{children}</p>
+    <div className={`border-l-4 border-brasa bg-brasa/8 px-4 py-3 text-brasa ${className}`}>
+      <p className="font-semibold">{children}</p>
       {onReintentar && (
-        <button onClick={onReintentar} className="mt-2 underline">
+        <button onClick={onReintentar} className="mt-1 font-bold underline underline-offset-2">
           Reintentar
         </button>
       )}
@@ -47,13 +54,14 @@ export function Aviso({ children, onReintentar, className = "m-4" }) {
   );
 }
 
+// Una pantalla vacía es una invitación a actuar, no un hueco.
 export function Vacio({ children }) {
-  return <p className="p-10 text-center text-neutral-400">{children}</p>;
+  return <p className="px-6 py-14 text-center text-lg text-tinta-2">{children}</p>;
 }
 
 export function Estado({ valor }) {
   return (
-    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${COLOR_ESTADO[valor] ?? "bg-neutral-100"}`}>
+    <span className={`rounded px-2 py-0.5 text-[13px] font-bold ${COLOR_ESTADO[valor] ?? "bg-espera text-tinta-2"}`}>
       {ETIQUETA_ESTADO[valor] ?? valor}
     </span>
   );
@@ -62,14 +70,14 @@ export function Estado({ valor }) {
 // --- Formularios ---
 
 const CONTROL =
-  "min-h-12 w-full rounded-xl border border-crema-borde bg-white px-3 text-tinta outline-none focus:border-dorado";
+  "min-h-12 w-full rounded-lg border border-filete bg-mantel px-3 text-[17px] text-tinta outline-none focus:border-rio";
 
 export function Campo({ etiqueta, ayuda, className = "", ...props }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 block text-sm font-medium text-neutral-600">{etiqueta}</span>
+      <span className="mb-1 block text-sm font-semibold text-tinta-2">{etiqueta}</span>
       <input {...props} className={CONTROL} />
-      {ayuda && <span className="mt-1 block text-xs text-neutral-400">{ayuda}</span>}
+      {ayuda && <span className="mt-1 block text-[13px] text-tinta-2">{ayuda}</span>}
     </label>
   );
 }
@@ -77,7 +85,7 @@ export function Campo({ etiqueta, ayuda, className = "", ...props }) {
 export function AreaTexto({ etiqueta, className = "", ...props }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 block text-sm font-medium text-neutral-600">{etiqueta}</span>
+      <span className="mb-1 block text-sm font-semibold text-tinta-2">{etiqueta}</span>
       <textarea {...props} className={`${CONTROL} min-h-24 py-2`} />
     </label>
   );
@@ -86,7 +94,7 @@ export function AreaTexto({ etiqueta, className = "", ...props }) {
 export function Selector({ etiqueta, opciones, ayuda, className = "", ...props }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 block text-sm font-medium text-neutral-600">{etiqueta}</span>
+      <span className="mb-1 block text-sm font-semibold text-tinta-2">{etiqueta}</span>
       <select {...props} className={CONTROL}>
         {opciones.map((o) => (
           <option key={o.valor} value={o.valor}>
@@ -94,7 +102,7 @@ export function Selector({ etiqueta, opciones, ayuda, className = "", ...props }
           </option>
         ))}
       </select>
-      {ayuda && <span className="mt-1 block text-xs text-neutral-400">{ayuda}</span>}
+      {ayuda && <span className="mt-1 block text-[13px] text-tinta-2">{ayuda}</span>}
     </label>
   );
 }
@@ -102,18 +110,18 @@ export function Selector({ etiqueta, opciones, ayuda, className = "", ...props }
 export function Casilla({ etiqueta, ayuda, ...props }) {
   return (
     <label className="flex min-h-12 items-center gap-3">
-      <input type="checkbox" {...props} className="size-5 accent-dorado" />
+      <input type="checkbox" {...props} className="size-5 accent-rio" />
       <span>
-        <span className="font-medium text-tinta">{etiqueta}</span>
-        {ayuda && <span className="block text-xs text-neutral-400">{ayuda}</span>}
+        <span className="font-semibold text-tinta">{etiqueta}</span>
+        {ayuda && <span className="block text-[13px] text-tinta-2">{ayuda}</span>}
       </span>
     </label>
   );
 }
 
-// Formularios en panel deslizante: abajo en el celular, centrado en pantalla grande.
-// El error se pinta aquí dentro: si se quedara en la página, el panel lo taparía y
-// el usuario vería que su botón "no hace nada".
+// Formularios en panel deslizante: abajo en el celular, centrado en pantalla
+// grande. El error se pinta aquí dentro: si se quedara en la página, el panel
+// lo taparía y el usuario vería que su botón "no hace nada".
 export function Hoja({ titulo, error, onCerrar, children }) {
   useEffect(() => {
     const alPulsar = (e) => e.key === "Escape" && onCerrar();
@@ -123,16 +131,18 @@ export function Hoja({ titulo, error, onCerrar, children }) {
 
   return (
     <div className="fixed inset-0 z-30 flex items-end justify-center sm:items-center">
-      <button aria-label="Cerrar" onClick={onCerrar} className="absolute inset-0 bg-tinta/40" />
-      <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 sm:max-w-lg sm:rounded-2xl">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-tinta">{titulo}</h2>
-          <button onClick={onCerrar} className="flex size-10 items-center justify-center rounded-lg text-neutral-400">
+      <button aria-label="Cerrar" onClick={onCerrar} className="absolute inset-0 bg-tinta/50" />
+      <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-mantel sm:max-w-lg sm:rounded-2xl">
+        <div className="sticky top-0 flex items-center justify-between border-b border-filete bg-mantel px-5 py-4">
+          <h2 className="text-xl font-extrabold tracking-[-0.02em] text-tinta">{titulo}</h2>
+          <button onClick={onCerrar} className="-mr-2 flex size-10 items-center justify-center rounded-lg text-tinta-2">
             <X size={20} />
           </button>
         </div>
-        <Aviso className="mb-4">{error}</Aviso>
-        {children}
+        <div className="p-5">
+          <Aviso className="mb-4">{error}</Aviso>
+          {children}
+        </div>
       </div>
     </div>
   );

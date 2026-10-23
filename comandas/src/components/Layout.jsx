@@ -1,7 +1,9 @@
-import { LogOut } from "lucide-react";
+import { ChevronLeft, LogOut } from "lucide-react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/sesion";
 import { INICIO_POR_ROL } from "../lib/formato";
+
+const NOMBRE_ROL = { MESERO: "Mesero", COCINA: "Cocina", ADMIN: "Administración" };
 
 export function RutaProtegida({ roles, children }) {
   const { user } = useAuth();
@@ -12,25 +14,33 @@ export function RutaProtegida({ roles, children }) {
   return children;
 }
 
+// El encabezado es cromo: color de marca, y nada que compita con el contenido.
 export function Cabecera({ titulo, atras, acciones }) {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-crema-borde bg-white px-4 py-3">
+    <header className="sticky top-0 z-10 flex items-center gap-2 bg-rio px-3 py-2.5 text-white">
       {atras && (
-        <Link to={atras} className="-ml-2 flex size-10 items-center justify-center rounded-lg text-2xl text-neutral-500">
-          ‹
+        <Link
+          to={atras}
+          aria-label="Volver"
+          className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white/80 active:bg-white/15"
+        >
+          <ChevronLeft size={24} />
         </Link>
       )}
-      <div className="min-w-0 flex-1">
-        <h1 className="truncate text-lg font-bold text-tinta">{titulo}</h1>
-        {user && <p className="truncate text-xs text-neutral-500">{user.nombre} · {user.rol.toLowerCase()}</p>}
-      </div>
+      <h1 className="min-w-0 flex-1 truncate px-1 text-xl font-extrabold tracking-[-0.02em]">{titulo}</h1>
       {acciones}
+      {user && (
+        <span className="hidden shrink-0 rounded-md bg-white/15 px-2.5 py-1 text-[13px] font-bold sm:block">
+          {NOMBRE_ROL[user.rol] ?? user.rol}
+        </span>
+      )}
       <button
         onClick={logout}
         title="Cerrar sesión"
-        className="flex size-10 items-center justify-center rounded-lg text-neutral-400 active:bg-crema"
+        aria-label="Cerrar sesión"
+        className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white/80 active:bg-white/15"
       >
         <LogOut size={20} />
       </button>
@@ -39,5 +49,5 @@ export function Cabecera({ titulo, atras, acciones }) {
 }
 
 export function Pantalla({ children }) {
-  return <div className="min-h-full bg-crema pb-24">{children}</div>;
+  return <div className="min-h-full bg-sala pb-24">{children}</div>;
 }

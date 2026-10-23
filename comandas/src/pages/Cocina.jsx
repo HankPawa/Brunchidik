@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/sesion";
 import { useWebSocket } from "../hooks/useWebSocket";
-import { Cabecera } from "../components/Layout";
+import { Cabecera, Pantalla } from "../components/Layout";
 import { Aviso, Cargando } from "../components/ui";
-import { minutosDesde } from "../lib/formato";
+import { sonarPlatoNuevo } from "../lib/aviso";
+import { minutosDesde, nivelDeEspera, PIEL_ESPERA } from "../lib/formato";
 
 const TOPICS = ["/topic/cocina"];
 
-// Tablero de cocina: pantalla encendida todo el servicio, mirada de lejos y
-// dedos ocupados. Por eso el contraste alto, las tarjetas grandes y el aviso
-// sonoro cuando entra algo nuevo.
+// Tablero de cocina. Se mira desde la línea, a dos o tres metros, con las manos
+// ocupadas y bajo luz fuerte. Por eso: pieza grande, número de mesa y minutos
+// como elementos dominantes, y relleno sólido en vez de borde cuando algo va
+// tarde — un borde no se ve a esa distancia.
 export default function Cocina() {
   const { pedir } = useAuth();
   const [items, setItems] = useState([]);
@@ -21,7 +23,7 @@ export default function Cocina() {
     try {
       const pendientes = await pedir("/api/cocina/pendientes");
       const nuevos = pendientes.filter((i) => !conocidos.current.has(i.id));
-      if (nuevos.length > 0 && conocidos.current.size > 0) sonar();
+      if (nuevos.length > 0 && conocidos.current.size > 0) sonarPlatoNuevo();
       conocidos.current = new Set(pendientes.map((i) => i.id));
       setItems(pendientes);
       setError("");
@@ -55,75 +57,121 @@ export default function Cocina() {
     }
   };
 
-  const porEstado = (estado) => items.filter((i) => i.estado === estado);
+  // Lo más viejo primero: es el orden en que hay que resolverlo.
+  const porEstado = (estado) =>
+    items
+      .filter((i) => i.estado === estado)
+      .sort((a, b) => new Date(a.fechaEnvio) - new Date(b.fechaEnvio));
+
+  const enCola = porEstado("PENDIENTE");
+  const preparando = porEstado("PREPARANDO");
 
   return (
-    <div className="min-h-full bg-neutral-900 text-white">
-      <div className="bg-neutral-950">
-        <Cabecera titulo="Cocina" />
-      </div>
+    <Pantalla>
+      <Cabecera titulo="Cocina" />
       <Aviso onReintentar={cargar}>{error}</Aviso>
 
       {cargando ? (
         <Cargando />
       ) : items.length === 0 ? (
-        <p className="p-16 text-center text-xl text-neutral-400">Sin pedidos pendientes</p>
+        <p className="px-6 py-24 text-center text-3xl font-bold text-tinta-2">La cocina está al día</p>
       ) : (
-        <div className="grid gap-4 p-4 md:grid-cols-2">
-          <Columna titulo="En cola" items={porEstado("PENDIENTE")} accion="Empezar" onAccion={(i) => marcar(i, "PREPARANDO")} />
-          <Columna
+        <div className="grid gap-5 p-4 xl:grid-cols-2">
+          <Banda
+            titulo="En cola"
+            items={enCola}
+            accion="Empezar"
+            onAccion={(i) => marcar(i, "PREPARANDO")}
+            vacia="Nada esperando"
+          />
+          <Banda
             titulo="Preparando"
-            items={porEstado("PREPARANDO")}
+            items={preparando}
             accion="Listo"
-            destacado
+            enMarcha
             onAccion={(i) => marcar(i, "LISTO")}
+            vacia="Nada en el fuego"
           />
         </div>
       )}
-    </div>
+    </Pantalla>
   );
 }
 
-function Columna({ titulo, items, accion, onAccion, destacado }) {
+function Banda({ titulo, items, accion, onAccion, enMarcha, vacia }) {
   return (
     <section>
-      <h2 className="mb-3 text-sm font-bold tracking-widest text-neutral-400 uppercase">
-        {titulo} ({items.length})
+      <h2 className="mb-3 flex items-baseline gap-2 text-2xl font-extrabold tracking-[-0.02em] text-tinta">
+        {titulo}
+        <span className="text-xl font-bold text-tinta-2">{items.length}</span>
       </h2>
-      <ul className="space-y-3">
-        {items.map((item) => {
-          const minutos = minutosDesde(item.fechaEnvio);
-          return (
-            <li
-              key={item.id}
-              className={`rounded-2xl p-4 ${minutos >= 15 ? "bg-alerta/20 ring-2 ring-alerta" : "bg-neutral-800"}`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-sm text-neutral-400">Mesa {item.mesa}</p>
-                  <p className="text-2xl leading-tight font-bold">
-                    {item.cantidad}× {item.nombre}
-                  </p>
-                  {item.notas && <p className="mt-1 text-lg text-dorado">{item.notas}</p>}
-                </div>
-                <span className={`shrink-0 text-lg font-bold ${minutos >= 15 ? "text-alerta" : "text-neutral-400"}`}>
-                  {minutos}′
-                </span>
-              </div>
 
-              <button
-                onClick={() => onAccion(item)}
-                className={`mt-4 min-h-14 w-full rounded-xl text-lg font-bold active:scale-[0.99] ${
-                  destacado ? "bg-emerald-500 text-neutral-900" : "bg-white text-neutral-900"
-                }`}
-              >
-                {accion}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      {items.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-filete px-4 py-10 text-center text-xl text-tinta-2">
+          {vacia}
+        </p>
+      ) : (
+        <ul className="space-y-3">
+          {items.map((item) => (
+            <Ticket key={item.id} item={item} accion={accion} onAccion={onAccion} enMarcha={enMarcha} />
+          ))}
+        </ul>
+      )}
     </section>
+  );
+}
+
+function Ticket({ item, accion, onAccion, enMarcha }) {
+  const minutos = minutosDesde(item.fechaEnvio);
+  const piel = PIEL_ESPERA[nivelDeEspera(minutos)];
+  const tarde = piel === PIEL_ESPERA.tarde;
+
+  return (
+    <li className={`flex overflow-hidden rounded-xl ${piel.pieza}`}>
+      {/* La pestaña del canto es lo que se lee desde lejos: un raíl de colores
+          que dice la antigüedad sin leer una sola palabra. */}
+      <span aria-hidden className={`w-3 shrink-0 ${piel.pestana}`} />
+
+      <div className="min-w-0 flex-1 p-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className={`text-sm font-bold ${tarde ? "text-white/70" : "text-tinta-2"}`}>Mesa</p>
+            <p className="text-5xl leading-none font-extrabold tracking-[-0.03em]">{item.mesa}</p>
+          </div>
+          <p className={`text-5xl leading-none font-extrabold tracking-[-0.03em] ${piel.reloj}`}>
+            {minutos}
+            <span className="text-2xl font-bold"> min</span>
+          </p>
+        </div>
+
+        <p className="mt-4 text-3xl leading-tight font-bold tracking-[-0.02em]">
+          <span className={tarde ? "text-white/70" : "text-tinta-2"}>{item.cantidad}×</span> {item.nombre}
+        </p>
+
+        {item.notas && (
+          <p
+            className={`mt-2 inline-block rounded px-2 py-1 text-xl font-bold ${
+              tarde ? "bg-white/20 text-white" : "bg-tibio/20 text-tinta"
+            }`}
+          >
+            {item.notas}
+          </p>
+        )}
+
+        <button
+          onClick={() => onAccion(item)}
+          className={`mt-4 min-h-16 w-full rounded-lg text-xl font-extrabold transition active:scale-[0.99] ${
+            tarde
+              ? "bg-white text-brasa"
+              : enMarcha
+                ? "bg-listo text-white"
+                : "bg-tinta text-white"
+          }`}
+        >
+          {accion}
+        </button>
+      </div>
+    </li>
   );
 }
 
@@ -151,22 +199,4 @@ function useMantenerPantallaEncendida() {
       bloqueo?.release().catch(() => {});
     };
   }, []);
-}
-
-function sonar() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.value = 880;
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.4);
-    setTimeout(() => ctx.close(), 600);
-  } catch {
-    // Sin audio disponible: el aviso visual basta.
-  }
 }

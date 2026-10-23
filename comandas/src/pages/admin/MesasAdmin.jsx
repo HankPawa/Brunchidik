@@ -66,16 +66,16 @@ export default function MesasAdmin() {
       ) : (
         <ul className="space-y-2">
           {mesas.map((mesa) => (
-            <li key={mesa.id} className="flex items-center gap-3 rounded-xl border border-crema-borde bg-white p-3">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-crema text-xl font-bold text-tinta">
+            <li key={mesa.id} className="flex items-center gap-3 rounded-xl border border-filete bg-white p-3">
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-sala text-xl font-bold text-tinta">
                 {mesa.numero}
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold text-tinta">{mesa.nombre || `Mesa ${mesa.numero}`}</p>
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-tinta-2">
                   {mesa.capacidad ? `${mesa.capacidad} personas` : "Sin capacidad definida"}
-                  {!mesa.activa && " · fuera de servicio"}
-                  {mesa.comandaAbiertaId && " · ocupada"}
+                  {!mesa.activa && ", fuera de servicio"}
+                  {mesa.comandaAbiertaId && ", ocupada"}
                 </p>
               </div>
               <button
@@ -87,13 +87,13 @@ export default function MesasAdmin() {
                     capacidad: mesa.capacidad ? String(mesa.capacidad) : "",
                   })
                 }
-                className="flex size-11 items-center justify-center rounded-lg text-neutral-500 active:bg-crema"
+                className="flex size-11 items-center justify-center rounded-lg text-tinta-2 active:bg-sala"
               >
                 <Pencil size={18} />
               </button>
               <button
                 onClick={() => eliminar(mesa)}
-                className="flex size-11 items-center justify-center rounded-lg text-alerta active:bg-alerta/10"
+                className="flex size-11 items-center justify-center rounded-lg text-brasa active:bg-brasa/8"
               >
                 <Trash2 size={18} />
               </button>

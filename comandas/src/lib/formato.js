@@ -18,21 +18,15 @@ export const ETIQUETA_ESTADO = {
   CANCELADO: "Cancelado",
 };
 
+// El estado se pinta con relleno sólido, no con texto de color sobre fondo
+// pálido: a dos metros un relleno se lee y un borde no.
 export const COLOR_ESTADO = {
-  BORRADOR: "bg-neutral-200 text-neutral-700",
-  PENDIENTE: "bg-amber-100 text-amber-800",
-  PREPARANDO: "bg-blue-100 text-blue-800",
-  LISTO: "bg-emerald-100 text-emerald-800",
-  ENTREGADO: "bg-neutral-100 text-neutral-500",
-  CANCELADO: "bg-neutral-100 text-neutral-400 line-through",
-};
-
-export const pesos = (valor) => `$${Number(valor || 0).toLocaleString("es-CO")}`;
-
-// Minutos transcurridos desde una marca de tiempo "naive" del servidor.
-export const minutosDesde = (fecha) => {
-  if (!fecha) return 0;
-  return Math.max(0, Math.floor((Date.now() - new Date(fecha).getTime()) / 60000));
+  BORRADOR: "bg-espera text-tinta-2",
+  PENDIENTE: "bg-tinta text-white",
+  PREPARANDO: "bg-tibio text-tinta",
+  LISTO: "bg-listo text-white",
+  ENTREGADO: "bg-espera text-tinta-2",
+  CANCELADO: "bg-espera text-tinta-2 line-through",
 };
 
 export const ETIQUETA_PAGO = {
@@ -48,10 +42,18 @@ export const UNIDADES = [
   { valor: "ML", texto: "Mililitros" },
 ];
 
+export const pesos = (valor) => `$${Number(valor || 0).toLocaleString("es-CO")}`;
+
 // Cantidades de inventario: hasta 3 decimales, pero sin ceros de adorno.
 export const cantidad = (valor) => {
   const n = Number(valor || 0);
   return n.toLocaleString("es-CO", { maximumFractionDigits: 3 });
+};
+
+// Minutos transcurridos desde una marca de tiempo "naive" del servidor.
+export const minutosDesde = (fecha) => {
+  if (!fecha) return 0;
+  return Math.max(0, Math.floor((Date.now() - new Date(fecha).getTime()) / 60000));
 };
 
 // Fecha de hoy en AAAA-MM-DD, hora local, para los campos de rango.
@@ -60,3 +62,45 @@ export const hoyISO = () => {
   const mes = String(d.getMonth() + 1).padStart(2, "0");
   return `${d.getFullYear()}-${mes}-${String(d.getDate()).padStart(2, "0")}`;
 };
+
+// --- Escala de calor ---------------------------------------------------------
+// Un único sitio decide cuánto lleva esperando algo. Los umbrales salen del
+// servicio real: a los 8 minutos un plato empieza a pesar, a los 15 va tarde.
+export const MINUTOS_TIBIO = 8;
+export const MINUTOS_TARDE = 15;
+
+export const nivelDeEspera = (minutos) => {
+  if (minutos >= MINUTOS_TARDE) return "tarde";
+  if (minutos >= MINUTOS_TIBIO) return "tibio";
+  return "fresco";
+};
+
+// Cómo se pinta un ticket según lo que lleva esperando. El nivel "tarde" toma
+// la pieza entera: desde la línea tiene que verse sin leer nada.
+export const PIEL_ESPERA = {
+  fresco: { pieza: "bg-mantel text-tinta", pestana: "bg-espera", reloj: "text-tinta-2" },
+  tibio: { pieza: "bg-mantel text-tinta", pestana: "bg-tibio", reloj: "text-tibio" },
+  tarde: { pieza: "bg-brasa text-white", pestana: "bg-white/35", reloj: "text-white" },
+};
+
+// --- Estado de una mesa ------------------------------------------------------
+// Qué significa que una mesa esté "lista" lo decide un solo sitio, porque lo
+// usan la rejilla del salón, la cuenta y el aviso del servidor.
+export const EN_COCINA = ["PENDIENTE", "PREPARANDO"];
+
+// Una mesa está COMPLETA cuando cocina no tiene nada suyo y hay platos
+// esperando en el pase: el mesero puede llevárselo todo de una vez.
+//
+// Los borradores no la bloquean: son platos que el mesero todavía no ha
+// mandado, así que por parte de la cocina el pedido sí está terminado.
+export function resumenDeMesa(comanda) {
+  if (!comanda) return { estado: "libre", listos: 0, enCocina: 0, total: 0 };
+
+  const items = comanda.items ?? [];
+  const enCocina = items.filter((i) => EN_COCINA.includes(i.estado)).length;
+  const listos = items.filter((i) => i.estado === "LISTO").length;
+  const total = items.filter((i) => i.estado !== "CANCELADO").length;
+
+  const estado = listos > 0 && enCocina === 0 ? "completa" : listos > 0 ? "parcial" : "ocupada";
+  return { estado, listos, enCocina, total };
+}

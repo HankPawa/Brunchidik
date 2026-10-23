@@ -75,8 +75,8 @@ export default function Recetas() {
       <Aviso onReintentar={recargar}>{error}</Aviso>
 
       {sinReceta.length > 0 && (
-        <div className="mb-4 flex gap-3 rounded-xl border border-dorado bg-dorado/10 p-3">
-          <AlertTriangle className="shrink-0 text-dorado" size={20} />
+        <div className="mb-4 flex gap-3 rounded-xl border border-tibio bg-tibio/15 p-3">
+          <AlertTriangle className="shrink-0 text-rio" size={20} />
           <p className="text-sm text-tinta">
             <strong>{sinReceta.length} plato(s) sin receta.</strong> Se pueden vender, pero no descuentan inventario.
           </p>
@@ -91,15 +91,15 @@ export default function Recetas() {
             <li key={plato.id}>
               <button
                 onClick={() => abrir(plato)}
-                className="flex w-full items-center gap-3 rounded-xl border border-crema-borde bg-white p-3 text-left active:bg-crema"
+                className="flex w-full items-center gap-3 rounded-xl border border-filete bg-white p-3 text-left active:bg-sala"
               >
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold text-tinta">{plato.nombre}</p>
-                  <p className={`text-sm ${idsSinReceta.has(plato.id) ? "text-dorado" : "text-neutral-500"}`}>
+                  <p className={`text-sm ${idsSinReceta.has(plato.id) ? "text-rio" : "text-tinta-2"}`}>
                     {idsSinReceta.has(plato.id) ? "Sin receta" : "Receta definida"}
                   </p>
                 </div>
-                <span className="text-neutral-300">›</span>
+                <span className="text-filete">›</span>
               </button>
             </li>
           ))}
@@ -107,12 +107,12 @@ export default function Recetas() {
       )}
 
       {editando && (
-        <Hoja titulo={`Receta · ${editando.plato.nombre}`} error={error} onCerrar={cerrarFormulario}>
+        <Hoja titulo={`Receta de ${editando.plato.nombre}`} error={error} onCerrar={cerrarFormulario}>
           {!editando.lineas ? (
             <Cargando />
           ) : (
             <form onSubmit={guardar} className="space-y-4">
-              <p className="text-sm text-neutral-500">
+              <p className="text-sm text-tinta-2">
                 Cantidad que gasta <strong>una unidad</strong> del plato. Se descuenta al enviar a cocina.
               </p>
 
@@ -146,7 +146,7 @@ export default function Recetas() {
                     onClick={() =>
                       setEditando((prev) => ({ ...prev, lineas: prev.lineas.filter((_, idx) => idx !== i) }))
                     }
-                    className="flex size-12 shrink-0 items-center justify-center rounded-lg text-alerta active:bg-alerta/10"
+                    className="flex size-12 shrink-0 items-center justify-center rounded-lg text-brasa active:bg-brasa/8"
                   >
                     <Trash2 size={18} />
                   </button>

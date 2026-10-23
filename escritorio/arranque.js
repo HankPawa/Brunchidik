@@ -120,8 +120,8 @@ export async function arrancar({
       "Falta la interfaz compilada",
       `No se encontró index.html en: ${directorioEstatico}`,
       [
-        "Compílala con: npm --prefix comandas run build",
-        "O usa «npm run escritorio» desde la raíz, que la compila antes de abrir.",
+        "Compílala con: `npm --prefix comandas run build`",
+        "O usa `npm run escritorio` desde la raíz, que la compila antes de abrir.",
       ],
     );
   }
@@ -160,7 +160,7 @@ export async function arrancar({
     throw new FalloArranque(
       "La configuración está incompleta",
       problems.join("\n"),
-      [`Revisa el archivo de configuración: ${rutaConfig}`, "Después vuelve a abrir el programa."],
+      [`Revisa el archivo de configuración: \`${rutaConfig}\``, "Después vuelve a abrir el programa."],
     );
   }
 
@@ -173,8 +173,8 @@ export async function arrancar({
       "No se pudo conectar con la base de datos",
       err.message.split("\n").at(-1),
       [
-        "Comprueba que el servicio «postgresql-x64-17» esté iniciado en Windows.",
-        `Si cambiaste la contraseña de PostgreSQL, actualízala en: ${rutaConfig}`,
+        "Comprueba que el servicio `postgresql-x64-17` esté iniciado en Windows.",
+        `Si cambiaste la contraseña de PostgreSQL, actualízala en: \`${rutaConfig}\``,
       ],
     );
   }
@@ -207,8 +207,8 @@ export async function arrancar({
             `El puerto ${puerto} ya está ocupado`,
             "Otro programa está usando ese puerto.",
             [
-              "¿Dejaste el servidor abierto en una terminal? Ciérrala.",
-              `Si necesitas otro puerto, cámbialo en: ${rutaConfig}`,
+              "¿Dejaste el servidor abierto en una terminal? Ciérrala con Ctrl+C.",
+              `Si necesitas otro puerto, cámbialo en: \`${rutaConfig}\``,
             ],
           ),
         );

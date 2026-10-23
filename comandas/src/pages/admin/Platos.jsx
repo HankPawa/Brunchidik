@@ -83,31 +83,31 @@ export default function Platos() {
       ) : (
         <ul className="space-y-2">
           {platos.map((plato) => (
-            <li key={plato.id} className="flex items-center gap-3 rounded-xl border border-crema-borde bg-white p-3">
+            <li key={plato.id} className="flex items-center gap-3 rounded-xl border border-filete bg-white p-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold text-tinta">{plato.nombre}</p>
-                <p className="text-sm text-neutral-500">
-                  {pesos(plato.precio)} · {nombreCategoria(plato.categoriaId)}
+                <p className="text-sm text-tinta-2">
+                  {pesos(plato.precio)} en {nombreCategoria(plato.categoriaId)}
                 </p>
                 <div className="mt-1 flex flex-wrap gap-1 text-xs">
                   {!plato.disponible && (
-                    <span className="rounded bg-neutral-200 px-1.5 py-0.5 text-neutral-600">Agotado</span>
+                    <span className="rounded bg-filete px-1.5 py-0.5 text-tinta-2">Agotado</span>
                   )}
-                  {plato.visibleWeb && <span className="rounded bg-blue-100 px-1.5 py-0.5 text-blue-800">Web</span>}
+                  {plato.visibleWeb && <span className="rounded bg-rio/12 px-1.5 py-0.5 text-rio">Web</span>}
                   {plato.visibleSalon && (
-                    <span className="rounded bg-dorado/20 px-1.5 py-0.5 text-tinta">Salón</span>
+                    <span className="rounded bg-tibio/20 px-1.5 py-0.5 text-tinta">Salón</span>
                   )}
                 </div>
               </div>
               <button
                 onClick={() => setEditando({ ...VACIO, ...plato, descripcion: plato.descripcion ?? "", imagenUrl: plato.imagenUrl ?? "" })}
-                className="flex size-11 items-center justify-center rounded-lg text-neutral-500 active:bg-crema"
+                className="flex size-11 items-center justify-center rounded-lg text-tinta-2 active:bg-sala"
               >
                 <Pencil size={18} />
               </button>
               <button
                 onClick={() => eliminar(plato)}
-                className="flex size-11 items-center justify-center rounded-lg text-alerta active:bg-alerta/10"
+                className="flex size-11 items-center justify-center rounded-lg text-brasa active:bg-brasa/8"
               >
                 <Trash2 size={18} />
               </button>
@@ -160,7 +160,7 @@ export default function Platos() {
               onChange={(e) => setEditando({ ...editando, imagenUrl: e.target.value })}
             />
 
-            <div className="space-y-1 border-t border-crema-borde pt-3">
+            <div className="space-y-1 border-t border-filete pt-3">
               <Casilla
                 etiqueta="Disponible"
                 ayuda="Sin esto no se puede vender en ningún sitio."

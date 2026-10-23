@@ -361,6 +361,8 @@ export async function cancelarItem(req, res) {
   const comanda = await buscarComanda(id);
   const json = toComanda(comanda);
   publicar(TOPICS.cocina, json);
+  // Cancelar el último plato pendiente también deja la mesa lista para llevar.
+  await avisarSiLaMesaEstaCompleta(comanda, Number(comanda.meseroId));
   await audit.registrar("CANCELAR_PLATO", `Canceló un plato de la comanda #${id}`, audit.SERVICIO_COMANDAS);
   responder(res, comanda);
 }
@@ -444,8 +446,32 @@ export async function cambiarEstadoCocina(req, res) {
   if (estado === "LISTO") {
     publicar(TOPICS.salon, json);
     publicar(TOPICS.comandasMesero(Number(item.comanda.meseroId)), json);
+    await avisarSiLaMesaEstaCompleta(actualizado.comanda, Number(item.comanda.meseroId));
   }
   res.json(json);
+}
+
+// Cuando el último plato de una mesa sale de cocina, el mesero puede llevarlo
+// todo de una vez en lugar de ir a cuentagotas. El servidor es quien sabe si
+// queda algo pendiente, así que el aviso se decide aquí y no en la pantalla.
+//
+// Los borradores no cuentan: son platos que el mesero aún no ha mandado, así
+// que por parte de la cocina el pedido sí está terminado.
+async function avisarSiLaMesaEstaCompleta(comanda, meseroId) {
+  const [enCocina, listos] = await Promise.all([
+    prisma.comandaItem.count({ where: { comandaId: comanda.id, estado: { in: EN_COCINA } } }),
+    prisma.comandaItem.count({ where: { comandaId: comanda.id, estado: "LISTO" } }),
+  ]);
+  if (enCocina > 0 || listos === 0) return;
+
+  const aviso = {
+    tipo: "mesaCompleta",
+    comandaId: Number(comanda.id),
+    mesa: comanda.mesa.numero,
+    platos: listos,
+  };
+  publicar(TOPICS.comandasMesero(meseroId), aviso);
+  publicar(TOPICS.salon, aviso);
 }
 
 export async function entregarItem(req, res) {

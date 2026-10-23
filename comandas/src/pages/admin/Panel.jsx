@@ -30,7 +30,7 @@ export default function Panel() {
                 key={atajo.a}
                 to={atajo.a}
                 title={atajo.texto}
-                className="flex size-10 items-center justify-center rounded-lg text-neutral-400 active:bg-crema"
+                className="flex size-10 items-center justify-center rounded-lg text-white/80 active:bg-white/15"
               >
                 <atajo.Icono size={20} />
               </Link>
@@ -39,14 +39,14 @@ export default function Panel() {
         }
       />
 
-      <nav className="flex gap-1 overflow-x-auto border-b border-crema-borde bg-white px-3 py-2">
+      <nav className="flex gap-1 overflow-x-auto border-b border-filete bg-mantel px-3 py-2">
         {SECCIONES.map(({ a, texto }) => (
           <NavLink
             key={a}
             to={a}
             className={({ isActive }) =>
-              `min-h-10 shrink-0 rounded-lg px-4 py-2 text-sm font-semibold transition ${
-                isActive ? "bg-tinta text-white" : "text-neutral-500 active:bg-crema"
+              `min-h-10 shrink-0 rounded-lg px-4 py-2 text-[15px] font-bold transition ${
+                isActive ? "bg-rio text-white" : "text-tinta-2 active:bg-sala"
               }`
             }
           >

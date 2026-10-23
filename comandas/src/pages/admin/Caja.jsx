@@ -87,7 +87,7 @@ export default function Caja() {
               <ArrowUpRight size={18} /> Salida
             </Boton>
             <Boton
-              variante="dorado"
+              variante="marca"
               className="flex flex-1 items-center justify-center gap-2"
               onClick={() => setCerrando({ conteo: { ...CONTEO_VACIO }, notas: "" })}
             >
@@ -206,7 +206,7 @@ export default function Caja() {
               if (ok) setCerrando(null);
             }}
           >
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm text-tinta-2">
               Cuenta el dinero y escribe lo que hay <strong>de verdad</strong>. La diferencia se calcula sola.
             </p>
 
@@ -231,7 +231,7 @@ export default function Caja() {
                     ayuda={`Esperado: ${pesos(esperado)}`}
                   />
                   {diferencia !== null && diferencia !== 0 && (
-                    <p className={`mt-1 text-sm font-semibold ${diferencia < 0 ? "text-alerta" : "text-dorado"}`}>
+                    <p className={`mt-1 text-sm font-semibold ${diferencia < 0 ? "text-brasa" : "text-rio"}`}>
                       {diferencia < 0 ? "Faltan " : "Sobran "}
                       {pesos(Math.abs(diferencia))}
                     </p>
@@ -246,7 +246,7 @@ export default function Caja() {
               onChange={(e) => setCerrando({ ...cerrando, notas: e.target.value })}
               ayuda="Si hay descuadre, explica aquí a qué se debió."
             />
-            <Boton type="submit" variante="dorado" cargando={ocupado} className="w-full">
+            <Boton type="submit" variante="marca" cargando={ocupado} className="w-full">
               Cerrar caja
             </Boton>
           </form>
@@ -258,10 +258,10 @@ export default function Caja() {
 
 function SinCaja({ onAbrir }) {
   return (
-    <div className="rounded-2xl border border-crema-borde bg-white p-8 text-center">
-      <Unlock className="mx-auto mb-3 text-neutral-300" size={40} />
+    <div className="rounded-2xl border border-filete bg-white p-8 text-center">
+      <Unlock className="mx-auto mb-3 text-filete" size={40} />
       <p className="mb-1 text-lg font-bold text-tinta">La caja está cerrada</p>
-      <p className="mb-5 text-sm text-neutral-500">
+      <p className="mb-5 text-sm text-tinta-2">
         Ábrela con el dinero que haya en el cajón para empezar a cuadrar el día.
       </p>
       <Boton onClick={onAbrir}>Abrir caja</Boton>
@@ -274,16 +274,21 @@ function Resumen({ cuadre, arqueo }) {
 
   return (
     <>
-      <div className="rounded-2xl border-2 border-dorado bg-white p-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Debería haber en el cajón</p>
-        <p className="text-4xl font-bold text-tinta">{pesos(cuadre.esperado.EFECTIVO)}</p>
-        <p className="mt-1 text-sm text-neutral-500">
+      {/* La cifra esperada es lo único grande de la pantalla: es la pregunta
+          que el cajero se hace cada vez que mira aquí. */}
+      <div className="rounded-2xl bg-tinta p-5 text-white">
+        <p className="text-base font-semibold text-white/70">Debería haber en el cajón</p>
+        <p className="mt-1 text-5xl leading-none font-extrabold tracking-[-0.035em]">
+          {pesos(cuadre.esperado.EFECTIVO)}
+        </p>
+        <p className="mt-3 text-[15px] text-white/70">
           Base {pesos(cuadre.baseInicial)} + ventas en efectivo {pesos(cuadre.ventas.EFECTIVO)}
           {cuadre.ingresos > 0 && ` + entradas ${pesos(cuadre.ingresos)}`}
           {cuadre.egresos > 0 && ` − salidas ${pesos(cuadre.egresos)}`}
         </p>
-        <p className="mt-2 text-xs text-neutral-400">
-          Abierta desde {arqueo.fechaApertura?.replace("T", " ").slice(0, 16)} · {cuadre.comandas} cuenta(s) cobradas
+        <p className="mt-2 text-[13px] text-white/50">
+          Abierta desde {arqueo.fechaApertura?.replace("T", " ").slice(0, 16)}, {cuadre.comandas}{" "}
+          {cuadre.comandas === 1 ? "cuenta cobrada" : "cuentas cobradas"}
         </p>
       </div>
 
@@ -293,7 +298,7 @@ function Resumen({ cuadre, arqueo }) {
       </div>
 
       {sinMetodo > 0 && (
-        <div className="mt-3 rounded-xl border border-alerta/30 bg-alerta/10 p-3 text-sm text-alerta">
+        <div className="mt-3 rounded-xl border border-brasa/40 bg-brasa/8 p-3 text-sm text-brasa">
           <strong>{pesos(sinMetodo)}</strong> en cuentas cerradas sin método de pago. No entran en ningún esperado:
           revísalas antes de cerrar.
         </div>
@@ -304,10 +309,10 @@ function Resumen({ cuadre, arqueo }) {
 
 function Tarjeta({ titulo, valor, nota }) {
   return (
-    <div className="rounded-xl border border-crema-borde bg-white p-3">
-      <p className="text-xs text-neutral-500">{titulo}</p>
-      <p className="text-xl font-bold text-tinta">{pesos(valor)}</p>
-      <p className="text-xs text-neutral-400">{nota}</p>
+    <div className="rounded-xl bg-mantel p-3">
+      <p className="text-sm font-semibold text-tinta-2">{titulo}</p>
+      <p className="text-2xl font-extrabold tracking-[-0.02em] text-tinta">{pesos(valor)}</p>
+      <p className="mt-0.5 text-[13px] text-tinta-2">{nota}</p>
     </div>
   );
 }
@@ -316,7 +321,7 @@ function Movimientos({ movimientos, onAnular, ocupado }) {
   if (!movimientos || movimientos.length === 0) {
     return (
       <section className="mt-5">
-        <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-neutral-500">Movimientos</h3>
+        <h3 className="mb-2 text-lg font-extrabold tracking-[-0.02em] text-tinta">Movimientos</h3>
         <Vacio>Sin entradas ni salidas de dinero.</Vacio>
       </section>
     );
@@ -324,23 +329,23 @@ function Movimientos({ movimientos, onAnular, ocupado }) {
 
   return (
     <section className="mt-5">
-      <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-neutral-500">Movimientos</h3>
-      <ul className="overflow-hidden rounded-xl border border-crema-borde bg-white">
+      <h3 className="mb-2 text-lg font-extrabold tracking-[-0.02em] text-tinta">Movimientos</h3>
+      <ul className="overflow-hidden rounded-xl border border-filete bg-white">
         {movimientos.map((m) => (
           <li
             key={m.id}
-            className={`flex items-center gap-3 border-b border-crema-borde px-3 py-2 last:border-0 ${
+            className={`flex items-center gap-3 border-b border-filete px-3 py-2 last:border-0 ${
               m.anulado ? "opacity-50" : ""
             }`}
           >
             <div className="min-w-0 flex-1">
               <p className={`truncate font-medium text-tinta ${m.anulado ? "line-through" : ""}`}>{m.concepto}</p>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-tinta-2">
                 {m.fecha?.replace("T", " ").slice(0, 16)}
-                {m.anulado && " · anulado"}
+                {m.anulado && ", anulado"}
               </p>
             </div>
-            <span className={`shrink-0 font-semibold ${m.tipo === "EGRESO" ? "text-alerta" : "text-emerald-700"}`}>
+            <span className={`shrink-0 font-semibold ${m.tipo === "EGRESO" ? "text-brasa" : "text-listo"}`}>
               {m.tipo === "EGRESO" ? "−" : "+"}
               {pesos(m.monto)}
             </span>
@@ -349,7 +354,7 @@ function Movimientos({ movimientos, onAnular, ocupado }) {
                 onClick={() => onAnular(m.id)}
                 disabled={ocupado}
                 title="Anular"
-                className="flex size-10 shrink-0 items-center justify-center rounded-lg text-neutral-400 active:bg-crema disabled:opacity-40"
+                className="flex size-10 shrink-0 items-center justify-center rounded-lg text-tinta-2 active:bg-sala disabled:opacity-40"
               >
                 <Ban size={16} />
               </button>
@@ -357,7 +362,7 @@ function Movimientos({ movimientos, onAnular, ocupado }) {
           </li>
         ))}
       </ul>
-      <p className="mt-2 text-xs text-neutral-400">
+      <p className="mt-2 text-xs text-tinta-2">
         Los movimientos no se borran: se anulan, para que el arqueo siempre pueda explicarse.
       </p>
     </section>

@@ -101,35 +101,35 @@ export default function Insumos() {
             <li
               key={insumo.id}
               className={`rounded-xl border bg-white p-3 ${
-                insumo.stock < 0 ? "border-alerta" : insumo.bajoMinimo ? "border-dorado" : "border-crema-borde"
+                insumo.stock < 0 ? "border-brasa" : insumo.bajoMinimo ? "border-tibio" : "border-filete"
               }`}
             >
               <div className="flex items-center gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold text-tinta">
                     {insumo.nombre}
-                    {!insumo.activo && <span className="ml-2 text-xs font-normal text-neutral-400">(inactivo)</span>}
+                    {!insumo.activo && <span className="ml-2 text-xs font-normal text-tinta-2">(inactivo)</span>}
                   </p>
-                  <p className="text-sm text-neutral-500">
-                    {cantidad(insumo.stock)} {insumo.unidad} · mínimo {cantidad(insumo.stockMinimo)}
+                  <p className="text-sm text-tinta-2">
+                    {cantidad(insumo.stock)} {insumo.unidad}, mínimo {cantidad(insumo.stockMinimo)}
                   </p>
                   {insumo.stock < 0 && (
-                    <p className="text-sm font-semibold text-alerta">En negativo: se vendió sin existencias</p>
+                    <p className="text-sm font-semibold text-brasa">En negativo: se vendió sin existencias</p>
                   )}
                   {insumo.stock >= 0 && insumo.bajoMinimo && (
-                    <p className="text-sm font-semibold text-dorado">Bajo el mínimo</p>
+                    <p className="text-sm font-semibold text-rio">Bajo el mínimo</p>
                   )}
                 </div>
                 <button
                   onClick={() => verHistorial(insumo)}
                   title="Movimientos"
-                  className="flex size-11 items-center justify-center rounded-lg text-neutral-500 active:bg-crema"
+                  className="flex size-11 items-center justify-center rounded-lg text-tinta-2 active:bg-sala"
                 >
                   <History size={18} />
                 </button>
                 <button
                   onClick={() => setEditando({ ...insumo, stockMinimo: String(insumo.stockMinimo) })}
-                  className="flex size-11 items-center justify-center rounded-lg text-neutral-500 active:bg-crema"
+                  className="flex size-11 items-center justify-center rounded-lg text-tinta-2 active:bg-sala"
                 >
                   <Pencil size={18} />
                 </button>
@@ -211,7 +211,7 @@ export default function Insumos() {
 
       {ajustando && (
         <Hoja
-          titulo={`${ajustando.direccion === "entrada" ? "Entrada" : "Merma"} · ${ajustando.insumo.nombre}`}
+          titulo={`${ajustando.direccion === "entrada" ? "Entrada de" : "Merma de"} ${ajustando.insumo.nombre}`}
           error={error}
           onCerrar={() => cerrar(setAjustando)}
         >
@@ -252,29 +252,29 @@ export default function Insumos() {
       )}
 
       {historial && (
-        <Hoja titulo={`Movimientos · ${historial.insumo.nombre}`} onCerrar={() => setHistorial(null)}>
+        <Hoja titulo={`Movimientos de ${historial.insumo.nombre}`} onCerrar={() => setHistorial(null)}>
           {!historial.movimientos ? (
             <Cargando />
           ) : historial.movimientos.length === 0 ? (
             <Vacio>Sin movimientos todavía.</Vacio>
           ) : (
-            <ul className="divide-y divide-crema-borde">
+            <ul className="divide-y divide-filete">
               {historial.movimientos.map((mv) => (
                 <li key={mv.id} className="flex items-baseline justify-between gap-3 py-2">
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-tinta">{mv.tipo}</p>
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-xs text-tinta-2">
                       {mv.fecha?.replace("T", " ").slice(0, 16)}
-                      {mv.motivo && ` · ${mv.motivo}`}
-                      {mv.comandaItemId && " · venta en mesa"}
+                      {mv.motivo && `, ${mv.motivo}`}
+                      {mv.comandaItemId && ", venta en mesa"}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`font-semibold ${mv.cantidad < 0 ? "text-alerta" : "text-emerald-700"}`}>
+                    <p className={`font-semibold ${mv.cantidad < 0 ? "text-brasa" : "text-listo"}`}>
                       {mv.cantidad > 0 ? "+" : ""}
                       {cantidad(mv.cantidad)}
                     </p>
-                    <p className="text-xs text-neutral-400">queda {cantidad(mv.stockResultante)}</p>
+                    <p className="text-xs text-tinta-2">queda {cantidad(mv.stockResultante)}</p>
                   </div>
                 </li>
               ))}

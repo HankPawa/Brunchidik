@@ -68,7 +68,7 @@ export default function Reportes() {
         ))}
       </div>
 
-      <div className="mb-4 rounded-xl border border-crema-borde bg-white p-3">
+      <div className="mb-4 rounded-xl border border-filete bg-white p-3">
         <div className="flex gap-2">
           <Campo
             etiqueta="Desde"
@@ -86,13 +86,13 @@ export default function Reportes() {
           />
         </div>
         <div className="mt-2 flex gap-2 text-sm">
-          <button onClick={() => setRango({ desde: hoyISO(), hasta: hoyISO() })} className="underline text-neutral-500">
+          <button onClick={() => setRango({ desde: hoyISO(), hasta: hoyISO() })} className="underline text-tinta-2">
             Hoy
           </button>
-          <button onClick={() => setRango(rangoAtajo(7))} className="underline text-neutral-500">
+          <button onClick={() => setRango(rangoAtajo(7))} className="underline text-tinta-2">
             7 días
           </button>
-          <button onClick={() => setRango(rangoAtajo(30))} className="underline text-neutral-500">
+          <button onClick={() => setRango(rangoAtajo(30))} className="underline text-tinta-2">
             30 días
           </button>
         </div>
@@ -110,9 +110,9 @@ export default function Reportes() {
 
 function Tarjeta({ titulo, valor }) {
   return (
-    <div className="rounded-xl border border-crema-borde bg-white p-3">
-      <p className="text-xs text-neutral-500">{titulo}</p>
-      <p className="text-xl font-bold text-tinta">{valor}</p>
+    <div className="rounded-xl border border-filete bg-white p-3">
+      <p className="text-xs text-tinta-2">{titulo}</p>
+      <p className="text-2xl font-extrabold tracking-[-0.02em] text-tinta">{valor}</p>
     </div>
   );
 }
@@ -120,19 +120,19 @@ function Tarjeta({ titulo, valor }) {
 function Bloque({ titulo, children }) {
   return (
     <section className="mt-4">
-      <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-neutral-500">{titulo}</h3>
-      <div className="overflow-hidden rounded-xl border border-crema-borde bg-white">{children}</div>
+      <h3 className="mb-2 text-lg font-extrabold tracking-[-0.02em] text-tinta">{titulo}</h3>
+      <div className="overflow-hidden rounded-xl border border-filete bg-white">{children}</div>
     </section>
   );
 }
 
 function Fila({ izquierda, centro, derecha, resaltar }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-crema-borde px-3 py-2 last:border-0">
-      <span className={`min-w-0 flex-1 truncate ${resaltar ? "font-semibold text-alerta" : "text-tinta"}`}>
+    <div className="flex items-baseline justify-between gap-3 border-b border-filete px-3 py-2 last:border-0">
+      <span className={`min-w-0 flex-1 truncate ${resaltar ? "font-semibold text-brasa" : "text-tinta"}`}>
         {izquierda}
       </span>
-      {centro && <span className="shrink-0 text-sm text-neutral-500">{centro}</span>}
+      {centro && <span className="shrink-0 text-sm text-tinta-2">{centro}</span>}
       <span className="shrink-0 font-semibold text-tinta">{derecha}</span>
     </div>
   );
@@ -186,20 +186,20 @@ function Consumo({ datos }) {
   return (
     <Bloque titulo="Consumo por insumo">
       {datos.insumos.map((i) => (
-        <div key={i.insumoId} className="border-b border-crema-borde px-3 py-2 last:border-0">
+        <div key={i.insumoId} className="border-b border-filete px-3 py-2 last:border-0">
           <div className="flex items-baseline justify-between gap-3">
             <span className="min-w-0 flex-1 truncate font-medium text-tinta">{i.nombre}</span>
             <span className="shrink-0 font-semibold text-tinta">
               {cantidad(i.neto)} {i.unidad}
             </span>
           </div>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-tinta-2">
             gastado {cantidad(i.consumido)}
-            {i.devuelto > 0 && ` · devuelto ${cantidad(i.devuelto)}`}
-            {i.comprado > 0 && ` · comprado ${cantidad(i.comprado)}`}
-            {i.ajustado !== 0 && ` · ajustes ${cantidad(i.ajustado)}`}
-            {" · "}
-            <span className={i.stockActual < 0 ? "font-semibold text-alerta" : i.bajoMinimo ? "font-semibold text-dorado" : ""}>
+            {i.devuelto > 0 && `, devuelto ${cantidad(i.devuelto)}`}
+            {i.comprado > 0 && `, comprado ${cantidad(i.comprado)}`}
+            {i.ajustado !== 0 && `, ajustes ${cantidad(i.ajustado)}`}
+            {", "}
+            <span className={i.stockActual < 0 ? "font-semibold text-brasa" : i.bajoMinimo ? "font-semibold text-rio" : ""}>
               quedan {cantidad(i.stockActual)} {i.unidad}
             </span>
           </p>

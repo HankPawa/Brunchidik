@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Minus, Plus, Send, Trash2, X } from "lucide-react";
+import { Check, Minus, Plus, Send, Trash2, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/sesion";
 import { useWebSocket } from "../hooks/useWebSocket";
 import { Cabecera, Pantalla } from "../components/Layout";
 import { Aviso, Boton, Cargando, Estado } from "../components/ui";
-import { pesos } from "../lib/formato";
+import { sonarMesaLista } from "../lib/aviso";
+import { pesos, resumenDeMesa } from "../lib/formato";
 
 const METODOS = [
   ["EFECTIVO", "Efectivo"],
@@ -13,6 +14,9 @@ const METODOS = [
   ["TRANSFERENCIA", "Transferencia"],
 ];
 
+// La cuenta de una mesa. No son tarjetas sueltas: es un documento con
+// renglones, como la cuenta de papel que el cliente acaba viendo. Por eso van
+// separados por filetes sobre una sola hoja, y el total manda al pie.
 export default function Comanda() {
   const { id } = useParams();
   const { pedir, user } = useAuth();
@@ -41,7 +45,11 @@ export default function Comanda() {
 
   // Cuando cocina marca un plato listo, la cuenta se actualiza sola.
   const topics = useMemo(() => (user ? [`/topic/mesero/${user.id}/comandas`, "/topic/salon"] : []), [user]);
-  useWebSocket("/ws", topics, cargar);
+  useWebSocket("/ws", topics, (mensaje) => {
+    // Puede estar mirando esta misma cuenta cuando sale el último plato.
+    if (mensaje?.tipo === "mesaCompleta" && String(mensaje.comandaId) === String(id)) sonarMesaLista();
+    cargar();
+  });
 
   const accion = async (ejecutar) => {
     setOcupado(true);
@@ -78,9 +86,7 @@ export default function Comanda() {
       if (r.faltantes.length > 0) {
         setAviso({
           tipo: "faltante",
-          texto: `Se envió, pero falta inventario: ${r.faltantes
-            .map((f) => `${f.insumo} (${f.stock} ${f.unidad})`)
-            .join(", ")}`,
+          texto: `Enviado. Falta inventario de ${r.faltantes.map((f) => `${f.insumo} (${f.stock} ${f.unidad})`).join(", ")}`,
         });
       } else {
         setAviso({ tipo: "ok", texto: "Enviado a cocina" });
@@ -106,15 +112,22 @@ export default function Comanda() {
 
       {aviso && (
         <div
-          className={`m-4 flex items-start gap-3 rounded-xl p-4 ${
-            aviso.tipo === "ok" ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"
+          className={`flex items-start gap-3 px-4 py-3 font-bold ${
+            aviso.tipo === "ok" ? "bg-listo text-white" : "bg-tibio text-tinta"
           }`}
         >
-          <p className="flex-1 font-medium">{aviso.texto}</p>
-          <button onClick={() => setAviso(null)}>
+          <p className="flex-1">{aviso.texto}</p>
+          <button onClick={() => setAviso(null)} aria-label="Cerrar aviso" className="shrink-0">
             <X size={18} />
           </button>
         </div>
+      )}
+
+      {resumenDeMesa(comanda).estado === "completa" && vista !== "carta" && (
+        <p className="flex items-center gap-2 bg-listo px-4 py-3 text-lg font-extrabold text-white">
+          <Check size={22} strokeWidth={3} />
+          Todo listo para llevar
+        </p>
       )}
 
       {vista === "carta" ? (
@@ -122,83 +135,94 @@ export default function Comanda() {
       ) : (
         <div className="p-4">
           {activos.length === 0 ? (
-            <p className="py-10 text-center text-neutral-500">Aún no has agregado platos.</p>
+            <p className="px-6 py-14 text-center text-lg text-tinta-2">
+              La mesa está abierta. Agrega el primer plato.
+            </p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="overflow-hidden rounded-xl bg-mantel">
               {activos.map((item) => (
-                <li key={item.id} className="rounded-xl border border-crema-borde bg-white p-3">
+                <li key={item.id} className="border-b border-filete p-4 last:border-0">
                   <div className="flex items-start gap-3">
+                    <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded bg-sala text-base font-extrabold text-tinta">
+                      {item.cantidad}
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-tinta">{item.nombre}</p>
-                      {item.notas && <p className="text-sm text-neutral-500">{item.notas}</p>}
-                      <div className="mt-1 flex items-center gap-2">
+                      <p className="text-[17px] leading-snug font-bold text-tinta">{item.nombre}</p>
+                      {item.notas && <p className="text-[15px] text-tinta-2">{item.notas}</p>}
+                      <div className="mt-1.5 flex flex-wrap items-center gap-2">
                         <Estado valor={item.estado} />
-                        {item.faltoStock && <span className="text-xs text-alerta">sin inventario</span>}
+                        {item.faltoStock && <span className="text-[13px] font-bold text-brasa">sin inventario</span>}
                       </div>
                     </div>
-                    <p className="font-semibold text-tinta">{pesos(item.subtotal)}</p>
+                    <p className="text-[17px] font-extrabold text-tinta">{pesos(item.subtotal)}</p>
                   </div>
 
-                  <div className="mt-3 flex items-center gap-2">
-                    {item.estado === "BORRADOR" ? (
-                      <>
-                        <button
-                          onClick={() => cambiarCantidad(item, -1)}
-                          disabled={ocupado}
-                          className="flex size-11 items-center justify-center rounded-lg border border-crema-borde active:bg-crema"
-                        >
-                          {item.cantidad === 1 ? <Trash2 size={18} /> : <Minus size={18} />}
-                        </button>
-                        <span className="w-8 text-center text-lg font-bold">{item.cantidad}</span>
-                        <button
-                          onClick={() => cambiarCantidad(item, 1)}
-                          disabled={ocupado}
-                          className="flex size-11 items-center justify-center rounded-lg border border-crema-borde active:bg-crema"
-                        >
-                          <Plus size={18} />
-                        </button>
-                      </>
-                    ) : (
-                      <span className="text-sm text-neutral-500">{item.cantidad} unidad(es)</span>
-                    )}
+                  {(item.estado === "BORRADOR" || item.estado === "LISTO" ||
+                    ["PENDIENTE", "PREPARANDO"].includes(item.estado)) && (
+                    <div className="mt-3 flex items-center gap-2">
+                      {item.estado === "BORRADOR" && (
+                        <>
+                          <button
+                            onClick={() => cambiarCantidad(item, -1)}
+                            disabled={ocupado}
+                            aria-label={item.cantidad === 1 ? "Quitar plato" : "Restar uno"}
+                            className="flex size-11 items-center justify-center rounded-lg border border-filete text-tinta active:bg-sala"
+                          >
+                            {item.cantidad === 1 ? <Trash2 size={18} /> : <Minus size={18} />}
+                          </button>
+                          <button
+                            onClick={() => cambiarCantidad(item, 1)}
+                            disabled={ocupado}
+                            aria-label="Sumar uno"
+                            className="flex size-11 items-center justify-center rounded-lg border border-filete text-tinta active:bg-sala"
+                          >
+                            <Plus size={18} />
+                          </button>
+                        </>
+                      )}
 
-                    <div className="flex-1" />
+                      <div className="flex-1" />
 
-                    {item.estado === "LISTO" && (
-                      <Boton
-                        variante="dorado"
-                        disabled={ocupado}
-                        onClick={() => accion(() => pedir(`/api/comandas/${id}/items/${item.id}/entregar`, { method: "POST" }))}
-                      >
-                        Entregar
-                      </Boton>
-                    )}
-                    {["PENDIENTE", "PREPARANDO"].includes(item.estado) && (
-                      <Boton
-                        variante="secundario"
-                        disabled={ocupado}
-                        onClick={() => accion(() => pedir(`/api/comandas/${id}/items/${item.id}/cancelar`, { method: "POST" }))}
-                      >
-                        Cancelar
-                      </Boton>
-                    )}
-                  </div>
+                      {item.estado === "LISTO" && (
+                        <Boton
+                          variante="marca"
+                          disabled={ocupado}
+                          onClick={() =>
+                            accion(() => pedir(`/api/comandas/${id}/items/${item.id}/entregar`, { method: "POST" }))
+                          }
+                        >
+                          Entregar
+                        </Boton>
+                      )}
+                      {["PENDIENTE", "PREPARANDO"].includes(item.estado) && (
+                        <Boton
+                          variante="secundario"
+                          disabled={ocupado}
+                          onClick={() =>
+                            accion(() => pedir(`/api/comandas/${id}/items/${item.id}/cancelar`, { method: "POST" }))
+                          }
+                        >
+                          Cancelar
+                        </Boton>
+                      )}
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
           )}
 
           {vista === "cobro" && (
-            <div className="mt-6 rounded-xl border border-crema-borde bg-white p-4">
-              <p className="mb-3 font-semibold text-tinta">¿Cómo pagan?</p>
-              <div className="grid gap-2">
+            <div className="mt-5 overflow-hidden rounded-xl bg-mantel">
+              <p className="border-b border-filete px-4 py-3 text-lg font-extrabold text-tinta">¿Cómo pagan?</p>
+              <div className="grid gap-2 p-4">
                 {METODOS.map(([valor, etiqueta]) => (
                   <Boton key={valor} disabled={ocupado} onClick={() => cobrar(valor)}>
                     {etiqueta}
                   </Boton>
                 ))}
                 <Boton variante="secundario" onClick={() => setVista("cuenta")}>
-                  Volver
+                  Volver a la cuenta
                 </Boton>
               </div>
             </div>
@@ -207,23 +231,28 @@ export default function Comanda() {
       )}
 
       {vista !== "carta" && vista !== "cobro" && (
-        <div className="fixed inset-x-0 bottom-0 border-t border-crema-borde bg-white p-4">
+        <div className="fixed inset-x-0 bottom-0 border-t border-filete bg-mantel px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="mb-3 flex items-baseline justify-between">
-            <span className="text-neutral-500">Total</span>
-            <span className="text-2xl font-bold text-tinta">{pesos(comanda.total)}</span>
+            <span className="text-base font-semibold text-tinta-2">Total</span>
+            <span className="text-3xl font-extrabold tracking-[-0.03em] text-tinta">{pesos(comanda.total)}</span>
           </div>
           <div className="flex gap-2">
             <Boton variante="secundario" className="flex-1" onClick={() => setVista("carta")}>
-              + Agregar
+              Agregar platos
             </Boton>
             {borradores.length > 0 ? (
               <Boton className="flex-1" cargando={ocupado} onClick={enviar}>
                 <span className="flex items-center justify-center gap-2">
-                  <Send size={18} /> Enviar ({borradores.length})
+                  <Send size={18} /> Enviar {borradores.length}
                 </span>
               </Boton>
             ) : (
-              <Boton variante="dorado" className="flex-1" disabled={activos.length === 0} onClick={() => setVista("cobro")}>
+              <Boton
+                variante="marca"
+                className="flex-1"
+                disabled={activos.length === 0}
+                onClick={() => setVista("cobro")}
+              >
                 Cobrar
               </Boton>
             )}
@@ -245,8 +274,8 @@ function Carta({ carta, onAgregar, onCerrar, ocupado }) {
           <button
             key={c.id}
             onClick={() => setCategoria(c.id)}
-            className={`min-h-11 shrink-0 rounded-full px-4 font-medium ${
-              activa?.id === c.id ? "bg-tinta text-white" : "border border-crema-borde bg-white text-tinta"
+            className={`min-h-11 shrink-0 rounded-lg px-4 font-bold transition ${
+              activa?.id === c.id ? "bg-tinta text-white" : "border border-filete bg-mantel text-tinta"
             }`}
           >
             {c.nombre}
@@ -254,27 +283,29 @@ function Carta({ carta, onAgregar, onCerrar, ocupado }) {
         ))}
       </div>
 
-      <ul className="space-y-2">
+      <ul className="overflow-hidden rounded-xl bg-mantel">
         {(activa?.items ?? []).map((plato) => (
-          <li key={plato.id}>
+          <li key={plato.id} className="border-b border-filete last:border-0">
             <button
               disabled={ocupado}
               onClick={() => onAgregar(plato)}
-              className="flex w-full items-center gap-3 rounded-xl border border-crema-borde bg-white p-4 text-left active:bg-crema"
+              className="flex w-full items-center gap-3 p-4 text-left active:bg-sala disabled:opacity-60"
             >
               <div className="min-w-0 flex-1">
-                <p className="font-semibold text-tinta">{plato.nombre}</p>
-                <p className="text-sm text-neutral-500">{pesos(plato.precio)}</p>
+                <p className="text-[17px] font-bold text-tinta">{plato.nombre}</p>
+                <p className="text-[15px] font-semibold text-tinta-2">{pesos(plato.precio)}</p>
               </div>
-              <Plus size={22} className="text-dorado" />
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-tinta text-white">
+                <Plus size={20} />
+              </span>
             </button>
           </li>
         ))}
       </ul>
 
-      <div className="fixed inset-x-0 bottom-0 border-t border-crema-borde bg-white p-4">
+      <div className="fixed inset-x-0 bottom-0 border-t border-filete bg-mantel px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <Boton className="w-full" onClick={onCerrar}>
-          Listo
+          Volver a la cuenta
         </Boton>
       </div>
     </div>

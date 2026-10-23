@@ -2,53 +2,129 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Montis Plaza · Comandas</title>
+    <title>Montis Plaza Comandas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
+      /* Misma identidad que la aplicación: el color significa estado, y aquí
+         el estado es "esto no arrancó". */
       :root {
-        --tinta: #1a1a1a;
-        --crema: #faf8f5;
-        --borde: #f0ede8;
-        --alerta: #c0392b;
+        --sala: #eef2f1;
+        --mantel: #ffffff;
+        --filete: #d7e0dd;
+        --tinta: #06211f;
+        --tinta-2: #5a6e6b;
+        --rio: #0c6b62;
+        --brasa: #c62f1a;
       }
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
       body {
         margin: 0;
-        padding: 32px;
-        background: var(--crema);
+        background: var(--sala);
         color: var(--tinta);
-        font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+        font: 16px/1.5 "Archivo", "Segoe UI", system-ui, sans-serif;
+        font-variant-numeric: tabular-nums;
         user-select: none;
       }
-      h1 { margin: 0 0 4px; font-size: 20px; }
-      .marca { margin: 0 0 24px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #a0a0a0; }
+      header {
+        background: var(--rio);
+        color: #fff;
+        padding: 14px 28px;
+        font-size: 15px;
+        font-weight: 700;
+      }
+      main {
+        padding: 28px;
+      }
+      h1 {
+        margin: 0 0 16px;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+      }
       .detalle {
-        margin: 0 0 20px;
+        margin: 0 0 24px;
+        border-left: 4px solid var(--brasa);
+        background: rgba(198, 47, 26, 0.08);
         padding: 12px 14px;
-        border: 1px solid rgba(192, 57, 43, .3);
-        border-radius: 12px;
-        background: rgba(192, 57, 43, .08);
-        color: var(--alerta);
-        font-family: ui-monospace, Consolas, monospace;
-        font-size: 13px;
+        color: var(--brasa);
+        font-size: 15px;
+        font-weight: 600;
         white-space: pre-wrap;
         word-break: break-word;
         user-select: text;
       }
-      h2 { margin: 0 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #707070; }
-      ol { margin: 0; padding-left: 20px; }
-      li { margin-bottom: 8px; user-select: text; }
-      footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--borde); font-size: 13px; color: #808080; }
+      h2 {
+        margin: 0 0 10px;
+        font-size: 19px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: paso;
+      }
+      /* La numeración se queda porque esto sí es una secuencia: pasos a seguir
+         en orden hasta que el programa arranque. */
+      li {
+        counter-increment: paso;
+        position: relative;
+        margin-bottom: 10px;
+        padding-left: 36px;
+        user-select: text;
+      }
+      li::before {
+        content: counter(paso);
+        position: absolute;
+        left: 0;
+        top: 1px;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: var(--tinta);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 800;
+      }
+      code {
+        background: var(--mantel);
+        border: 1px solid var(--filete);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 14px;
+        word-break: break-all;
+      }
+      footer {
+        margin-top: 28px;
+        padding-top: 16px;
+        border-top: 1px solid var(--filete);
+        font-size: 15px;
+        color: var(--tinta-2);
+      }
     </style>
   </head>
   <body>
-    <p class="marca">Montis Plaza · Comandas</p>
-    <h1 id="titulo">No se pudo iniciar</h1>
-    <p class="detalle" id="detalle"></p>
-    <div id="ayuda" hidden>
-      <h2>Qué puedes hacer</h2>
-      <ol id="consejos"></ol>
-    </div>
-    <footer>Corrige el problema y vuelve a abrir el programa.</footer>
+    <header>Montis Plaza Comandas</header>
+    <main>
+      <h1 id="titulo">No se pudo iniciar</h1>
+      <p class="detalle" id="detalle"></p>
+      <div id="ayuda" hidden>
+        <h2>Qué puedes hacer</h2>
+        <ol id="consejos"></ol>
+      </div>
+      <footer>Corrige el problema y vuelve a abrir el programa.</footer>
+    </main>
 
     <script>
       const datos = new URLSearchParams(location.search);
@@ -70,7 +146,21 @@
         const lista = document.getElementById("consejos");
         for (const consejo of consejos) {
           const item = document.createElement("li");
-          item.textContent = consejo;
+          // El resaltado lo marca quien escribe el mensaje, con acentos graves.
+          // Adivinar rutas y comandos por su forma cortaba las rutas con
+          // espacios por la mitad, y eso se ve peor que no resaltar nada.
+          const partes = consejo.split(/(`[^`]+`)/g);
+          for (const parte of partes) {
+            if (!parte) continue;
+            const esCodigo = /^`.*`$/.test(parte);
+            if (esCodigo) {
+              const code = document.createElement("code");
+              code.textContent = parte.replace(/^`|`$/g, "");
+              item.appendChild(code);
+            } else {
+              item.appendChild(document.createTextNode(parte));
+            }
+          }
           lista.appendChild(item);
         }
       }
