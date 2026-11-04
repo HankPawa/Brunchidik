@@ -43,7 +43,9 @@ for (const [nombre, carpeta] of [
   ["comandas", "comandas"],
   ["escritorio", "escritorio"],
 ]) {
-  if (existsSync(path.join(raiz, carpeta, "node_modules"))) ok(`Dependencias de ${nombre} instaladas`);
+  // npm escribe .package-lock.json solo al terminar una instalación: una
+  // carpeta node_modules vacía o a medias no cuenta como instalada.
+  if (existsSync(path.join(raiz, carpeta, "node_modules", ".package-lock.json"))) ok(`Dependencias de ${nombre} instaladas`);
   else fallo(`Faltan las dependencias de ${nombre}`, `npm --prefix ${carpeta} install`);
 }
 
