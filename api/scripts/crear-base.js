@@ -33,7 +33,9 @@ if (!nombre) {
 // Para crear una base hay que estar conectado a otra. `postgres` existe siempre.
 const urlMantenimiento = new URL(url);
 urlMantenimiento.pathname = "/postgres";
-urlMantenimiento.search = "";
+// sslmode se conserva: los Postgres en la nube (Neon) rechazan conexiones sin TLS.
+const sslmode = url.searchParams.get("sslmode");
+urlMantenimiento.search = sslmode ? `?sslmode=${sslmode}` : "";
 
 const prisma = new PrismaClient({ datasources: { db: { url: urlMantenimiento.toString() } } });
 
