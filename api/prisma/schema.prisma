@@ -21,6 +21,13 @@ model Usuario {
   cuentaGoogle Boolean @map("cuenta_google")
   rol          String? @db.VarChar(255)
 
+  // Relaciones inversas de las claves foráneas que ya existen en la base: el
+  // arqueo y los movimientos de caja tienen que poder responder por su autor.
+  // No crean columnas.
+  arqueosAbiertos Arqueo[]         @relation("ArqueoAbiertoPor")
+  arqueosCerrados Arqueo[]         @relation("ArqueoCerradoPor")
+  movimientosCaja MovimientoCaja[]
+
   @@map("usuarios")
 }
 
@@ -147,16 +154,17 @@ model RecetaItem {
 // realmente se descontó, aunque la receta haya cambiado después.
 // `cantidad` lleva signo (negativa al consumir).
 model MovimientoInventario {
-  id              BigInt   @id @default(autoincrement())
-  insumoId        BigInt   @map("insumo_id")
-  tipo            String   @db.VarChar(12) // CONSUMO | DEVOLUCION | AJUSTE | COMPRA
-  cantidad        Decimal  @db.Decimal(14, 3)
-  stockResultante Decimal  @map("stock_resultante") @db.Decimal(14, 3)
-  motivo          String?  @db.VarChar(255)
-  comandaItemId   BigInt?  @map("comanda_item_id")
-  usuarioId       BigInt?  @map("usuario_id")
-  fecha           DateTime @db.Timestamp(6)
-  insumo          Insumo   @relation(fields: [insumoId], references: [id], onDelete: Restrict)
+  id              BigInt       @id @default(autoincrement())
+  insumoId        BigInt       @map("insumo_id")
+  tipo            String       @db.VarChar(12) // CONSUMO | DEVOLUCION | AJUSTE | COMPRA
+  cantidad        Decimal      @db.Decimal(14, 3)
+  stockResultante Decimal      @map("stock_resultante") @db.Decimal(14, 3)
+  motivo          String?      @db.VarChar(255)
+  comandaItemId   BigInt?      @map("comanda_item_id")
+  usuarioId       BigInt?      @map("usuario_id")
+  fecha           DateTime     @db.Timestamp(6)
+  insumo          Insumo       @relation(fields: [insumoId], references: [id], onDelete: Restrict)
+  comandaItem     ComandaItem? @relation(fields: [comandaItemId], references: [id], onDelete: SetNull)
 
   @@index([insumoId, fecha])
   @@index([comandaItemId])
@@ -201,21 +209,22 @@ model Comanda {
 // El nombre y el precio se copian del plato al añadirlo: editar la carta no
 // puede reescribir lo que ya se vendió. Por eso menuItemId puede quedar en nulo.
 model ComandaItem {
-  id                 BigInt    @id @default(autoincrement())
-  comandaId          BigInt    @map("comanda_id")
-  menuItemId         BigInt?   @map("menu_item_id")
-  nombreItem         String    @map("nombre_item") @db.VarChar(255)
-  precioUnitario     Decimal   @map("precio_unitario") @db.Decimal(38, 2)
+  id                 BigInt                 @id @default(autoincrement())
+  comandaId          BigInt                 @map("comanda_id")
+  menuItemId         BigInt?                @map("menu_item_id")
+  nombreItem         String                 @map("nombre_item") @db.VarChar(255)
+  precioUnitario     Decimal                @map("precio_unitario") @db.Decimal(38, 2)
   cantidad           Int
-  notas              String?   @db.VarChar(255)
-  estado             String    @default("BORRADOR") @db.VarChar(12) // BORRADOR | PENDIENTE | PREPARANDO | LISTO | ENTREGADO | CANCELADO
-  faltoStock         Boolean   @default(false) @map("falto_stock")
-  inventarioAplicado Boolean   @default(false) @map("inventario_aplicado")
-  fechaCreacion      DateTime  @map("fecha_creacion") @db.Timestamp(6)
-  fechaEnvio         DateTime? @map("fecha_envio") @db.Timestamp(6)
-  fechaListo         DateTime? @map("fecha_listo") @db.Timestamp(6)
-  comanda            Comanda   @relation(fields: [comandaId], references: [id], onDelete: Cascade)
-  menuItem           MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  notas              String?                @db.VarChar(255)
+  estado             String                 @default("BORRADOR") @db.VarChar(12) // BORRADOR | PENDIENTE | PREPARANDO | LISTO | ENTREGADO | CANCELADO
+  faltoStock         Boolean                @default(false) @map("falto_stock")
+  inventarioAplicado Boolean                @default(false) @map("inventario_aplicado")
+  fechaCreacion      DateTime               @map("fecha_creacion") @db.Timestamp(6)
+  fechaEnvio         DateTime?              @map("fecha_envio") @db.Timestamp(6)
+  fechaListo         DateTime?              @map("fecha_listo") @db.Timestamp(6)
+  comanda            Comanda                @relation(fields: [comandaId], references: [id], onDelete: Cascade)
+  menuItem           MenuItem?              @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  movimientos        MovimientoInventario[]
 
   @@index([comandaId])
   @@index([estado, fechaEnvio])
@@ -237,6 +246,11 @@ model Arqueo {
   baseInicial Decimal @map("base_inicial") @db.Decimal(38, 2)
   abiertoPor  BigInt  @map("abierto_por")
   cerradoPor  BigInt? @map("cerrado_por")
+
+  // RESTRICT a propósito: un arqueo es un documento contable y no puede
+  // quedarse sin autor porque se borre un usuario.
+  abiertoPorUsuario Usuario  @relation("ArqueoAbiertoPor", fields: [abiertoPor], references: [id], onDelete: Restrict)
+  cerradoPorUsuario Usuario? @relation("ArqueoCerradoPor", fields: [cerradoPor], references: [id], onDelete: Restrict)
 
   // Lo que la caja dice que debería haber. Se congela al cerrar.
   esperadoEfectivo      Decimal? @map("esperado_efectivo") @db.Decimal(38, 2)
@@ -269,6 +283,7 @@ model MovimientoCaja {
   concepto  String   @db.VarChar(255)
   monto     Decimal  @db.Decimal(38, 2)
   usuarioId BigInt   @map("usuario_id")
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
   anulado   Boolean  @default(false)
   fecha     DateTime @db.Timestamp(6)
   arqueo    Arqueo   @relation(fields: [arqueoId], references: [id], onDelete: Cascade)
