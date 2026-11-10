@@ -11,11 +11,18 @@ import { COLOR_ESTADO, ETIQUETA_ESTADO } from "../lib/formato";
 //    son generosas, los controles son firmes y las filas de una cuenta no
 //    llevan radio porque no son tarjetas, son renglones.
 
+// "marca" es la yema: solo para la acción que cierra algo (entregar, cobrar,
+// cerrar caja). Si se usara para cualquier botón dejaría de señalar el final.
+//
+// El hover solo existe con ratón (Tailwind no lo aplica en pantallas táctiles)
+// y nunca en un botón deshabilitado: un botón que no hace nada no debe
+// reaccionar como si fuera a hacerlo.
 const VARIANTES = {
-  primario: "bg-tinta text-white active:bg-rio-hondo disabled:bg-filete disabled:text-tinta-2",
-  secundario: "bg-mantel text-tinta border border-filete active:bg-sala disabled:text-tinta-2",
-  peligro: "bg-brasa text-white active:brightness-90 disabled:bg-filete disabled:text-tinta-2",
-  dorado: "bg-rio text-white active:bg-rio-hondo disabled:bg-filete disabled:text-tinta-2",
+  primario: "bg-tinta text-white enabled:hover:bg-hoja active:bg-hoja-honda disabled:bg-filete disabled:text-tinta-2",
+  secundario:
+    "bg-mantel text-tinta border border-filete enabled:hover:border-tinta-2/50 enabled:hover:bg-sala active:bg-sala disabled:text-tinta-2",
+  peligro: "bg-brasa text-white enabled:hover:brightness-110 active:brightness-90 disabled:bg-filete disabled:text-tinta-2",
+  marca: "bg-yema text-tinta enabled:hover:bg-yema-honda active:brightness-95 disabled:bg-filete disabled:text-tinta-2",
 };
 
 export function Boton({ variante = "primario", cargando = false, className = "", children, ...props }) {
@@ -23,7 +30,7 @@ export function Boton({ variante = "primario", cargando = false, className = "",
     <button
       {...props}
       disabled={props.disabled || cargando}
-      className={`min-h-12 rounded-lg px-5 text-[15px] font-bold tracking-[-0.01em] transition disabled:cursor-not-allowed ${VARIANTES[variante]} ${className}`}
+      className={`min-h-12 rounded-lg px-5 text-[15px] font-bold tracking-[-0.01em] transition disabled:cursor-not-allowed ${VARIANTES[variante] ?? VARIANTES.primario} ${className}`}
     >
       {cargando ? <Loader2 className="mx-auto animate-spin" size={20} /> : children}
     </button>
@@ -46,7 +53,7 @@ export function Aviso({ children, onReintentar, className = "m-4" }) {
     <div className={`border-l-4 border-brasa bg-brasa/8 px-4 py-3 text-brasa ${className}`}>
       <p className="font-semibold">{children}</p>
       {onReintentar && (
-        <button onClick={onReintentar} className="mt-1 font-bold underline underline-offset-2">
+        <button onClick={onReintentar} className="mt-1 font-bold underline underline-offset-2 hover:decoration-2">
           Reintentar
         </button>
       )}
@@ -70,7 +77,7 @@ export function Estado({ valor }) {
 // --- Formularios ---
 
 const CONTROL =
-  "min-h-12 w-full rounded-lg border border-filete bg-mantel px-3 text-[17px] text-tinta outline-none focus:border-rio";
+  "min-h-12 w-full rounded-lg border border-filete bg-mantel px-3 text-[17px] text-tinta outline-none focus:border-hoja";
 
 export function Campo({ etiqueta, ayuda, className = "", ...props }) {
   return (
@@ -110,7 +117,7 @@ export function Selector({ etiqueta, opciones, ayuda, className = "", ...props }
 export function Casilla({ etiqueta, ayuda, ...props }) {
   return (
     <label className="flex min-h-12 items-center gap-3">
-      <input type="checkbox" {...props} className="size-5 accent-rio" />
+      <input type="checkbox" {...props} className="size-5 accent-hoja" />
       <span>
         <span className="font-semibold text-tinta">{etiqueta}</span>
         {ayuda && <span className="block text-[13px] text-tinta-2">{ayuda}</span>}
@@ -134,8 +141,8 @@ export function Hoja({ titulo, error, onCerrar, children }) {
       <button aria-label="Cerrar" onClick={onCerrar} className="absolute inset-0 bg-tinta/50" />
       <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-mantel sm:max-w-lg sm:rounded-2xl">
         <div className="sticky top-0 flex items-center justify-between border-b border-filete bg-mantel px-5 py-4">
-          <h2 className="text-xl font-extrabold tracking-[-0.02em] text-tinta">{titulo}</h2>
-          <button onClick={onCerrar} className="-mr-2 flex size-10 items-center justify-center rounded-lg text-tinta-2">
+          <h2 className="font-serif text-2xl leading-tight text-tinta">{titulo}</h2>
+          <button onClick={onCerrar} className="-mr-2 flex size-10 items-center justify-center rounded-lg text-tinta-2 hover:bg-sala hover:text-tinta">
             <X size={20} />
           </button>
         </div>

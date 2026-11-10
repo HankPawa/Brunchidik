@@ -1,33 +1,45 @@
 @import "tailwindcss";
 
-/* Identidad propia del salón, distinta de la web pública: esto es una
-   herramienta de trabajo, no un escaparate. El cliente nunca la ve.
+/* Identidad del salón: yema y hoja. Es una herramienta de trabajo, no un
+   escaparate, así que la marca se queda en la entrada y en el encabezado.
 
    Principio que ordena toda la paleta: el color codifica TIEMPO Y ESTADO,
-   nunca decora. Si algo está coloreado es porque significa algo. El color de
-   marca aparece solo en el encabezado y en la entrada. */
+   nunca decora. Si algo está coloreado es porque significa algo. La yema es
+   la única excepción y tiene un papel fijo: la marca y la acción que cierra
+   algo (entregar, cobrar, cerrar caja). */
 @theme {
-  /* Superficie de trabajo: un verde-gris frío, como una mesa de preparación.
-     Deliberadamente no es la crema cálida de cafetería. */
-  --color-sala: #eef2f1;
+  /* Superficie de trabajo: un gris con un punto de hoja. Deliberadamente no
+     es la crema cálida de cafetería. */
+  --color-sala: #f2f4ee;
   --color-mantel: #ffffff;
-  --color-filete: #d7e0dd;
+  --color-filete: #dde3d6;
 
-  /* La tinta es petróleo oscuro, un color elegido, no un negro aguado. */
-  --color-tinta: #06211f;
-  --color-tinta-2: #5a6e6b;
+  /* La tinta es hoja de plátano muy oscura, un color elegido y no un negro
+     aguado. Es también el relleno de una mesa ocupada. */
+  --color-tinta: #17362a;
+  --color-tinta-2: #5b6b60;
 
-  /* El mar, que es la categoría más grande de la carta. Solo para la marca. */
-  --color-rio: #0c6b62;
-  --color-rio-hondo: #084b45;
+  /* Marca. La hoja viste el encabezado; la yema es el sol de la mañana y el
+     centro de casi todo plato de brunch. */
+  --color-hoja: #1f4a36;
+  --color-hoja-honda: #133024;
+  --color-yema: #f4b627;
+  --color-yema-honda: #dda013;
 
-  /* Escala de calor. Mide cuánto lleva esperando algo. */
-  --color-espera: #e4eae8;
-  --color-tibio: #e9a209;
+  /* Escala de calor. Mide cuánto lleva esperando algo. El aviso intermedio es
+     naranja de fogón, no amarillo, para que nunca se confunda con la yema. */
+  --color-espera: #e6eae1;
+  --color-tibio: #d9690a;
+  /* El mismo aviso sobre una mesa ocupada (fondo tinta), donde el fogón
+     normal no llega al contraste mínimo. */
+  --color-tibio-claro: #f5a04f;
   --color-brasa: #c62f1a;
-  --color-listo: #16794a;
+  --color-listo: #1e8a4a;
 
-  --font-sans: "Archivo", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-sans: "Archivo Variable", "Archivo", "Segoe UI", system-ui, -apple-system, sans-serif;
+  /* Solo para la marca, los títulos y los números de mesa: nombra lugares, no
+     datos. Las cifras que se vigilan siguen en la sans de ancho fijo. */
+  --font-serif: "Young Serif", Georgia, serif;
 }
 
 html,
@@ -52,9 +64,24 @@ body {
   font-feature-settings: "tnum" 1;
 }
 
-/* Foco visible y del color de la marca: se opera con teclado en la caja. */
+/* Young Serif trae por defecto cifras de estilo antiguo: el 1 se confunde con
+   una I y el 10 se lee "IO". En un número de mesa eso no se puede permitir. */
+.font-serif {
+  font-variant-numeric: lining-nums;
+  font-feature-settings: "lnum" 1;
+}
+
+/* Tailwind 4 deja los botones con el cursor de flecha. Con ratón (la caja, la
+   app de escritorio) eso hace que nada parezca pulsable. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+/* Foco visible en hoja: se opera con teclado en la caja. La yema no sirve
+   aquí porque sobre blanco apenas contrasta. */
 :where(button, a, input, select, textarea):focus-visible {
-  outline: 3px solid var(--color-rio);
+  outline: 3px solid var(--color-hoja);
   outline-offset: 2px;
 }
 

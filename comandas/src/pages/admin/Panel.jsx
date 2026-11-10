@@ -30,7 +30,7 @@ export default function Panel() {
                 key={atajo.a}
                 to={atajo.a}
                 title={atajo.texto}
-                className="flex size-10 items-center justify-center rounded-lg text-white/80 active:bg-white/15"
+                className="flex size-10 items-center justify-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white active:bg-white/15"
               >
                 <atajo.Icono size={20} />
               </Link>
@@ -46,7 +46,7 @@ export default function Panel() {
             to={a}
             className={({ isActive }) =>
               `min-h-10 shrink-0 rounded-lg px-4 py-2 text-[15px] font-bold transition ${
-                isActive ? "bg-rio text-white" : "text-tinta-2 active:bg-sala"
+                isActive ? "bg-hoja text-white" : "text-tinta-2 hover:bg-sala hover:text-tinta active:bg-sala"
               }`
             }
           >

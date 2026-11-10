@@ -93,21 +93,21 @@ export default function Platos() {
                   {!plato.disponible && (
                     <span className="rounded bg-filete px-1.5 py-0.5 text-tinta-2">Agotado</span>
                   )}
-                  {plato.visibleWeb && <span className="rounded bg-rio/12 px-1.5 py-0.5 text-rio">Web</span>}
+                  {plato.visibleWeb && <span className="rounded bg-hoja/12 px-1.5 py-0.5 text-hoja">Web</span>}
                   {plato.visibleSalon && (
-                    <span className="rounded bg-tibio/20 px-1.5 py-0.5 text-tinta">Salón</span>
+                    <span className="rounded bg-hoja/12 px-1.5 py-0.5 text-hoja">Salón</span>
                   )}
                 </div>
               </div>
               <button
                 onClick={() => setEditando({ ...VACIO, ...plato, descripcion: plato.descripcion ?? "", imagenUrl: plato.imagenUrl ?? "" })}
-                className="flex size-11 items-center justify-center rounded-lg text-tinta-2 active:bg-sala"
+                className="flex size-11 items-center justify-center rounded-lg text-tinta-2 hover:bg-sala active:bg-sala"
               >
                 <Pencil size={18} />
               </button>
               <button
                 onClick={() => eliminar(plato)}
-                className="flex size-11 items-center justify-center rounded-lg text-brasa active:bg-brasa/8"
+                className="flex size-11 items-center justify-center rounded-lg text-brasa hover:bg-brasa/8 active:bg-brasa/8"
               >
                 <Trash2 size={18} />
               </button>

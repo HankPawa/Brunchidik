@@ -229,15 +229,16 @@ html.dark .feature-card-desc { color: #999; }
 }
 
 /* ── Favoritos (sección Home) ── */
-html.dark .fav-section { background-color: #161616 !important; }
-html.dark .fav-card.card { background: #1e1e1e !important; }
-html.dark .fav-card-name { color: #e8e2da; }
-html.dark .fav-card--active { box-shadow: 0 0 0 3px #c9a84c, 0 10px 30px rgba(0,0,0,.4) !important; }
-html.dark .fav-desc-panel { background: #1e1e1e; border-color: #2a2a2a; }
-html.dark .fav-desc-name { color: #e8e2da; }
-html.dark .fav-desc-text { color: #888; }
-html.dark .fav-desc-close { color: #555; }
-html.dark .fav-desc-close:hover { color: #e8e2da; }
+html.dark .fav-section { background-color: #161616; }
+html.dark .fav-title,
+html.dark .fav-link,
+html.dark .fav-nombre,
+html.dark .fav-precio { color: #e8e2da; }
+html.dark .fav-link:hover { color: #aaa; }
+html.dark .fav-desc { color: #999; }
+html.dark .fav-foto,
+html.dark .fav-cargando { background: #2a2a2a; }
+html.dark .fav-plato:focus-visible { outline-color: #e8e2da; }
 html.dark .fav-title { color: #e8e2da; }
 
 /* ── Favoritos en Perfil ── */

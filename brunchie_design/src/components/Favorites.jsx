@@ -1,155 +1,92 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import pancakes from "../assets/pancakes.jpg";
-import avocado from "../assets/avocado.jpg";
-import eggs from "../assets/eggs.jpg";
+import ProductModal from "./ProductModal";
+import { fotoDePlato } from "../lib/fotosPlatos";
 import "./Favorites.css";
 
-gsap.registerPlugin(ScrollTrigger);
+// Los que más se piden van primero. Si alguno se agota o sale de la carta, su
+// lugar lo ocupa otro plato disponible con foto: la portada nunca ofrece algo
+// que no se puede pedir.
+const PREFERIDOS = [
+  "Eggs Benedict",
+  "Pancakes",
+  "Avocado Toast Campestre",
+  "Torrijas de Ricotta",
+  "Mimosa",
+  "Matcha Latte",
+];
+const CUANTOS = 6;
+
+const fmtPrecio = (precio) => `$${Number(precio).toLocaleString("es-CO")}`;
+
+const prioridad = (plato) => {
+  const i = PREFERIDOS.indexOf(plato.nombre);
+  return i === -1 ? PREFERIDOS.length : i;
+};
 
 const Favorites = () => {
-  const sectionRef  = useRef(null);
-  const tweenRef    = useRef(null);
-  const [selected, setSelected] = useState(null);
-
-  const items = [
-    {
-      name: "Pancakes",
-      img: pancakes,
-      desc: "Torre de pancakes dorados con miel de abejas, azúcar glass y frutos rojos frescos.",
-    },
-    {
-      name: "Avocado Toast",
-      img: avocado,
-      desc: "Pan artesanal tostado con aguacate cremoso, semillas de sésamo y un toque de limón.",
-    },
-    {
-      name: "Eggs Benedict",
-      img: eggs,
-      desc: "Muffin inglés con jamón, huevo pochado y salsa holandesa hecha al momento.",
-    },
-    {
-      name: "Pancakes",
-      img: pancakes,
-      desc: "Torre de pancakes dorados con miel de abejas, azúcar glass y frutos rojos frescos.",
-    },
-    {
-      name: "Avocado Toast",
-      img: avocado,
-      desc: "Pan artesanal tostado con aguacate cremoso, semillas de sésamo y un toque de limón.",
-    },
-    {
-      name: "Eggs Benedict",
-      img: eggs,
-      desc: "Muffin inglés con jamón, huevo pochado y salsa holandesa hecha al momento.",
-    },
-  ];
+  const [platos, setPlatos] = useState(null); // null mientras carga
+  const [abierto, setAbierto] = useState(null);
 
   useEffect(() => {
-    if (globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const ctx = gsap.context(() => {
-
-      gsap.from(".fav-title", {
-        scrollTrigger: { trigger: ".fav-title", start: "top 85%", once: true },
-        y: 25,
-        opacity: 0,
-        duration: 0.45,
-        ease: "power2.out",
-      });
-
-      gsap.from(".fav-btn", {
-        scrollTrigger: { trigger: ".fav-btn", start: "top 95%", once: true },
-        y: 15,
-        opacity: 0,
-        duration: 0.4,
-        ease: "power2.out",
-      });
-
-      const cards = gsap.utils.toArray(".fav-card");
-      const total = cards.length;
-      const angle = 360 / total;
-      const radius = 250;
-
-      cards.forEach((card, i) => {
-        gsap.set(card, {
-          rotationY: i * angle,
-          transformOrigin: `50% 50% -${radius}px`,
-          z: radius,
-        });
-      });
-
-      const tween = gsap.to(".carousel", {
-        rotationY: "+=360",
-        duration: 20,
-        repeat: -1,
-        ease: "none",
-      });
-
-      tweenRef.current = tween;
-
-      const carousel = document.querySelector(".carousel");
-      carousel.addEventListener("mouseenter", () => tween.pause());
-      carousel.addEventListener("mouseleave", () => tween.resume());
-
-    }, sectionRef);
-
-    const onLoad = () => ScrollTrigger.refresh();
-    globalThis.addEventListener("load", onLoad);
-
+    let vigente = true;
+    fetch("/api/menu")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`Error ${r.status}`))))
+      .then((menu) => {
+        const elegidos = menu
+          .filter((p) => p.disponible && fotoDePlato(p))
+          .sort((a, b) => prioridad(a) - prioridad(b))
+          .slice(0, CUANTOS);
+        if (vigente) setPlatos(elegidos);
+      })
+      .catch(() => vigente && setPlatos([]));
     return () => {
-      ctx.revert();
-      globalThis.removeEventListener("load", onLoad);
+      vigente = false;
     };
   }, []);
 
+  // Sin carta no hay nada que destacar; el menú sigue a un clic en la barra.
+  if (platos?.length === 0) return null;
+
   return (
-    <section ref={sectionRef} className="section has-background-light fav-section">
-      <div className="container has-text-centered">
-
-        <h2 className="title is-4 fav-title">Nuestros Favoritos</h2>
-
-        <div className="carousel-container fav-carousel-wrap">
-          <div className="carousel">
-            {items.map((item, index) => (
-              <div
-                className={`fav-card card custom-card ${selected?.name === item.name ? "fav-card--active" : ""}`}
-                key={index}
-                onClick={() => {
-                  const isSame = selected?.name === item.name;
-                  setSelected(isSame ? null : item);
-                  if (isSame) tweenRef.current?.resume();
-                  else tweenRef.current?.pause();
-                }}
-              >
-                <div className="card-image">
-                  <figure className="image is-4by3">
-                    <img src={item.img} alt={item.name} loading="lazy"/>
-                  </figure>
-                </div>
-                <div className="card-content">
-                  <p className="fav-card-name">{item.name}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+    <section className="fav-section">
+      <div className="fav-inner">
+        <div className="fav-head">
+          <h2 className="fav-title">Nuestros favoritos</h2>
+          <Link to="/menu" className="fav-link">Ver el menú completo</Link>
         </div>
 
-        {selected && (
-          <div className="fav-desc-panel">
-            <button className="fav-desc-close" onClick={() => { setSelected(null); tweenRef.current?.resume(); }}>✕</button>
-            <p className="fav-desc-name">{selected.name}</p>
-            <p className="fav-desc-text">{selected.desc}</p>
-          </div>
-        )}
-
-        <Link to="/menu" className="button is-black is-small fav-btn">
-          Ver menú completo
-        </Link>
-
+        <ul className="fav-grid">
+          {platos
+            ? platos.map((plato) => (
+                <li key={plato.id}>
+                  <button type="button" className="fav-plato" onClick={() => setAbierto(plato)}>
+                    <img src={fotoDePlato(plato)} alt="" loading="lazy" className="fav-foto" />
+                    <span className="fav-linea">
+                      <span className="fav-nombre">{plato.nombre}</span>
+                      <span className="fav-precio">{fmtPrecio(plato.precio)}</span>
+                    </span>
+                    {plato.descripcion && <span className="fav-desc">{plato.descripcion}</span>}
+                  </button>
+                </li>
+              ))
+            : [0, 1, 2].map((i) => <li key={i} className="fav-cargando" aria-hidden="true" />)}
+        </ul>
       </div>
+
+      {abierto && (
+        <ProductModal
+          item={{
+            id: abierto.id,
+            name: abierto.nombre,
+            price: fmtPrecio(abierto.precio),
+            priceNum: Number(abierto.precio),
+            img: fotoDePlato(abierto),
+            desc: abierto.descripcion,
+          }}
+          onClose={() => setAbierto(null)}
+        />
+      )}
     </section>
   );
 };

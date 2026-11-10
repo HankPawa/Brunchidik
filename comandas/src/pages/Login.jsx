@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/sesion";
 import { INICIO_POR_ROL } from "../lib/formato";
-import { Boton } from "../components/ui";
+import { Boton, Campo } from "../components/ui";
 
-// La entrada es el único sitio donde la marca ocupa toda la pantalla: a partir
-// de aquí el color pasa a significar tiempo y estado, y deja de decorar.
+// La entrada es el único sitio donde la marca ocupa la pantalla: un amanecer,
+// la yema saliendo por el borde de la hoja. A partir de aquí el color pasa a
+// significar tiempo y estado, y deja de decorar.
 export default function Login() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
@@ -27,36 +28,37 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center bg-rio px-6 py-10">
-      <div className="mx-auto w-full max-w-sm">
-        <h1 className="text-4xl leading-none font-extrabold tracking-[-0.035em] text-white">Montis Plaza</h1>
-        <p className="mt-1 mb-7 text-xl font-semibold text-white/70">Comandas del salón</p>
+    <div className="flex min-h-full flex-col bg-sala lg:flex-row">
+      <section className="relative flex flex-col justify-end overflow-hidden bg-hoja px-6 pt-14 pb-32 lg:w-1/2 lg:justify-center lg:px-16 lg:pb-48">
+        <h1 className="relative font-serif text-5xl leading-none text-white lg:text-7xl">Montis Plaza</h1>
+        <p className="relative mt-3 text-lg font-semibold text-white/70 lg:text-xl">Comandas del salón</p>
+        <span
+          aria-hidden
+          className="absolute -bottom-28 left-1/2 size-52 -translate-x-1/2 rounded-full bg-yema lg:-bottom-44 lg:size-88"
+        />
+      </section>
 
-        <form onSubmit={enviar} className="rounded-2xl bg-mantel p-5">
-          <label className="mb-4 block">
-            <span className="mb-1 block text-sm font-semibold text-tinta-2">Correo</span>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="username"
-              autoCapitalize="none"
-              required
-              className="min-h-12 w-full rounded-lg border border-filete px-3 text-[17px] text-tinta outline-none focus:border-rio"
-            />
-          </label>
-
-          <label className="mb-5 block">
-            <span className="mb-1 block text-sm font-semibold text-tinta-2">Contraseña</span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              required
-              className="min-h-12 w-full rounded-lg border border-filete px-3 text-[17px] text-tinta outline-none focus:border-rio"
-            />
-          </label>
+      <div className="flex flex-1 justify-center px-6 py-8 lg:items-center">
+        <form onSubmit={enviar} className="w-full max-w-sm">
+          <Campo
+            etiqueta="Correo"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
+            autoCapitalize="none"
+            required
+            className="mb-4"
+          />
+          <Campo
+            etiqueta="Contraseña"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+            className="mb-6"
+          />
 
           {error && (
             <p className="mb-4 border-l-4 border-brasa bg-brasa/8 px-3 py-2 text-[15px] font-semibold text-brasa">

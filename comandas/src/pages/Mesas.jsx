@@ -133,7 +133,7 @@ function MesaListaAviso({ aviso, onIr, onCerrar }) {
   return (
     <div className="flex items-center gap-3 bg-listo px-4 py-3 text-white">
       <Check size={28} strokeWidth={3} className="shrink-0" />
-      <button onClick={onIr} className="min-w-0 flex-1 text-left">
+      <button onClick={onIr} className="min-w-0 flex-1 text-left hover:underline hover:underline-offset-4">
         <p className="text-xl leading-tight font-extrabold">Mesa {aviso.mesa} completa</p>
         <p className="text-[15px] font-semibold text-white/80">
           {aviso.platos} {aviso.platos === 1 ? "plato listo" : "platos listos"} para llevar
@@ -142,7 +142,7 @@ function MesaListaAviso({ aviso, onIr, onCerrar }) {
       <button
         onClick={onCerrar}
         aria-label="Descartar aviso"
-        className="flex size-10 shrink-0 items-center justify-center rounded-lg active:bg-white/20"
+        className="flex size-10 shrink-0 items-center justify-center rounded-lg hover:bg-white/15 active:bg-white/20"
       >
         <X size={20} />
       </button>
@@ -154,19 +154,23 @@ function Baldosa({ mesa, comanda, ocupado, onAbrir, onEntrar }) {
   const { estado, listos, total } = resumenDeMesa(comanda);
   const completa = estado === "completa";
 
-  const piel = completa ? "bg-listo text-white" : comanda ? "bg-tinta text-white" : "bg-mantel text-tinta";
+  // El hover aclara la baldosa sin cambiarle el color: con ratón tiene que
+  // seguir leyéndose libre, ocupada o completa.
+  const piel = completa
+    ? "bg-listo text-white enabled:hover:brightness-110"
+    : comanda
+      ? "bg-tinta text-white enabled:hover:bg-hoja"
+      : "bg-mantel text-tinta border border-filete enabled:hover:border-tinta-2/60 enabled:hover:bg-white";
   const tenue = comanda ? "text-white/70" : "text-tinta-2";
 
   return (
     <button
       disabled={ocupado}
       onClick={() => (comanda ? onEntrar(comanda.id) : onAbrir())}
-      className={`flex min-h-36 flex-col justify-between rounded-2xl p-4 text-left transition active:scale-[0.98] disabled:opacity-60 ${piel} ${
-        comanda ? "" : "border border-filete"
-      }`}
+      className={`flex min-h-36 flex-col justify-between rounded-2xl p-4 text-left transition active:scale-[0.98] disabled:opacity-60 ${piel}`}
     >
       <div className="flex items-baseline justify-between gap-2">
-        <span className="text-5xl leading-none font-extrabold tracking-[-0.04em]">{mesa.numero}</span>
+        <span className="font-serif text-[56px] leading-[0.85]">{mesa.numero}</span>
         {completa ? (
           <Check size={26} strokeWidth={3} className="shrink-0" />
         ) : (
@@ -187,7 +191,7 @@ function Baldosa({ mesa, comanda, ocupado, onAbrir, onEntrar }) {
               {/* "Alguno listo" informa; no manda. Por eso va en ámbar y no en
                   verde: el verde significa ir a por la mesa. */}
               {estado === "parcial" && (
-                <p className="mt-1 text-sm font-extrabold text-tibio">
+                <p className="mt-1 text-sm font-extrabold text-tibio-claro">
                   {listos} de {total} listos
                 </p>
               )}

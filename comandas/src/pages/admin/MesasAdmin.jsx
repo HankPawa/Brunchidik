@@ -87,13 +87,13 @@ export default function MesasAdmin() {
                     capacidad: mesa.capacidad ? String(mesa.capacidad) : "",
                   })
                 }
-                className="flex size-11 items-center justify-center rounded-lg text-tinta-2 active:bg-sala"
+                className="flex size-11 items-center justify-center rounded-lg text-tinta-2 hover:bg-sala active:bg-sala"
               >
                 <Pencil size={18} />
               </button>
               <button
                 onClick={() => eliminar(mesa)}
-                className="flex size-11 items-center justify-center rounded-lg text-brasa active:bg-brasa/8"
+                className="flex size-11 items-center justify-center rounded-lg text-brasa hover:bg-brasa/8 active:bg-brasa/8"
               >
                 <Trash2 size={18} />
               </button>

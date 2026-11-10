@@ -10,33 +10,10 @@ import WhatsApp from "../components/WhatsApp";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import ProductModal from "../components/ProductModal";
-import pancakes from "../assets/pancakes.jpg";
-import avocado from "../assets/avocado.jpg";
-import englisheggs from "../assets/englisheggs.jpg";
-import torrejon from "../assets/torrejon.jpg";
-import baconeggs from "../assets/baconeggs.webp";
-import eggs from "../assets/eggs.jpg";
-import matcha_latte from "../assets/matcha_latte.jpg";
-import mimosa_coctel from "../assets/mimosa_coctel.jpg";
-import kombucha from "../assets/kombucha.jpg";
+import { fotoDePlato } from "../lib/fotosPlatos";
 import "./Menu.css";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const imageMap = {
-  "Pancakes":                          pancakes,
-  "Bacon Eggs":                        baconeggs,
-  "Muffin Inglés con Huevos":          englisheggs,
-  "Avocado Toast Campestre":           avocado,
-  "Eggs Benedict":                     eggs,
-  "Torrijas de Ricotta":               torrejon,
-  "Mimosa":                            mimosa_coctel,
-  "Kombucha":                          kombucha,
-  "Matcha Latte":                      matcha_latte,
-  "French Toast":                      null,
-  "Parfait de granola y frutos rojos": null,
-  "Açaí Bowl":                         null,
-};
 
 const fmtPrecio = (precio) => `$${Number(precio).toLocaleString("es-CO")}`;
 
@@ -47,7 +24,7 @@ const FlipCard = ({ item, onOpenModal }) => {
   const [flipped, setFlipped]     = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const { toggle, isFav } = useFavorites();
-  const img = imageMap[item.nombre] || item.imagenUrl || null;
+  const img = fotoDePlato(item);
   const fav = isFav(item.id);
 
   const handleFav = (e) => {

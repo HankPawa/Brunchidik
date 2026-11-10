@@ -86,13 +86,13 @@ export default function Reportes() {
           />
         </div>
         <div className="mt-2 flex gap-2 text-sm">
-          <button onClick={() => setRango({ desde: hoyISO(), hasta: hoyISO() })} className="underline text-tinta-2">
+          <button onClick={() => setRango({ desde: hoyISO(), hasta: hoyISO() })} className="underline text-tinta-2 hover:text-tinta">
             Hoy
           </button>
-          <button onClick={() => setRango(rangoAtajo(7))} className="underline text-tinta-2">
+          <button onClick={() => setRango(rangoAtajo(7))} className="underline text-tinta-2 hover:text-tinta">
             7 días
           </button>
-          <button onClick={() => setRango(rangoAtajo(30))} className="underline text-tinta-2">
+          <button onClick={() => setRango(rangoAtajo(30))} className="underline text-tinta-2 hover:text-tinta">
             30 días
           </button>
         </div>
@@ -199,7 +199,7 @@ function Consumo({ datos }) {
             {i.comprado > 0 && `, comprado ${cantidad(i.comprado)}`}
             {i.ajustado !== 0 && `, ajustes ${cantidad(i.ajustado)}`}
             {", "}
-            <span className={i.stockActual < 0 ? "font-semibold text-brasa" : i.bajoMinimo ? "font-semibold text-rio" : ""}>
+            <span className={i.stockActual < 0 ? "font-semibold text-brasa" : i.bajoMinimo ? "font-semibold text-tibio" : ""}>
               quedan {cantidad(i.stockActual)} {i.unidad}
             </span>
           </p>

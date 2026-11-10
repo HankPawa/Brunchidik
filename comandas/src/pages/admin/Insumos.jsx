@@ -117,19 +117,19 @@ export default function Insumos() {
                     <p className="text-sm font-semibold text-brasa">En negativo: se vendió sin existencias</p>
                   )}
                   {insumo.stock >= 0 && insumo.bajoMinimo && (
-                    <p className="text-sm font-semibold text-rio">Bajo el mínimo</p>
+                    <p className="text-sm font-semibold text-tibio">Bajo el mínimo</p>
                   )}
                 </div>
                 <button
                   onClick={() => verHistorial(insumo)}
                   title="Movimientos"
-                  className="flex size-11 items-center justify-center rounded-lg text-tinta-2 active:bg-sala"
+                  className="flex size-11 items-center justify-center rounded-lg text-tinta-2 hover:bg-sala active:bg-sala"
                 >
                   <History size={18} />
                 </button>
                 <button
                   onClick={() => setEditando({ ...insumo, stockMinimo: String(insumo.stockMinimo) })}
-                  className="flex size-11 items-center justify-center rounded-lg text-tinta-2 active:bg-sala"
+                  className="flex size-11 items-center justify-center rounded-lg text-tinta-2 hover:bg-sala active:bg-sala"
                 >
                   <Pencil size={18} />
                 </button>

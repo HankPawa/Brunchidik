@@ -19,17 +19,20 @@ export function Cabecera({ titulo, atras, acciones }) {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-10 flex items-center gap-2 bg-rio px-3 py-2.5 text-white">
+    <header className="sticky top-0 z-10 flex items-center gap-2 bg-hoja px-3 py-2.5 text-white">
       {atras && (
         <Link
           to={atras}
           aria-label="Volver"
-          className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white/80 active:bg-white/15"
+          className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white active:bg-white/15"
         >
           <ChevronLeft size={24} />
         </Link>
       )}
-      <h1 className="min-w-0 flex-1 truncate px-1 text-xl font-extrabold tracking-[-0.02em]">{titulo}</h1>
+      {/* En las pantallas de primer nivel, la yema hace de firma en el lugar
+          donde las de segundo nivel llevan la flecha de volver. */}
+      {!atras && <span aria-hidden className="ml-2 size-3 shrink-0 rounded-full bg-yema" />}
+      <h1 className="min-w-0 flex-1 truncate px-1 font-serif text-[22px] leading-tight">{titulo}</h1>
       {acciones}
       {user && (
         <span className="hidden shrink-0 rounded-md bg-white/15 px-2.5 py-1 text-[13px] font-bold sm:block">
@@ -40,7 +43,7 @@ export function Cabecera({ titulo, atras, acciones }) {
         onClick={logout}
         title="Cerrar sesión"
         aria-label="Cerrar sesión"
-        className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white/80 active:bg-white/15"
+        className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white/80 hover:bg-white/10 hover:text-white active:bg-white/15"
       >
         <LogOut size={20} />
       </button>

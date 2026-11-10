@@ -76,7 +76,7 @@ export default function Recetas() {
 
       {sinReceta.length > 0 && (
         <div className="mb-4 flex gap-3 rounded-xl border border-tibio bg-tibio/15 p-3">
-          <AlertTriangle className="shrink-0 text-rio" size={20} />
+          <AlertTriangle className="shrink-0 text-tibio" size={20} />
           <p className="text-sm text-tinta">
             <strong>{sinReceta.length} plato(s) sin receta.</strong> Se pueden vender, pero no descuentan inventario.
           </p>
@@ -91,11 +91,11 @@ export default function Recetas() {
             <li key={plato.id}>
               <button
                 onClick={() => abrir(plato)}
-                className="flex w-full items-center gap-3 rounded-xl border border-filete bg-white p-3 text-left active:bg-sala"
+                className="flex w-full items-center gap-3 rounded-xl border border-filete bg-white p-3 text-left hover:bg-sala active:bg-sala"
               >
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold text-tinta">{plato.nombre}</p>
-                  <p className={`text-sm ${idsSinReceta.has(plato.id) ? "text-rio" : "text-tinta-2"}`}>
+                  <p className={`text-sm ${idsSinReceta.has(plato.id) ? "text-tibio" : "text-tinta-2"}`}>
                     {idsSinReceta.has(plato.id) ? "Sin receta" : "Receta definida"}
                   </p>
                 </div>
@@ -146,7 +146,7 @@ export default function Recetas() {
                     onClick={() =>
                       setEditando((prev) => ({ ...prev, lineas: prev.lineas.filter((_, idx) => idx !== i) }))
                     }
-                    className="flex size-12 shrink-0 items-center justify-center rounded-lg text-brasa active:bg-brasa/8"
+                    className="flex size-12 shrink-0 items-center justify-center rounded-lg text-brasa hover:bg-brasa/8 active:bg-brasa/8"
                   >
                     <Trash2 size={18} />
                   </button>

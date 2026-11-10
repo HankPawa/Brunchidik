@@ -117,7 +117,7 @@ export default function Comanda() {
           }`}
         >
           <p className="flex-1">{aviso.texto}</p>
-          <button onClick={() => setAviso(null)} aria-label="Cerrar aviso" className="shrink-0">
+          <button onClick={() => setAviso(null)} aria-label="Cerrar aviso" className="shrink-0 rounded hover:opacity-70">
             <X size={18} />
           </button>
         </div>
@@ -166,7 +166,7 @@ export default function Comanda() {
                             onClick={() => cambiarCantidad(item, -1)}
                             disabled={ocupado}
                             aria-label={item.cantidad === 1 ? "Quitar plato" : "Restar uno"}
-                            className="flex size-11 items-center justify-center rounded-lg border border-filete text-tinta active:bg-sala"
+                            className="flex size-11 items-center justify-center rounded-lg border border-filete text-tinta hover:bg-sala active:bg-sala"
                           >
                             {item.cantidad === 1 ? <Trash2 size={18} /> : <Minus size={18} />}
                           </button>
@@ -174,7 +174,7 @@ export default function Comanda() {
                             onClick={() => cambiarCantidad(item, 1)}
                             disabled={ocupado}
                             aria-label="Sumar uno"
-                            className="flex size-11 items-center justify-center rounded-lg border border-filete text-tinta active:bg-sala"
+                            className="flex size-11 items-center justify-center rounded-lg border border-filete text-tinta hover:bg-sala active:bg-sala"
                           >
                             <Plus size={18} />
                           </button>
@@ -234,7 +234,7 @@ export default function Comanda() {
         <div className="fixed inset-x-0 bottom-0 border-t border-filete bg-mantel px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="mb-3 flex items-baseline justify-between">
             <span className="text-base font-semibold text-tinta-2">Total</span>
-            <span className="text-3xl font-extrabold tracking-[-0.03em] text-tinta">{pesos(comanda.total)}</span>
+            <span className="font-serif text-[34px] leading-none text-tinta">{pesos(comanda.total)}</span>
           </div>
           <div className="flex gap-2">
             <Boton variante="secundario" className="flex-1" onClick={() => setVista("carta")}>
@@ -275,7 +275,7 @@ function Carta({ carta, onAgregar, onCerrar, ocupado }) {
             key={c.id}
             onClick={() => setCategoria(c.id)}
             className={`min-h-11 shrink-0 rounded-lg px-4 font-bold transition ${
-              activa?.id === c.id ? "bg-tinta text-white" : "border border-filete bg-mantel text-tinta"
+              activa?.id === c.id ? "bg-tinta text-white" : "border border-filete bg-mantel text-tinta hover:border-tinta-2/50 hover:bg-sala"
             }`}
           >
             {c.nombre}
@@ -289,7 +289,7 @@ function Carta({ carta, onAgregar, onCerrar, ocupado }) {
             <button
               disabled={ocupado}
               onClick={() => onAgregar(plato)}
-              className="flex w-full items-center gap-3 p-4 text-left active:bg-sala disabled:opacity-60"
+              className="flex w-full items-center gap-3 p-4 text-left hover:bg-sala active:bg-sala disabled:opacity-60"
             >
               <div className="min-w-0 flex-1">
                 <p className="text-[17px] font-bold text-tinta">{plato.nombre}</p>

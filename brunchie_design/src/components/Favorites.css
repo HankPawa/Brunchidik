@@ -1,135 +1,145 @@
+/* Favoritos de la portada: platos reales de la carta, leídos como una carta
+   con fotos y no como tarjetas sueltas. Sin sombras ni bordes: la foto y el
+   nombre bastan. */
 .fav-section {
-  padding: 5rem 1.5rem !important;
+  padding: 5rem 1.5rem;
+}
+
+.fav-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.fav-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .fav-title {
-  font-family: 'Fraunces', serif !important;
-  font-size: 2rem !important;
-  margin-bottom: 2.5rem !important;
-}
-
-.fav-carousel-wrap {
-  margin-bottom: 2.5rem;
-}
-
-@media (max-width: 768px) {
-  .fav-section { padding: 3.5rem 1rem !important; }
-  .fav-title   { font-size: 1.5rem !important; }
-}
-
-.fav-card-name {
   font-family: 'Fraunces', serif;
-  font-size: .95rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: .3rem;
+  line-height: 1.1;
 }
 
-.fav-card-desc {
+.fav-link {
   font-family: 'Nunito', sans-serif;
-  font-size: .78rem;
-  color: #777;
-  line-height: 1.45;
-  margin: 0;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  white-space: nowrap;
 }
 
-.custom-card {
-  border-radius: 20px;
-  overflow: hidden;
-  transition: all 0.3s ease;
+.fav-link:hover { color: #555; }
+
+.fav-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem 1.75rem;
+  list-style: none;
 }
 
-.custom-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
-
-.card-image img {
-  object-fit: cover;
-  height: 100%;
-}
-
-.carousel-container {
-  width: min(500px, 100%);
-  height: 240px;
-  margin: 0 auto;
-  perspective: 1000px;
-}
-
-@media (max-width: 540px) {
-  .carousel-container { height: 220px; }
-  .fav-card { width: 120px; }
-}
-
-.carousel {
+.fav-plato {
+  display: block;
   width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d; /* 👈 activa 3D */
-}
-
-.fav-card {
-  width: 120px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform-style: preserve-3d;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-}
-
-.fav-card img {
-  border-radius: 12px;
-}
-
-.fav-card--active {
-  box-shadow: 0 0 0 3px #1a1a1a, 0 10px 30px rgba(0,0,0,.2) !important;
-}
-
-/* Panel descripción */
-.fav-desc-panel {
-  position: relative;
-  max-width: 420px;
-  margin: 1.5rem auto 0;
-  background: #fff;
-  border-radius: 16px;
-  padding: 1.25rem 1.5rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,.08);
-  border: 1.5px solid #f0ede8;
-  animation: fadeUp .25s ease;
-  text-align: left;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.fav-desc-close {
-  position: absolute;
-  top: .75rem;
-  right: .75rem;
+  padding: 0;
+  border: 0;
   background: none;
-  border: none;
-  font-size: .9rem;
-  color: #aaa;
+  text-align: left;
+  font: inherit;
+  color: inherit;
   cursor: pointer;
-  transition: color .2s;
 }
-.fav-desc-close:hover { color: #1a1a1a; }
 
-.fav-desc-name {
+.fav-foto {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #f0ede8;
+}
+
+.fav-linea {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: .9rem;
+}
+
+.fav-nombre {
   font-family: 'Fraunces', serif;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: .5rem;
+  line-height: 1.2;
 }
 
-.fav-desc-text {
+.fav-precio {
   font-family: 'Nunito', sans-serif;
-  font-size: .9rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.fav-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: .35rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: .95rem;
+  line-height: 1.5;
   color: #666;
-  line-height: 1.6;
-  margin: 0;
+}
+
+.fav-plato:hover .fav-nombre {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+.fav-plato:focus-visible {
+  outline: 3px solid #1a1a1a;
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+
+.fav-cargando {
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+  background: #f0ede8;
+}
+
+/* En el celular, una fila que se desliza con el dedo en lugar de una pila de
+   seis fotos. */
+@media (max-width: 768px) {
+  .fav-section { padding: 3.5rem 0; }
+  .fav-head { padding: 0 1rem; }
+  .fav-title { font-size: 1.5rem; }
+
+  .fav-grid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 72%;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    /* Sin esto el imán alinea la primera foto contra el borde y se come el
+       margen izquierdo. */
+    scroll-padding-inline: 1rem;
+    padding: 0 1rem .5rem;
+    scrollbar-width: none;
+  }
+
+  .fav-grid::-webkit-scrollbar { display: none; }
+  .fav-grid > li { scroll-snap-align: start; }
 }

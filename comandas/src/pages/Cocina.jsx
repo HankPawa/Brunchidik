@@ -74,7 +74,7 @@ export default function Cocina() {
       {cargando ? (
         <Cargando />
       ) : items.length === 0 ? (
-        <p className="px-6 py-24 text-center text-3xl font-bold text-tinta-2">La cocina está al día</p>
+        <p className="px-6 py-24 text-center font-serif text-4xl text-tinta-2">La cocina está al día</p>
       ) : (
         <div className="grid gap-5 p-4 xl:grid-cols-2">
           <Banda
@@ -162,10 +162,10 @@ function Ticket({ item, accion, onAccion, enMarcha }) {
           onClick={() => onAccion(item)}
           className={`mt-4 min-h-16 w-full rounded-lg text-xl font-extrabold transition active:scale-[0.99] ${
             tarde
-              ? "bg-white text-brasa"
+              ? "bg-white text-brasa hover:bg-white/90"
               : enMarcha
-                ? "bg-listo text-white"
-                : "bg-tinta text-white"
+                ? "bg-listo text-white hover:brightness-110"
+                : "bg-tinta text-white hover:bg-hoja"
           }`}
         >
           {accion}

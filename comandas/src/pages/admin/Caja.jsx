@@ -231,7 +231,7 @@ export default function Caja() {
                     ayuda={`Esperado: ${pesos(esperado)}`}
                   />
                   {diferencia !== null && diferencia !== 0 && (
-                    <p className={`mt-1 text-sm font-semibold ${diferencia < 0 ? "text-brasa" : "text-rio"}`}>
+                    <p className={`mt-1 text-sm font-semibold ${diferencia < 0 ? "text-brasa" : "text-hoja"}`}>
                       {diferencia < 0 ? "Faltan " : "Sobran "}
                       {pesos(Math.abs(diferencia))}
                     </p>
@@ -354,7 +354,7 @@ function Movimientos({ movimientos, onAnular, ocupado }) {
                 onClick={() => onAnular(m.id)}
                 disabled={ocupado}
                 title="Anular"
-                className="flex size-10 shrink-0 items-center justify-center rounded-lg text-tinta-2 active:bg-sala disabled:opacity-40"
+                className="flex size-10 shrink-0 items-center justify-center rounded-lg text-tinta-2 hover:bg-sala active:bg-sala disabled:opacity-40"
               >
                 <Ban size={16} />
               </button>
