@@ -13,7 +13,7 @@ Dos aplicaciones del restaurante **Montis Plaza** sobre una misma API y una mism
 
 ## Arrancar en local
 
-Necesitas **Node.js 20+** y **PostgreSQL** corriendo. Redis es opcional.
+Necesitas **Node.js 20+** y la dirección de la base de datos. La base del proyecto vive en **Neon** (PostgreSQL en la nube), así que no hace falta instalar PostgreSQL en el equipo: basta con poner su dirección en `DATABASE_URL`. Redis es opcional.
 
 ```bash
 # 1. Configurar el backend
@@ -38,7 +38,7 @@ npm run escritorio
 
 Al arrancar imprime la dirección de la red local (`http://TU-IP:8080`): es la que los meseros abren en el celular, conectados al mismo WiFi.
 
-¿Algo no arranca? `npm run check` revisa Node, dependencias, variables de entorno, PostgreSQL, migraciones y Redis, y dice qué falta.
+¿Algo no arranca? `npm run check` revisa Node, dependencias, variables de entorno, la conexión a la base, migraciones y Redis, y dice qué falta.
 
 ### Comandos
 
@@ -70,7 +70,7 @@ Ninguna credencial está escrita en el código: todo sale de `api/.env` (o del `
 
 | Variable | Obligatoria | Para qué |
 |---|---|---|
-| `DATABASE_URL` | sí | Conexión a PostgreSQL (formato Prisma, no JDBC) |
+| `DATABASE_URL` | sí | Conexión a PostgreSQL (formato Prisma, no JDBC). Con Neon: host directo (sin `-pooler`) y `sslmode=require` |
 | `JWT_SECRET` | sí | Firma de los tokens de sesión (mínimo 32 caracteres) |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | para la semilla | Usuario administrador inicial |
 | `MESERO_*`, `COCINA_*` | para la semilla | Cuentas del personal del salón (correo y contraseña) |
@@ -116,6 +116,12 @@ La API expone `/ws`. El cliente se autentica con su token en el primer mensaje y
 ### Base de datos
 
 PostgreSQL gestionado con **migraciones de Prisma versionadas** (`api/prisma/migrations`): en una máquina nueva, `npm run db:migrate` reconstruye el esquema exacto.
+
+La base del proyecto es **una sola, en Neon**, y todos los equipos apuntan a ella. Si un equipo usa otra (un PostgreSQL local, por ejemplo), lo que se cree ahí no aparece en los demás: los datos no se sincronizan solos entre bases.
+
+**Conexión por el puerto 443.** Muchas redes (universidades, algunos locales) cortan el puerto 5432 de PostgreSQL aunque haya internet. Por eso, cuando `DATABASE_URL` apunta a Neon, la API se conecta por WebSocket en el puerto 443 con el adaptador `@prisma/adapter-neon` (`api/src/config/prisma.js`), y funciona en cualquier red. Con cualquier otro PostgreSQL (Docker, la integración continua) usa la conexión normal.
+
+Las **migraciones** (`npm run db:migrate`, `npm run setup`) sí necesitan el puerto 5432: si la red lo bloquea, `npm run check` lo avisa y hay que aplicarlas desde otra red. Arrancar y usar la app no las necesita.
 
 ---
 

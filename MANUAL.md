@@ -16,14 +16,16 @@ El proyecto son **dos aplicaciones** sobre una misma API y una misma base de dat
 | Herramienta | Versión | Descarga |
 |---|---|---|
 | Node.js | 20 o superior (recomendado 22) | https://nodejs.org |
-| PostgreSQL | 15 o superior | https://www.postgresql.org/download/ |
 | Git | Cualquiera | https://git-scm.com |
+| PostgreSQL | 15 o superior, **solo si no usas Neon** | https://www.postgresql.org/download/ |
 
 Hay un archivo `.nvmrc` en la raíz: si usas `nvm`, con `nvm use` te pones en la versión correcta.
 
+**La base de datos del proyecto está en Neon** (PostgreSQL en la nube). Con ella no hay que instalar PostgreSQL: solo hace falta su dirección, que te pasa el equipo (no está en el repositorio porque lleva la contraseña). Todos los equipos usan esa misma base; ver el paso 3.
+
 **Redis es opcional.** Sin él, el límite de peticiones y los códigos de verificación funcionan en memoria. No hace falta instalarlo para trabajar.
 
-> **Al instalar PostgreSQL, apunta la contraseña del usuario `postgres`.** La vas a necesitar en el paso 3 y no se puede recuperar después sin reinstalar.
+> **Si instalas PostgreSQL en el equipo, apunta la contraseña del usuario `postgres`.** La vas a necesitar en el paso 3 y no se puede recuperar después sin reinstalar.
 
 ---
 
@@ -48,7 +50,7 @@ Abre `api/.env` y completa:
 
 | Variable | Qué poner |
 |---|---|
-| `DATABASE_URL` | `postgresql://postgres:TU_CONTRASEÑA@localhost:5432/brunch_db?schema=public` |
+| `DATABASE_URL` | La dirección de la base de Neon del proyecto: `postgresql://USUARIO:CONTRASEÑA@ep-xxxx.REGION.aws.neon.tech/brunch_api?sslmode=require&schema=public`. Usa el host **sin** `-pooler`. Solo si trabajas con un PostgreSQL propio: `postgresql://postgres:TU_CONTRASEÑA@localhost:5432/brunch_db?schema=public` |
 | `JWT_SECRET` | Una cadena aleatoria de 32 caracteres o más. Genérala con el comando de abajo |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | El administrador que quieres que se cree |
 | `MESERO_EMAIL` / `MESERO_PASSWORD` | La cuenta del mesero |
@@ -95,13 +97,15 @@ Hace cinco cosas, en orden:
 
 **No hace falta `createdb` ni `psql`.** En Windows, el instalador de PostgreSQL no añade sus herramientas al PATH, así que esos comandos no existen en la terminal. El paso de crear la base se hace desde Node con la conexión de `api/.env`.
 
+**Con Neon, la base ya existe y ya tiene datos.** `npm run setup` no borra nada: las migraciones solo aplican lo que falte y la semilla nunca pisa la contraseña de una cuenta existente. Eso sí, los pasos 2 a 4 usan el puerto 5432 de PostgreSQL; si la red lo bloquea (pasa en la universidad), fallarán ahí. No es grave: la base de Neon ya está preparada y la app funciona igual, porque se conecta por el puerto 443. Basta con haber instalado las dependencias (paso 1).
+
 Si algo falla:
 
 ```bash
 npm run check
 ```
 
-Revisa la versión de Node, las dependencias de los cuatro proyectos, el archivo `.env`, la conexión a PostgreSQL, las migraciones pendientes y Redis, y dice exactamente qué falta.
+Revisa la versión de Node, las dependencias de los cuatro proyectos, el archivo `.env`, la conexión a la base (con Neon, también si la red bloquea el puerto 5432), las migraciones pendientes y Redis, y dice exactamente qué falta.
 
 ---
 
@@ -242,7 +246,13 @@ Estos son los que de verdad aparecen, con lo que los causa.
 → En Windows las herramientas de PostgreSQL no están en el PATH. No hace falta: usa `npm run db:create`, que hace lo mismo desde Node.
 
 **«No se pudo conectar a PostgreSQL»**
-→ El servicio no está corriendo, o `DATABASE_URL` apunta a otro sitio. En Windows, comprueba el servicio `postgresql-x64-17` en *Servicios*. La dirección debe empezar por `postgresql://`, nunca por `jdbc:`.
+→ Con Neon: casi siempre es el internet. La API entra por el puerto 443, así que si hay internet debería conectar; `npm run check` dice si Neon responde. Con un PostgreSQL propio: el servicio no está corriendo, o `DATABASE_URL` apunta a otro sitio. En Windows, comprueba el servicio `postgresql-x64-17` en *Servicios*. La dirección debe empezar por `postgresql://`, nunca por `jdbc:`.
+
+**`npm run check` avisa «Esta red bloquea el puerto 5432»**
+→ La red corta el puerto de PostgreSQL. La app funciona igual, porque con Neon va por el 443. Solo afecta a `npm run db:migrate` y `npm run setup`: si hay una migración nueva, aplícala desde otra red (la de casa o los datos del celular).
+
+**Desaparecieron platos, mesas o ventas que sí se habían creado**
+→ La API está conectada a otra base. Lo que se crea queda en la base a la que apunta `DATABASE_URL` en ese momento, y las bases no se sincronizan entre sí. Comprueba que `api/.env` apunte a la base de Neon del proyecto (`brunch_api`) y no a un PostgreSQL local, y no arranques nunca la API con otra `DATABASE_URL` «solo por esta vez».
 
 **La autenticación de PostgreSQL falla y la contraseña es correcta**
 → Si lleva `@`, `#`, `:` o `/`, hay que codificarla dentro de la dirección (`@` → `%40`, `#` → `%23`).

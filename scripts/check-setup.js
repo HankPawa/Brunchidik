@@ -66,7 +66,20 @@ if (!existsSync(envPath)) {
 
   const url = new URL(values.databaseUrl.replace(/^postgres(ql)?:/, "http:"));
   const puerto = Number(url.port || 5432);
-  if (await puertoAbierto(url.hostname, puerto)) {
+  const esNeon = url.hostname.endsWith(".neon.tech");
+
+  // Con Neon la API entra por el 443 (api/src/config/prisma.js), así que un 5432
+  // cortado por la red no impide trabajar: solo impide aplicar migraciones.
+  if (esNeon && !(await puertoAbierto(url.hostname, puerto))) {
+    if (await puertoAbierto(url.hostname, 443)) {
+      ok(`Neon responde en ${url.hostname} por el puerto 443`);
+      aviso(
+        "Esta red bloquea el puerto 5432: la app funciona, pero una migración nueva hay que aplicarla desde otra red (npm run db:migrate)",
+      );
+    } else {
+      fallo(`Neon no responde en ${url.hostname}`, "Revisa la conexión a internet");
+    }
+  } else if (await puertoAbierto(url.hostname, puerto)) {
     ok(`PostgreSQL responde en ${url.hostname}:${puerto}`);
     try {
       execSync("npx prisma migrate status", { cwd: path.join(raiz, "api"), stdio: "pipe" });
