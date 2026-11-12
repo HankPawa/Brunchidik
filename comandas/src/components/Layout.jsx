@@ -15,7 +15,7 @@ export function RutaProtegida({ roles, children }) {
 }
 
 // El encabezado es cromo: color de marca, y nada que compita con el contenido.
-export function Cabecera({ titulo, atras, acciones }) {
+export function Cabecera({ titulo, atras, onVolver, acciones }) {
   const { user, logout } = useAuth();
 
   return (
@@ -29,9 +29,20 @@ export function Cabecera({ titulo, atras, acciones }) {
           <ChevronLeft size={24} />
         </Link>
       )}
+      {onVolver && (
+        <button
+          type="button"
+          onClick={onVolver}
+          aria-label="Volver"
+          className="flex min-h-10 shrink-0 items-center gap-1 rounded-lg px-2 text-sm font-bold text-white/90 hover:bg-white/10 hover:text-white active:bg-white/15"
+        >
+          <ChevronLeft size={20} />
+          volver
+        </button>
+      )}
       {/* En las pantallas de primer nivel, la yema hace de firma en el lugar
           donde las de segundo nivel llevan la flecha de volver. */}
-      {!atras && <span aria-hidden className="ml-2 size-3 shrink-0 rounded-full bg-yema" />}
+      {!atras && !onVolver && <span aria-hidden className="ml-2 size-3 shrink-0 rounded-full bg-yema" />}
       <h1 className="min-w-0 flex-1 truncate px-1 font-serif text-[22px] leading-tight">{titulo}</h1>
       {acciones}
       {user && (

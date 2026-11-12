@@ -34,4 +34,5 @@ export async function aplicarMovimiento(tx, { insumoId, tipo, cantidad, motivo, 
 
 // Para evitar interbloqueos cuando dos transacciones tocan los mismos insumos,
 // siempre se aplican en el mismo orden.
-export const ordenarPorInsumo = (consumos) => [...consumos].sort((a, b) => a.insumoId - b.insumoId);
+export const ordenarPorInsumo = (consumos) =>
+  [...consumos].sort((a, b) => (a.insumoId < b.insumoId ? -1 : a.insumoId > b.insumoId ? 1 : 0));

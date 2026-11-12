@@ -100,6 +100,21 @@ export default function Comanda() {
       navigate("/mesas");
     });
 
+  const anular = async () => {
+    if (!window.confirm("¿Cerrar la mesa y anular la comanda? No se registrará ningún pago.")) return;
+
+    setOcupado(true);
+    setError("");
+    try {
+      await pedir(`/api/comandas/${id}/anular`, { method: "POST" });
+      navigate("/mesas");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setOcupado(false);
+    }
+  };
+
   if (!comanda) return <Pantalla>{error ? <Aviso onReintentar={cargar}>{error}</Aviso> : <Cargando />}</Pantalla>;
 
   const borradores = comanda.items.filter((i) => i.estado === "BORRADOR");
@@ -230,14 +245,17 @@ export default function Comanda() {
         </div>
       )}
 
-      {vista !== "carta" && vista !== "cobro" && (
+      {vista !== "carta" && vista !== "cobro" && comanda.estado === "ABIERTA" && (
         <div className="fixed inset-x-0 bottom-0 border-t border-filete bg-mantel px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="mb-3 flex items-baseline justify-between">
             <span className="text-base font-semibold text-tinta-2">Total</span>
             <span className="font-serif text-[34px] leading-none text-tinta">{pesos(comanda.total)}</span>
           </div>
-          <div className="flex gap-2">
-            <Boton variante="secundario" className="flex-1" onClick={() => setVista("carta")}>
+          <div className="grid grid-cols-3 gap-2">
+            <Boton variante="peligro" className="px-2 text-sm" cargando={ocupado} onClick={anular}>
+              Cerrar mesa
+            </Boton>
+            <Boton variante="secundario" className="flex-1" disabled={ocupado} onClick={() => setVista("carta")}>
               Agregar platos
             </Boton>
             {borradores.length > 0 ? (
@@ -250,7 +268,7 @@ export default function Comanda() {
               <Boton
                 variante="marca"
                 className="flex-1"
-                disabled={activos.length === 0}
+                disabled={ocupado || activos.length === 0}
                 onClick={() => setVista("cobro")}
               >
                 Cobrar

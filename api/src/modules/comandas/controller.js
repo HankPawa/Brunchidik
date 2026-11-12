@@ -5,7 +5,7 @@ import { toComanda, toComandaItem, toMesa, totalDeItems } from "../../lib/serial
 import { nowNaive } from "../../lib/time.js";
 import { publicar, TOPICS } from "../../ws/hub.js";
 import { publicarCaja } from "../caja/service.js";
-import { aplicarMovimiento } from "../inventario/service.js";
+import { aplicarMovimiento, ordenarPorInsumo } from "../inventario/service.js";
 import * as audit from "../audit/service.js";
 
 const conItems = { mesa: true, items: { orderBy: { id: "asc" } } };
@@ -401,6 +401,69 @@ export async function cerrar(req, res) {
     audit.SERVICIO_COMANDAS,
   );
   responder(res, cerrada);
+}
+
+export async function anular(req, res) {
+  const { id } = req.valid.params;
+  const anulada = await prisma.$transaction(async (tx) => {
+    const comanda = await tx.comanda.findUnique({ where: { id }, include: conItems });
+    if (!comanda) throw noEncontrado("Comanda no encontrada");
+    exigirAbierta(comanda);
+
+    if (comanda.items.some((item) => item.estado === "ENTREGADO")) {
+      throw new ApiError(409, "No se puede anular una mesa con platos ya entregados");
+    }
+
+    const actualizada = await tx.comanda.updateMany({
+      where: { id, estado: "ABIERTA" },
+      data: { estado: "ANULADA", fechaCierre: nowNaive() },
+    });
+    if (actualizada.count === 0) throw new ApiError(409, "La comanda ya no está abierta");
+
+    const devoluciones = [];
+    for (const item of comanda.items) {
+      if (!EN_COCINA.includes(item.estado) || !item.inventarioAplicado) continue;
+
+      const movimientos = await tx.movimientoInventario.findMany({
+        where: { comandaItemId: item.id, tipo: "CONSUMO" },
+        orderBy: { insumoId: "asc" },
+      });
+      devoluciones.push(...movimientos.map((movimiento) => ({ insumoId: movimiento.insumoId, item, movimiento })));
+    }
+
+    for (const { item, movimiento } of ordenarPorInsumo(devoluciones)) {
+      await aplicarMovimiento(tx, {
+        insumoId: movimiento.insumoId,
+        tipo: "DEVOLUCION",
+        cantidad: -Number(movimiento.cantidad),
+        motivo: `Anulación de comanda #${id}`,
+        comandaItemId: item.id,
+        usuarioId: req.user.id,
+      });
+    }
+
+    await tx.comandaItem.updateMany({
+      where: { comandaId: id, estado: { in: EN_COCINA } },
+      data: { estado: "CANCELADO", inventarioAplicado: false },
+    });
+    await tx.comandaItem.updateMany({
+      where: { comandaId: id, estado: { in: ["BORRADOR", "LISTO"] } },
+      data: { estado: "CANCELADO" },
+    });
+
+    return tx.comanda.findUnique({ where: { id }, include: conItems });
+  }, TX);
+
+  const json = toComanda(anulada);
+  publicar(TOPICS.cocina, json);
+  publicar(TOPICS.salon, json);
+  publicar(TOPICS.comandasMesero(Number(anulada.meseroId)), json);
+  await audit.registrar(
+    "ANULAR_COMANDA",
+    `Anuló la comanda #${id} (mesa ${anulada.mesa.numero})`,
+    audit.SERVICIO_COMANDAS,
+  );
+  responder(res, anulada);
 }
 
 // --- Cocina ---

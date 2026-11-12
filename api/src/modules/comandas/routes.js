@@ -25,6 +25,7 @@ comandasRouter.post("/:id/items/:itemId/cancelar", validate(s.itemParams, "param
 comandasRouter.post("/:id/items/:itemId/entregar", validate(s.itemParams, "params"), c.entregarItem);
 comandasRouter.post("/:id/enviar", validate(idParams, "params"), c.enviarACocina);
 comandasRouter.post("/:id/cerrar", validate(idParams, "params"), validate(s.cerrarComandaSchema), c.cerrar);
+comandasRouter.post("/:id/anular", validate(idParams, "params"), c.anular);
 
 export const cocinaRouter = Router();
 cocinaRouter.use(cocina);
